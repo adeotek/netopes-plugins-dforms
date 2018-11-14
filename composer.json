@@ -1,0 +1,22 @@
+{
+    "name": "netopes/plugins-dforms",
+    "description": "Dynamic forms plugin",
+    "type": "library",
+    "license": "MIT License",
+	"authors": [
+        {
+            "name": "George Benjamin-Schonberger",
+            "email": "george.benjamin@gmail.com"
+        }
+    ],
+	"minimum-stability": "stable",
+    "require": {
+        "php": ">=7.2",
+        "netopes/core": "2.2.*",
+    },
+    "autoload": {
+        "psr-4": {
+            "NETopes\\Plugins\\": ""
+        }
+    }
+}
