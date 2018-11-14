@@ -22,12 +22,12 @@ $ctrl_params = array(
                 array(
                     'type'=>'DivButton',
                     'command_string'=>"AjaxRequest('{$this->name}','ShowEditForm','id'|{{id}}~'id_template'|'{{id_template}}'~'cmodule'|'{$this->name}'~'cmethod'|'GlobalListing')->main-content",
-                    'params'=>array('tagid'=>'df_instance_edit_btn','tooltip'=>Translate::GetButton('edit'),'class'=>'btn btn-primary btn-xxs','icon'=>'fa fa-pencil-square-o'),
+                    'params'=>array('tagid'=>'df_instance_edit_btn','tooltip'=>Translate::GetButton('edit'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-xxs'),'icon'=>'fa fa-pencil-square-o'),
                 ),
                 array(
                     'type'=>'DivButton',
                     'command_string'=>"AjaxRequest('{$this->name}','ShowViewForm','id'|{{id}}~'id_template'|'{{id_template}}'~'is_modal'|1)->modal",
-                    'params'=>array('tagid'=>'df_template_view_btn','tooltip'=>Translate::GetButton('view'),'class'=>'btn btn-primary btn-xxs pull-right','icon'=>'fa fa-eye'),
+                    'params'=>array('tagid'=>'df_template_view_btn','tooltip'=>Translate::GetButton('view'),'class'=>NApp::$theme->GetBtnPrymaryClass('btn-xxs pull-right'),'icon'=>'fa fa-eye'),
                 ),
             ),
         ),
@@ -144,7 +144,7 @@ $ctrl_params = array(
                 array(
                     'type'=>'DivButton',
                     'command_string'=>"AjaxRequest('{$this->name}','DeleteRecord','id'|{{id}}~'id_template'|'{{id_template}}'~'cmodule'|'{$this->name}'~'cmethod'|'GlobalListing')->errors",
-                    'params'=>array('tagid'=>'df_instance_delete_btn','tooltip'=>Translate::GetButton('delete'),'class'=>'btn btn-danger btn-xxs','icon'=>'fa fa-times','confirm_text'=>Translate::GetMessage('confirm_delete'),'conditions'=>array(array('field'=>'ftype','type'=>'!=','value'=>2))),
+                    'params'=>array('tagid'=>'df_instance_delete_btn','tooltip'=>Translate::GetButton('delete'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs'),'icon'=>'fa fa-times','confirm_text'=>Translate::GetMessage('confirm_delete'),'conditions'=>array(array('field'=>'ftype','type'=>'!=','value'=>2))),
                 ),
             ),
         ),

@@ -27,6 +27,11 @@ use Translate;
  * @access   public
  */
 class Controls extends Module {
+    /**
+     * @var string Data source short name
+     * @static
+     */
+    public static $dataSourceName = 'Components\DForms\Controls';
 	/**
 	 * description
 	 *
@@ -43,7 +48,7 @@ class Controls extends Module {
 		// NApp::_Dlog($id_control,'$id_control');
 		// NApp::_Dlog($id_parent,'$id_parent');
 		// NApp::_Dlog($parent_group_name,'$parent_group_name');
-		$field_properties = DataProvider::GetArray('Components\DForms\Controls','GetProperties',array(
+		$field_properties = DataProvider::Get(static::$dataSourceName,'GetProperties',array(
 			'control_id'=>$id_control,
 			'for_state'=>-1,
 			'parent_id'=>$id_parent,
@@ -216,7 +221,7 @@ class Controls extends Module {
 		$id_control = $params->safeGet('id_control',NULL,'is_not0_numeric');
 		if(!$id_control) { throw new AppException('Invalid control identifier!'); }
 		$data = $params->safeGet('data',[],'is_array');
-		$cparams = DataProvider::GetArray('Components\DForms\Controls','GetProperties',['control_id'=>$id_control,'for_state'=>-1,'parent_id'=>0]);
+		$cparams = DataProvider::GetArray(static::DATA_SOURCE_NAME,'GetProperties',['control_id'=>$id_control,'for_state'=>-1,'parent_id'=>0]);
 		$result = [];
 		if(is_array($cparams) && count($cparams)) {
 			foreach($cparams as $cp) {

@@ -4,14 +4,14 @@
  *
  * Contains all database calls for dynamic forms.
  *
- * @package    NETopes\Plugins\DataSources\DForms
+ * @package    NETopes\Plugins\DForms\DataSources
  * @author     George Benjamin-Schonberger
  * @copyright  Copyright (c) 2019 AdeoTEK Software
  * @license    LICENSE.md
  * @version    1.0.1.0
  * @filesource
  */
-namespace NETopes\Plugins\DataSources\DForms;
+namespace NETopes\Plugins\DForms\DataSources;
 use NETopes\Core\Data\DataSource;
 /**
  * DynamicForms data source class
@@ -30,7 +30,7 @@ use NETopes\Core\Data\DataSource;
  * - 'filters' = an array of condition to be applied in WHERE clause
  * return (array|bool) Returns database request result
  *
- * @package  NETopes\Plugins\DataSources\DForms
+ * @package  NETopes\Plugins\DForms\DataSources
  * @access   public
  */
 abstract class Instances extends DataSource {

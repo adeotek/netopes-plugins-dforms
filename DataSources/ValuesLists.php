@@ -4,14 +4,14 @@
  *
  * Contains all database calls for forms values lists.
  *
- * @package    NETopes\Plugins\DataSources\DForms
+ * @package    NETopes\Plugins\DForms\DataSources
  * @author     George Benjamin-Schonberger
  * @copyright  Copyright (c) 2019 AdeoTEK Software
  * @license    LICENSE.md
  * @version    1.0.1.0
  * @filesource
  */
-namespace NETopes\Plugins\DataSources\DForms;
+namespace NETopes\Plugins\DForms\DataSources;
 use NETopes\Core\Data\DataSource;
 
 /**
@@ -31,61 +31,150 @@ use NETopes\Core\Data\DataSource;
  * - 'filters' = an array of condition to be applied in WHERE clause
  * return (array|bool) Returns database request result
  *
- * @package  NETopes\Plugins\DataSources\DForms
+ * @package  NETopes\Plugins\DForms\DataSources
  * @access   public
  */
 abstract class ValuesLists extends DataSource {
+    /**
+     * GetItems default parameters
+     */
+    const GET_ITEMS = ['for_id'=>NULL,'for_state'=>NULL,'for_text'=>NULL];
+    /**
+     * Gets forms values lists
+     *
+     * @param array $params ['for_id'=>NULL,'for_state'=>NULL,'for_text'=>NULL]
+     * @param array $extra_params
+     * @return mixed
+     * @access public
+     */
+	abstract public function GetItems($params = [],$extra_params = []);
+	/**
+     * GetItem default parameters
+     */
+    const GET_ITEM = ['for_id'=>NULL,'for_state'=>NULL,'for_text'=>NULL];
 	/**
 	 * Gets forms values lists
 	 *
+     * @param array $params ['for_id'=>NULL,'for_state'=>NULL,'for_text'=>NULL]
+     * @param array $extra_params
+     * @return mixed
 	 * @access public
 	 */
-	abstract public function GetItems($params = [],$extra_params = []);
+	abstract public function GetItem($params = [],$extra_params = []);
+	/**
+     * SetNewItem default parameters
+     */
+    const SET_NEW_ITEM = ['in_ltype'=>NULL,'in_name'=>NULL,'in_state'=>NULL];
 	/**
 	 * Sets a new values list
 	 *
+     * @param array $params ['in_ltype'=>NULL,'in_name'=>NULL,'in_state'=>NULL]
+     * @param array $extra_params
+     * @return mixed
 	 * @access public
 	 */
 	abstract public function SetNewItem($params = [],$extra_params = []);
 	/**
+     * SetItem default parameters
+     */
+    const SET_ITEM = ['for_id'=>NULL,'in_name'=>NULL,'in_state'=>NULL];
+	/**
 	 * Sets a values list
 	 *
+     * @param array $params ['for_id'=>NULL,'in_name'=>NULL,'in_state'=>NULL]
+     * @param array $extra_params
+     * @return mixed
 	 * @access public
 	 */
 	abstract public function SetItem($params = [],$extra_params = []);
 	/**
-	 * Unets a values list
+     * UnsetItem default parameters
+     */
+    const UNSET_ITEM = ['for_id'=>NULL];
+	/**
+	 * Unset a values list
 	 *
+     * @param array $params ['for_id'=>NULL]
+     * @param array $extra_params
+     * @return mixed
 	 * @access public
 	 */
 	abstract public function UnsetItem($params = [],$extra_params = []);
 	/**
+     * GetValues default parameters
+     */
+    const GET_VALUES = ['for_id'=>NULL,'list_id'=>NULL,'for_ltype'=>NULL,'for_state'=>NULL,'for_implicit'=>NULL,'for_text'=>NULL];
+	/**
 	 * Gets forms lists values
 	 *
+     * @param array $params ['for_id'=>NULL,'list_id'=>NULL,'for_ltype'=>NULL,'for_state'=>NULL,'for_implicit'=>NULL,'for_text'=>NULL]
+     * @param array $extra_params
+     * @return mixed
 	 * @access public
 	 */
 	abstract public function GetValues($params = [],$extra_params = []);
 	/**
+     * GetValue default parameters
+     */
+    const GET_VALUE = ['for_id'=>NULL,'list_id'=>NULL,'for_ltype'=>NULL,'for_state'=>NULL,'for_implicit'=>NULL,'for_text'=>NULL];
+	/**
+	 * Gets forms lists values
+	 *
+     * @param array $params ['for_id'=>NULL,'list_id'=>NULL,'for_ltype'=>NULL,'for_state'=>NULL,'for_implicit'=>NULL,'for_text'=>NULL]
+     * @param array $extra_params
+     * @return mixed
+	 * @access public
+	 */
+	abstract public function GetValue($params = [],$extra_params = []);
+	/**
+     * GetValueItems default parameters
+     */
+    const GET_VALUE_ITEMS = ['for_id'=>NULL,'list_id'=>NULL,'for_ltype'=>NULL,'for_state'=>NULL];
+	/**
 	 * Gets forms lists values items
 	 *
+     * @param array $params ['for_id'=>NULL,'list_id'=>NULL,'for_ltype'=>NULL,'for_state'=>NULL]
+     * @param array $extra_params
+     * @return mixed
 	 * @access public
 	 */
 	abstract public function GetValueItems($params = [],$extra_params = []);
 	/**
+     * SetNewValue default parameters
+     */
+    const SET_NEW_VALUE = ['list_id'=>NULL,'in_value'=>NULL,'in_name'=>NULL,'in_state'=>NULL,'in_implicit'=>NULL];
+	/**
 	 * Sets a new list value
 	 *
+     * @param array $params ['list_id'=>NULL,'in_value'=>NULL,'in_name'=>NULL,'in_state'=>NULL,'in_implicit'=>NULL]
+     * @param array $extra_params
+     * @return mixed
 	 * @access public
 	 */
 	abstract public function SetNewValue($params = [],$extra_params = []);
 	/**
+     * SetValue default parameters
+     */
+    const SET_VALUE = ['for_id'=>NULL,'in_value'=>NULL,'in_name'=>NULL,'in_state'=>NULL,'in_implicit'=>NULL];
+	/**
 	 * Sets a list value
 	 *
+     * @param array $params ['for_id'=>NULL,'in_value'=>NULL,'in_name'=>NULL,'in_state'=>NULL,'in_implicit'=>NULL]
+     * @param array $extra_params
+     * @return mixed
 	 * @access public
 	 */
 	abstract public function SetValue($params = [],$extra_params = []);
 	/**
-	 * Unets a list value
+     * UnsetValue default parameters
+     */
+    const UNSET_VALUE = ['for_id'=>NULL];
+	/**
+	 * Unset a list value
 	 *
+     * @param array $params ['for_id'=>NULL]
+     * @param array $extra_params
+     * @return mixed
 	 * @access public
 	 */
 	abstract public function UnsetValue($params = [],$extra_params = []);

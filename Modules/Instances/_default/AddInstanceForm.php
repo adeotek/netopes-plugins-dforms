@@ -7,17 +7,17 @@
 		if(strlen($f_tagid) && strlen($f_rtarget)) {
 			$ctrl_params['actions'] = array(
 				array(
-					'params'=>array('tagid'=>'df_'.$tname.'_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','class'=>'btn btn-primary','clear_base_class'=>TRUE,'onclick'=>NApp::arequest()->Prepare("AjaxRequest('{$this->name}','SaveNewRecord','id_template'|{$id_template}~'data'|df_{$tname}_form:form~'is_modal'|'{$is_modal}'~'cmodule'|'{$cmodule}'~'cmethod'|'{$cmethod}'~'ctarget'|'{$ctarget}','{$f_tagid}')->{$f_rtarget}")),
+					'params'=>array('tagid'=>'df_'.$tname.'_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','class'=>NApp::$theme->GetBtnPrymaryClass(),'clear_base_class'=>TRUE,'onclick'=>NApp::arequest()->Prepare("AjaxRequest('{$this->name}','SaveNewRecord','id_template'|{$id_template}~'data'|df_{$tname}_form:form~'is_modal'|'{$is_modal}'~'cmodule'|'{$cmodule}'~'cmethod'|'{$cmethod}'~'ctarget'|'{$ctarget}','{$f_tagid}')->{$f_rtarget}")),
 				),
 			);
 			if($is_modal) {
 				$ctrl_params['actions'][] = array(
 					'type'=>'CloseModal',
-					'params'=>array('tagid'=>'df_'.$tname.'_cancel','value'=>Translate::GetButton('cancel'),'class'=>'btn btn-default','icon'=>'fa fa-ban'),
+					'params'=>array('tagid'=>'df_'.$tname.'_cancel','value'=>Translate::GetButton('cancel'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-ban'),
 				);
 			} elseif($cmethod!=call_back_trace()) {
 				$ctrl_params['actions'][] = array(
-					'params'=>array('tagid'=>'df_'.$tname.'_back','value'=>Translate::GetButton('back'),'icon'=>'fa fa-chevron-left','class'=>'btn btn-default','clear_base_class'=>TRUE,'onclick'=>NApp::arequest()->Prepare("AjaxRequest('{$cmodule}','{$cmethod}','id_template'|{$id_template},'{$ctarget}')->{$ctarget}")),
+					'params'=>array('tagid'=>'df_'.$tname.'_back','value'=>Translate::GetButton('back'),'icon'=>'fa fa-chevron-left','class'=>NApp::$theme->GetBtnDefaultClass(),'clear_base_class'=>TRUE,'onclick'=>NApp::arequest()->Prepare("AjaxRequest('{$cmodule}','{$cmethod}','id_template'|{$id_template},'{$ctarget}')->{$ctarget}")),
 				);
 			}//if($is_modal)
 		}//if(strlen($f_tagid) && strlen($f_rtarget))
