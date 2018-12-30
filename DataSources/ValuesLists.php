@@ -23,10 +23,10 @@ use NETopes\Core\Data\DataSource;
  * $extra_params (array) An array of parameters that may contain:
  * - 'transaction'= name of transaction in which the query will run
  * - 'type' = request type: select, count, execute (default 'select')
- * - 'firstrow' = integer to limit number of returned rows
- * (if used with 'lastrow' represents the offset of the returned rows)
- * - 'lastrow' = integer to limit number of returned rows
- * (to be used only with 'firstrow')
+ * - 'first_row' = integer to limit number of returned rows
+ * (if used with 'last_row' represents the offset of the returned rows)
+ * - 'last_row' = integer to limit number of returned rows
+ * (to be used only with 'first_row')
  * - 'sort' = an array of fields to compose ORDER BY clause
  * - 'filters' = an array of condition to be applied in WHERE clause
  * return (array|bool) Returns database request result

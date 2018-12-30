@@ -752,7 +752,7 @@ class Templates extends Module {
 			'in_params'=>NULL,
 		]);
 		// if($result!==FALSE) {
-		// 	$target = $params->safeGetValue('target','');
+		// 	$target = $params->safeGet('target','','is_string');
 		// 	NApp::arequest()->Execute("AjaxRequest('{$this->name}','ShowContentTable','id_template'|{$id_template},'{$target}')->{$target}");
 		// }//if($result!==FALSE)
 	}//END public function MoveContentElement
