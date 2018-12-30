@@ -1,13 +1,13 @@
 <?php
 	$ctrl_params = array(
-		'tagid'=>'df_template_rel_ae_form',
+		'tag_id'=>'df_template_rel_ae_form',
 		'response_target'=>'df_template_rel_ae_errors',
 		'colsno'=>1,
 		'content'=>array(
 			array(
 				array(
 					'control_type'=>'SmartComboBox',
-					'control_params'=>array('tagid'=>'df_template_rel_ae_type','label'=>Translate::GetLabel('type'),'required'=>TRUE,'disabled'=>(is_numeric($id) && $id>0),
+					'control_params'=>array('tag_id'=>'df_template_rel_ae_type','label'=>Translate::GetLabel('type'),'required'=>TRUE,'disabled'=>(is_numeric($id) && $id>0),
 						'valfield'=>'id',
 						'displayfield'=>'name',
 						'selectedvalue'=>get_array_param($item,'id_relation_type',NULL,'is_numeric'),
@@ -25,19 +25,19 @@
 			array(
 				array(
 					'control_type'=>'TextBox',
-					'control_params'=>array('tagid'=>'df_template_rel_ae_name','value'=>get_array_param($item,'name','','is_string'),'label'=>Translate::GetLabel('name'),'required'=>TRUE,'onenterbutton'=>'df_template_rel_ae_save'),
+					'control_params'=>array('tag_id'=>'df_template_rel_ae_name','value'=>get_array_param($item,'name','','is_string'),'label'=>Translate::GetLabel('name'),'required'=>TRUE,'onenter_button'=>'df_template_rel_ae_save'),
 				),
 			),
 			array(
 				array(
 					'control_type'=>'TextBox',
-					'control_params'=>array('tagid'=>'df_template_rel_ae_key','value'=>get_array_param($item,'key','','is_string'),'label'=>Translate::GetLabel('key'),'required'=>TRUE,'onenterbutton'=>'df_template_rel_ae_save'),
+					'control_params'=>array('tag_id'=>'df_template_rel_ae_key','value'=>get_array_param($item,'key','','is_string'),'label'=>Translate::GetLabel('key'),'required'=>TRUE,'onenter_button'=>'df_template_rel_ae_save'),
 				),
 			),
 			array(
 				array(
 					'control_type'=>'SmartComboBox',
-					'control_params'=>array('tagid'=>'df_template_rel_ae_rtype','label'=>Translate::GetLabel('value_type'),'required'=>TRUE,
+					'control_params'=>array('tag_id'=>'df_template_rel_ae_rtype','label'=>Translate::GetLabel('value_type'),'required'=>TRUE,
 						'valfield'=>'id',
 						'displayfield'=>'name',
 						'selectedvalue'=>get_array_param($item,'rtype',NULL,'is_numeric'),
@@ -52,7 +52,7 @@
 			array(
 				array(
 					'control_type'=>'SmartComboBox',
-					'control_params'=>array('tagid'=>'df_template_rel_ae_utype','label'=>Translate::GetLabel('usage_type'),'required'=>TRUE,
+					'control_params'=>array('tag_id'=>'df_template_rel_ae_utype','label'=>Translate::GetLabel('usage_type'),'required'=>TRUE,
 						'valfield'=>'id',
 						'displayfield'=>'name',
 						'selectedvalue'=>get_array_param($item,'utype',NULL,'is_numeric'),
@@ -67,13 +67,13 @@
 			array(
 				array(
 					'control_type'=>'CheckBox',
-					'control_params'=>array('tagid'=>'df_template_rel_ae_required','value'=>get_array_param($item,'required',0,'is_numeric'),'label'=>Translate::GetLabel('required'),'class'=>'pull-left'),
+					'control_params'=>array('tag_id'=>'df_template_rel_ae_required','value'=>get_array_param($item,'required',0,'is_numeric'),'label'=>Translate::GetLabel('required'),'class'=>'pull-left'),
 				),
 			),
 		),
 		'actions'=>array(
 			array(
-				'params'=>array('tagid'=>'df_template_rel_ae_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::arequest()->Prepare("AjaxRequest('{$this->name}','AddEditRelationRecord',
+				'params'=>array('tag_id'=>'df_template_rel_ae_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::arequest()->Prepare("AjaxRequest('{$this->name}','AddEditRelationRecord',
 					'id_template'|{$id_template}
 					~'id'|'{$id}'
 					~'type'|df_template_rel_ae_type:value
@@ -87,7 +87,7 @@
 			),
 			array(
 				'type'=>'CloseModal',
-				'params'=>array('tagid'=>'df_template_rel_ae_cancel','value'=>Translate::GetButton('cancel'),'icon'=>'fa fa-ban'),
+				'params'=>array('tag_id'=>'df_template_rel_ae_cancel','value'=>Translate::GetButton('cancel'),'icon'=>'fa fa-ban'),
 			),
 		),
 	);

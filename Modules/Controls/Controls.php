@@ -96,7 +96,7 @@ class Controls extends Module {
 						$fp_nval = '';
 					}//if(get_array_param($fpi,'allow_null',0,'is_numeric')>0)
 					$fp_value = get_array_param($data,$fp_key,get_array_param($fpi,'default_value',$fp_nval,'is_numeric'),'is_numeric');
-					$fp_sparams['numberformat'] = '0|||';
+					$fp_sparams['number_format'] = '0|||';
 					$fp_sparams['align'] = 'center';
 					$fp_cwidth = 100;
 					$fp_ccols = 4;
@@ -151,7 +151,7 @@ class Controls extends Module {
 						'width'=>'500',
 						'hidden_row'=>$hidden,
 						'control_type'=>$fp_ctype,
-						'control_params'=>array_merge(array('container'=>'simpletable','tagid'=>$fp_key,'tagname'=>$fp_key,'value'=>$fp_value,'label'=>$fp_label,'labelwidth'=>150,'width'=>$fp_cwidth,'cols'=>$fp_ccols,'required'=>$fp_required),$fp_sparams),
+						'control_params'=>array_merge(array('container'=>'simpletable','tag_id'=>$fp_key,'tag_name'=>$fp_key,'value'=>$fp_value,'label'=>$fp_label,'labelwidth'=>150,'width'=>$fp_cwidth,'cols'=>$fp_ccols,'required'=>$fp_required),$fp_sparams),
 					),
 				);
 			} else {
@@ -164,7 +164,7 @@ class Controls extends Module {
 						'content'=>array(
 							'control_type'=>'BasicForm',
 							'control_params'=>array(
-								'tagid'=>'ctrlp_'.$group_name.'_form',
+								'tag_id'=>'ctrlp_'.$group_name.'_form',
 								'colsno'=>1,
 								'content'=>[],
 							),
@@ -176,7 +176,7 @@ class Controls extends Module {
 						'width'=>'500',
 						'hidden_row'=>$hidden,
 						'control_type'=>$fp_ctype,
-						'control_params'=>array_merge(array('container'=>'simpletable','tagid'=>$fp_key,'tagname'=>$fp_key,'value'=>$fp_value,'label'=>$fp_label,'labelwidth'=>150,'width'=>$fp_cwidth,'cols'=>$fp_ccols,'required'=>get_array_param($fpi,'required',FALSE,'bool')),$fp_sparams),
+						'control_params'=>array_merge(array('container'=>'simpletable','tag_id'=>$fp_key,'tag_name'=>$fp_key,'value'=>$fp_value,'label'=>$fp_label,'labelwidth'=>150,'width'=>$fp_cwidth,'cols'=>$fp_ccols,'required'=>get_array_param($fpi,'required',FALSE,'bool')),$fp_sparams),
 					),
 				);
 			}//if($id_parent>0)
@@ -205,7 +205,7 @@ class Controls extends Module {
 		}//if(is_string($data))
 		$target = $params->safeGet('target','ctrl_properties_tab','is_notempty_string');
 		$ctrl_tabs = $this->GetTabControlStructure($data,$id_control);
-		$ctrl_tab = new TabControl(array('tagid'=>$target,'tabs'=>$ctrl_tabs));
+		$ctrl_tab = new TabControl(array('tag_id'=>$target,'tabs'=>$ctrl_tabs));
 		return $ctrl_tab;
 	}//END public function GetControlPropertiesTab
 	/**

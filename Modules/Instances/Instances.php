@@ -14,7 +14,7 @@
 namespace NETopes\Plugins\DForms\Instances;
 use NETopes\Core\App\AppView;
 use NETopes\Core\App\Module;
-use NETopes\Core\App\Validator;
+use NETopes\Core\Validators\Validator;
 use NETopes\Core\Controls\Control;
 use NETopes\Core\Data\DataProvider;
 use NETopes\Plugins\DForms\Instances\PdfTemplates\InstancesPdf;
@@ -94,8 +94,8 @@ class Instances extends Module {
 		$tagid = ($id_instance ? $id_instance.'_' : '').get_array_param($field,'cell','','is_string').'_'.get_array_param($field,'name','','is_string');
 		$fvalues = explode('|::|',$fvalue);
 		$field = array_merge($field,array(
-			'tagid'=>$tagid.'-0',
-			'tagname'=>get_array_param($field,'id',NULL,'is_numeric').'[]',
+			'tag_id'=>$tagid.'-0',
+			'tag_name'=>get_array_param($field,'id',NULL,'is_numeric').'[]',
 			'value'=>get_array_param($fvalues,0,NULL,'isset'),
 		));
 		$fclass = get_array_param($field,'class','','is_string');
@@ -116,7 +116,7 @@ class Instances extends Module {
 			$tmp_ctrl['no_label'] = TRUE;
 			$tmp_ctrl['labelwidth'] = NULL;
 			$tmp_ctrl['width'] = NULL;
-			$tmp_ctrl['tagid'] = $tagid.'-'.$i;
+			$tmp_ctrl['tag_id'] = $tagid.'-'.$i;
 			$tmp_ctrl['value'] = get_array_param($fvalues,$i,NULL,'isset');
 			if(strpos($theme_type,'bootstrap')!==FALSE) { $tmp_ctrl['class'] .= ' form-control'; }
 			$tmp_ctrl['extratagparam'] = (isset($tmp_ctrl['extratagparam']) && $tmp_ctrl['extratagparam'] ? $tmp_ctrl['extratagparam'].' ' : '').'data-tid="'.$tagid.'" data-ti="'.$i.'"';
@@ -174,8 +174,8 @@ class Instances extends Module {
 		$id_instance = get_array_param($field,'id_instance',NULL,'is_integer');
 		$tagid = ($id_instance ? $id_instance.'_' : '').get_array_param($field,'cell','','is_string').'_'.get_array_param($field,'name','','is_string');
 		$field = array_merge($field,array(
-			'tagid'=>$tagid,
-			'tagname'=>get_array_param($field,'id',NULL,'is_numeric'),
+			'tag_id'=>$tagid,
+			'tag_name'=>get_array_param($field,'id',NULL,'is_numeric'),
 			'value'=>$fvalue,
 		));
 		// if(strlen($theme_type)) { $f_params['theme_type'] = $theme_type; }

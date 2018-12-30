@@ -85,12 +85,12 @@ $ctrl_params = array(
                 array(
                     'type'=>'DivButton',
                     'command_string'=>"AjaxRequest('{$this->name}','ShowValueAddEditForm','id'|{{id}}~'id_list'|{{id_list}},'{$target}')->modal",
-                    'params'=>array('tagid'=>'df_list_edit_btn','tooltip'=>Translate::GetButton('edit'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-xxs'),'icon'=>'fa fa-pencil-square-o'),
+                    'params'=>array('tag_id'=>'df_list_edit_btn','tooltip'=>Translate::GetButton('edit'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-xxs'),'icon'=>'fa fa-pencil-square-o'),
                 ),
                 array(
                     'type'=>'DivButton',
                     'command_string'=>"AjaxRequest('{$this->name}','DeleteValueRecord','id'|{{id}}~'id_list'|{{id_list}},'{$target}')->errors",
-                    'params'=>array('tagid'=>'df_list_delete_btn','tooltip'=>Translate::GetButton('delete'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs'),'icon'=>'fa fa-times','confirm_text'=>Translate::GetMessage('confirm_delete')),
+                    'params'=>array('tag_id'=>'df_list_delete_btn','tooltip'=>Translate::GetButton('delete'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs'),'icon'=>'fa fa-times','confirm_text'=>Translate::GetMessage('confirm_delete')),
                 ),
             ),
         ) : []),

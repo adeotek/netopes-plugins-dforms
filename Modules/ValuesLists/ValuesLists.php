@@ -46,7 +46,7 @@ class ValuesLists extends Module {
 		$view = new AppView(get_defined_vars(),$this,'main');
 		$view->AddTableView($this->GetViewFile('Listing'));
 		$view->SetTitle(Translate::GetLabel('values_lists'));
-		$btn_add = new Button(array('tagid'=>'df_list_add_btn','value'=>Translate::GetButton('add').' '.Translate::GetLabel('values_list'),'class'=>NApp::$theme->GetBtnInfoClass(),'icon'=>'fa fa-plus','onclick'=>NApp::arequest()->Prepare("AjaxRequest('{$this->name}','ShowAddForm')->modal")));
+		$btn_add = new Button(array('tag_id'=>'df_list_add_btn','value'=>Translate::GetButton('add').' '.Translate::GetLabel('values_list'),'class'=>NApp::$theme->GetBtnInfoClass(),'icon'=>'fa fa-plus','onclick'=>NApp::arequest()->Prepare("AjaxRequest('{$this->name}','ShowAddForm')->modal")));
 		$view->AddAction($btn_add->Show());
 		$view->SetTargetId('main_content_listing');
 		$view->Render();

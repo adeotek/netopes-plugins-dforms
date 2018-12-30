@@ -79,17 +79,17 @@ $ctrl_params = array(
                 array(
                     'type'=>'DivButton',
                     'command_string'=>"AjaxRequest('{$this->name}','ShowEditForm','id'|{{id}})->main-content",
-                    'params'=>array('tagid'=>'df_list_edit_btn','tooltip'=>Translate::GetButton('edit'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-xxs'),'icon'=>'fa fa-pencil-square-o'),
+                    'params'=>array('tag_id'=>'df_list_edit_btn','tooltip'=>Translate::GetButton('edit'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-xxs'),'icon'=>'fa fa-pencil-square-o'),
                 ),
                 array(
                     'type'=>'DivButton',
                     'command_string'=>"AjaxRequest('{$this->name}','ValuesListing','id_list'|'{{id}}','modal')->modal",
-                    'params'=>array('tagid'=>'df_list_det_btn','tooltip'=>Translate::GetButton('values'),'class'=>NApp::$theme->GetBtnInfoClass('btn-xxs'),'icon'=>'fa fa-list','conditions'=>array(array('field'=>'vcount','type'=>'>','value'=>0))),
+                    'params'=>array('tag_id'=>'df_list_det_btn','tooltip'=>Translate::GetButton('values'),'class'=>NApp::$theme->GetBtnInfoClass('btn-xxs'),'icon'=>'fa fa-list','conditions'=>array(array('field'=>'vcount','type'=>'>','value'=>0))),
                 ),
                 array(
                     'type'=>'DivButton',
                     'command_string'=>"AjaxRequest('{$this->name}','DeleteRecord','id'|{{id}})->errors",
-                    'params'=>array('tagid'=>'df_list_delete_btn','tooltip'=>Translate::GetButton('delete'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs pull-right'),'icon'=>'fa fa-times','confirm_text'=>Translate::GetMessage('confirm_delete')),
+                    'params'=>array('tag_id'=>'df_list_delete_btn','tooltip'=>Translate::GetButton('delete'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs pull-right'),'icon'=>'fa fa-times','confirm_text'=>Translate::GetMessage('confirm_delete')),
                 ),
             ),
         ),
