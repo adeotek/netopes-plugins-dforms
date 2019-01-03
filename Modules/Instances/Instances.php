@@ -373,12 +373,12 @@ class Instances extends Module {
 					foreach($fvals as $i=>$fv) {
 						switch($field['data_type']) {
 							case 'numeric':
-								$fval[$i] = Validator::ValidateParam($fv,NULL,'is_numeric');
+								$fval[$i] = Validator::ValidateValue($fv,NULL,'is_numeric');
 								$error = ($field['required']==1 && !is_numeric($fval[$i]));
 								break;
 							case 'string':
 							default:
-								$fval[$i] = Validator::ValidateParam($fv,'','is_string');
+								$fval[$i] = Validator::ValidateValue($fv,'','is_string');
 								$error = ($field['required']==1 && !strlen($fval[$i]));
 								break;
 						}//END switch
@@ -597,12 +597,12 @@ class Instances extends Module {
 					foreach($fvals as $i=>$fv) {
 						switch($field['data_type']) {
 							case 'numeric':
-								$fval[$i] = Validator::ValidateParam($fv,NULL,'is_numeric');
+								$fval[$i] = Validator::ValidateValue($fv,NULL,'is_numeric');
 								$error = ($field['required']==1 && !is_numeric($fval[$i]));
 								break;
 							case 'string':
 							default:
-								$fval[$i] = Validator::ValidateParam($fv,'','is_string');
+								$fval[$i] = Validator::ValidateValue($fv,'','is_string');
 								$error = ($field['required']==1 && !strlen($fval[$i]));
 								break;
 						}//END switch
