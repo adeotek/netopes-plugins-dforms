@@ -39,7 +39,7 @@ $ctrl_params = array(
         array(
             array(
                 'control_type'=>'NumericTextBox',
-                'control_params'=>array('tag_id'=>'df_template_design_edit_label_cols','tag_name'=>'label_cols','value'=>$item->getProperty('label_cols','','is_integer'),'label'=>Translate::GetLabel('label_cols'),'allownull'=>TRUE,'number_format'=>'0|||','onenter_button'=>'df_template_design_edit_save'),
+                'control_params'=>array('tag_id'=>'df_template_design_edit_label_cols','tag_name'=>'label_cols','value'=>$item->getProperty('label_cols','','is_integer'),'label'=>Translate::GetLabel('label_cols'),'allow_null'=>TRUE,'number_format'=>'0|||','onenter_button'=>'df_template_design_edit_save'),
             ),
         ),
         array(

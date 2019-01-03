@@ -92,7 +92,7 @@ class Controls extends Module {
 					$fp_ctype = 'NumericTextBox';
 					$fp_nval = 0;
 					if(get_array_param($fpi,'allow_null',0,'is_numeric')>0) {
-						$fp_sparams['allownull'] = TRUE;
+						$fp_sparams['allow_null'] = TRUE;
 						$fp_nval = '';
 					}//if(get_array_param($fpi,'allow_null',0,'is_numeric')>0)
 					$fp_value = get_array_param($data,$fp_key,get_array_param($fpi,'default_value',$fp_nval,'is_numeric'),'is_numeric');
