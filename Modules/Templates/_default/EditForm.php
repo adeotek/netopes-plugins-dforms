@@ -137,7 +137,7 @@ $ctrl_params = array(
                             array(
                                 'width'=>'900',
                                 'control_type'=>'CkEditor',
-                                'control_params'=>array('tag_id'=>'df_template_edit_print_template_value','value'=>$item->getProperty('t_print_template','','is_string'),'label'=>Translate::GetLabel('print_template'),'labelposition'=>'top','width'=>'100%','height'=>600,'extraconfig'=>'toolbarStartupExpanded: true'),
+                                'control_params'=>array('tag_id'=>'df_template_edit_print_template_value','value'=>$item->getProperty('t_print_template','','is_string'),'label'=>Translate::GetLabel('print_template'),'labelposition'=>'top','width'=>'100%','height'=>600,'extra_config'=>'toolbarStartupExpanded: true'),
                             ),
                         ),
                     ),

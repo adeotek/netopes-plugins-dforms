@@ -15,7 +15,7 @@
 		'method'=>$this->GetCurrentMethod(),
 		'persistent_state'=>TRUE,
 		'target'=>$dgtarget,
-		'alternate_row_collor'=>TRUE,
+		'alternate_row_color'=>TRUE,
 		'scrollable'=>FALSE,
 		'with_filter'=>TRUE,
 		'with_pagination'=>TRUE,

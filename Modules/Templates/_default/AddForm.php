@@ -59,7 +59,7 @@
 			// 	array(
 			// 		'width'=>'600',
 			// 		'control_type'=>'CkEditor',
-			// 		'control_params'=>array('container'=>'simpletable','tag_id'=>'df_template_add_print_template','value'=>'','label'=>Translate::GetLabel('print_template'),'labelwidth'=>200,'labelposition'=>'top','width'=>600,'height'=>100,'extraconfig'=>'toolbarStartupExpanded: false'),
+			// 		'control_params'=>array('container'=>'simpletable','tag_id'=>'df_template_add_print_template','value'=>'','label'=>Translate::GetLabel('print_template'),'labelwidth'=>200,'labelposition'=>'top','width'=>600,'height'=>100,'extra_config'=>'toolbarStartupExpanded: false'),
 			// 	),
 			// ),
 		),
