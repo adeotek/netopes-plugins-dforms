@@ -22,7 +22,7 @@
 				array(
 					'width'=>'600',
 					'control_type'=>'ComboBox',
-					'control_params'=>array('container'=>'simpletable','tag_id'=>'df_template_add_ftype','value'=>$ftypes,'label'=>Translate::GetLabel('type'),'labelwidth'=>200,'width'=>400,'valfield'=>'id','displayfield'=>'name','selectedvalue'=>NULL,'required'=>TRUE),
+					'control_params'=>array('container'=>'simpletable','tag_id'=>'df_template_add_ftype','value'=>$ftypes,'label'=>Translate::GetLabel('type'),'labelwidth'=>200,'width'=>400,'value_field'=>'id','display_field'=>'name','selectedvalue'=>NULL,'required'=>TRUE),
 				),
 			),
 			array(

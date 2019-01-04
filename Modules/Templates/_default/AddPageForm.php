@@ -10,7 +10,7 @@ $ctrl_params = [
         [
             [
                 'control_type'=>'ComboBox',
-                'control_params'=>['tag_id'=>'dft_add_page_position','value'=>$positions,'label'=>Translate::GetLabel('position'),'label_cols'=>4,'required'=>TRUE,'valfield'=>'val','displayfield'=>'name','selectedvalue'=>$maxPos],
+                'control_params'=>['tag_id'=>'dft_add_page_position','value'=>$positions,'label'=>Translate::GetLabel('position'),'label_cols'=>4,'required'=>TRUE,'value_field'=>'val','display_field'=>'name','selectedvalue'=>$maxPos],
             ],
         ],
     ],

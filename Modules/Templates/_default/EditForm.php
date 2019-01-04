@@ -40,7 +40,7 @@ $ctrl_params = array(
                             array(
                                 'width'=>'900',
                                 'control_type'=>'ComboBox',
-                                'control_params'=>array('tag_id'=>'df_template_edit_ftype','value'=>$ftypes,'label'=>Translate::GetLabel('type'),'valfield'=>'id','displayfield'=>'name','selectedvalue'=>$item->getProperty('ftype',0,'is_numeric'),'required'=>TRUE,'disabled'=>TRUE),
+                                'control_params'=>array('tag_id'=>'df_template_edit_ftype','value'=>$ftypes,'label'=>Translate::GetLabel('type'),'value_field'=>'id','display_field'=>'name','selectedvalue'=>$item->getProperty('ftype',0,'is_numeric'),'required'=>TRUE,'disabled'=>TRUE),
                             ),
                         ),
                         // array(

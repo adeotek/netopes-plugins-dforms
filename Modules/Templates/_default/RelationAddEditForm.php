@@ -8,8 +8,8 @@
 				array(
 					'control_type'=>'SmartComboBox',
 					'control_params'=>array('tag_id'=>'df_template_rel_ae_type','label'=>Translate::GetLabel('type'),'required'=>TRUE,'disabled'=>(is_numeric($id) && $id>0),
-						'valfield'=>'id',
-						'displayfield'=>'name',
+						'value_field'=>'id',
+						'display_field'=>'name',
 						'selectedvalue'=>get_array_param($item,'id_relation_type',NULL,'is_numeric'),
 						'allow_clear'=>TRUE,
 						'placeholder'=>Translate::GetLabel('please_select'),
@@ -38,8 +38,8 @@
 				array(
 					'control_type'=>'SmartComboBox',
 					'control_params'=>array('tag_id'=>'df_template_rel_ae_rtype','label'=>Translate::GetLabel('value_type'),'required'=>TRUE,
-						'valfield'=>'id',
-						'displayfield'=>'name',
+						'value_field'=>'id',
+						'display_field'=>'name',
 						'selectedvalue'=>get_array_param($item,'rtype',NULL,'is_numeric'),
 						'load_type'=>'database',
 						'data_source'=>array(
@@ -53,8 +53,8 @@
 				array(
 					'control_type'=>'SmartComboBox',
 					'control_params'=>array('tag_id'=>'df_template_rel_ae_utype','label'=>Translate::GetLabel('usage_type'),'required'=>TRUE,
-						'valfield'=>'id',
-						'displayfield'=>'name',
+						'value_field'=>'id',
+						'display_field'=>'name',
 						'selectedvalue'=>get_array_param($item,'utype',NULL,'is_numeric'),
 						'load_type'=>'database',
 						'data_source'=>array(

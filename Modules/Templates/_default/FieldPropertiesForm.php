@@ -42,8 +42,8 @@ use NETopes\Core\Controls\TextBox;
 			break;
 		case 'BasicForm':
 			$ctrl = new SmartComboBox(array('label'=>Translate::GetLabel('field_type'),'tag_id'=>'dft_fp_itype','tag_name'=>'itype',
-				'valfield'=>'id',
-				'displayfield'=>'name',
+				'value_field'=>'id',
+				'display_field'=>'name',
 				'selectedvalue'=>$item->getProperty('itype',1,'is_integer'),
 				'allow_clear'=>FALSE,
 				'load_type'=>'database',
@@ -62,8 +62,8 @@ use NETopes\Core\Controls\TextBox;
 			$ctrl = new HiddenInput(['tag_id'=>'dft_fp_listing','tag_name'=>'listing','value'=>$item->getProperty('listing',0,'is_integer')]);
 			$hfields[] = $ctrl->Show();
 			$ctrl = new SmartComboBox(array('label'=>Translate::GetLabel('form'),'tag_id'=>'dft_fp_id_sub_form','tag_name'=>'id_sub_form','required'=>TRUE,'disabled'=>(is_numeric($id) && $id>0),
-				'valfield'=>'id',
-				'displayfield'=>'full_name',
+				'value_field'=>'id',
+				'display_field'=>'full_name',
 				'selectedvalue'=>$item->getProperty('id_sub_form',1,'is_integer'),
 				'allow_clear'=>TRUE,
 				'placeholder'=>Translate::GetLabel('please_select_template'),
@@ -78,8 +78,8 @@ use NETopes\Core\Controls\TextBox;
 			break;
 		default:
 			$ctrl = new SmartComboBox(array('label'=>Translate::GetLabel('field_type'),'tag_id'=>'dft_fp_itype','tag_name'=>'itype',
-				'valfield'=>'id',
-				'displayfield'=>'name',
+				'value_field'=>'id',
+				'display_field'=>'name',
 				'selectedvalue'=>$item->getProperty('itype',1,'is_numeric'),
 				'allow_clear'=>FALSE,
 				'load_type'=>'database',
@@ -100,8 +100,8 @@ use NETopes\Core\Controls\TextBox;
 			if(in_array($cclass,['SmartComboBox','GroupCheckBox'])) {
 				$ctrl = new SmartComboBox(array('label'=>Translate::GetLabel('values_list'),'tag_id'=>'dft_fp_values_list','tag_name'=>'id_values_list',
 				'placeholder'=>Translate::GetLabel('none'),
-				'valfield'=>'id',
-				'displayfield'=>'name',
+				'value_field'=>'id',
+				'display_field'=>'name',
 				'selectedvalue'=>$item->getProperty('id_values_list',NULL,'is_string'),
 				'selectedtext'=>$item->getProperty('values_list','','is_string'),
 				'allow_clear'=>TRUE,
