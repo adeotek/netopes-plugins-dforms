@@ -58,23 +58,23 @@ $ctrl_params = array(
 
 if(is_array($fields)) {
     foreach($fields as $field) {
-        if(get_array_param($field,'listing',0,'is_numeric')!=1) { continue; }
-        $fname = get_array_param($field,'name','','is_string');
-        switch(get_array_param($field,'class','','is_string')) {
+        if(get_array_value($field,'listing',0,'is_numeric')!=1) { continue; }
+        $fname = get_array_value($field,'name','','is_string');
+        switch(get_array_value($field,'class','','is_string')) {
             case 'CheckBox':
                 $fdatatype = 'numeric';
                 $ftype = 'checkbox';
-                $flabel = get_array_param($field,'label','','is_string');
+                $flabel = get_array_value($field,'label','','is_string');
                 break;
             case 'SmartComboBox':
                 $fdatatype = 'string';
                 $ftype = 'value';
-                $flabel = get_array_param($field,'label','','is_string');
+                $flabel = get_array_value($field,'label','','is_string');
                 break;
             default:
                 $fdatatype = 'string';
                 $ftype = 'value';
-                $flabel = get_array_param($field,'label','','is_string');
+                $flabel = get_array_value($field,'label','','is_string');
                 break;
         }//END switch
         $ctrl_params['columns']['item-'.$fname] = array(

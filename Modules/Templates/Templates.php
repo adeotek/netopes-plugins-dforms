@@ -20,7 +20,7 @@ use NETopes\Core\Controls\Button;
 use NETopes\Core\Data\DataProvider;
 use NETopes\Core\Data\DataSet;
 use NETopes\Core\Data\VirtualEntity;
-use PAF\AppException;
+use NETopes\Core\AppException;
 use NApp;
 use Translate;
 
@@ -62,7 +62,7 @@ class Templates extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function Listing($params = NULL) {
 		// $this->Exec('ShowContentEditForm',array('id_template'=>1));
@@ -81,7 +81,7 @@ class Templates extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowAddForm($params = NULL){
 		$ftypes = DataProvider::GetKeyValueArray('_Custom\Offline','GetDynamicFormsTemplatesFTypes');
@@ -99,7 +99,7 @@ class Templates extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowEditForm($params = NULL) {
 		$id = $params->getOrFail('id','is_numeric','Invalid record identifier!');
@@ -122,7 +122,7 @@ class Templates extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function AddEditRecord($params = NULL){
 		// NApp::_Dlog($params,'AddEditRecord');
@@ -171,7 +171,7 @@ class Templates extends Module {
 				'in_print_template'=>$print_template,
 				'user_id'=>NApp::_GetCurrentUserId(),
 			));
-			$id = get_array_param($result,0,0,'is_numeric','inserted_id');
+			$id = get_array_value($result,0,0,'is_numeric','inserted_id');
 			if($result===FALSE || $id<=0) { throw new AppException('Unknown database error!'); }
 			$this->CloseForm();
 			$this->Exec('ShowEditForm',['id'=>$id],'main-content');
@@ -183,7 +183,7 @@ class Templates extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function SetPrintTemplate($params = NULL) {
 		// NApp::_Dlog($params,'SetPrintTemplate');
@@ -205,7 +205,7 @@ class Templates extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function DeleteRecord($params = NULL) {
 		$id = $params->getOrFail('id','is_not0_integer','Invalid template identifier!');
@@ -219,7 +219,7 @@ class Templates extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function EditRecordState($params = NULL) {
 		$id = $params->safeGet('id',NULL,'is_not0_numeric');
@@ -237,7 +237,7 @@ class Templates extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function CreateNewVersion($params = NULL) {
 		$id = $params->getOrFail('id','is_not0_integer','Invalid template identifier!');
@@ -251,7 +251,7 @@ class Templates extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function ValidateRecord($params = NULL) {
 		$id = $params->getOrFail('id','is_not0_integer','Invalid template identifier!');
@@ -270,7 +270,7 @@ class Templates extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowDesignEditForm($params = NULL) {
 		$idTemplate = $params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
@@ -287,7 +287,7 @@ class Templates extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function EditDesignRecord($params = NULL){
 		// NApp::_Dlog($params,'EditDesignRecord');
@@ -321,7 +321,7 @@ class Templates extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowRelationsEditForm($params = NULL) {
 		$id_template = $params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
@@ -336,7 +336,7 @@ class Templates extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowRelationAddEditForm($params = NULL) {
 		// NApp::_Dlog($params,'ShowRelationAddEditForm');
@@ -361,7 +361,7 @@ class Templates extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function AddEditRelationRecord($params = NULL){
 		// NApp::_Dlog($params,'AddEditRelationRecord');
@@ -397,7 +397,7 @@ class Templates extends Module {
 				'in_rtype'=>$rtype,
 				'in_utype'=>$utype,
 			));
-			$result = get_array_param($result,0,0,'is_numeric','inserted_id')>0;
+			$result = get_array_value($result,0,0,'is_numeric','inserted_id')>0;
 		}//if($id)
 		if($result!==FALSE) {
 			$this->CloseForm();
@@ -411,7 +411,7 @@ class Templates extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function DeleteRelationRecord($params = NULL) {
 		$id = $params->getOrFail('id','is_not0_integer','Invalid record identifier!');
@@ -427,7 +427,7 @@ class Templates extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowContentEditForm($params = NULL) {
 		$idTemplate = $params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
@@ -445,7 +445,7 @@ class Templates extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowContentTable($params = NULL) {
 		$idTemplate = $params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
@@ -464,7 +464,7 @@ class Templates extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowAddPageForm($params = NULL) {
 		// NApp::_Dlog($params,'ShowAddPageForm');
@@ -485,7 +485,7 @@ class Templates extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function UpdatePagesList($params = NULL) {
 		// NApp::_Dlog($params,'UpdatePagesList');
@@ -519,7 +519,7 @@ class Templates extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowAddTableElementForm($params = NULL) {
 		// NApp::_Dlog($params,'ShowAddTableElementForm');
@@ -543,7 +543,7 @@ class Templates extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function UpdateContentTable($params = NULL) {
 		// NApp::_Dlog($params,'UpdateContentTable');
@@ -586,7 +586,7 @@ class Templates extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function AddEditContentElement($params = NULL) {
 		// NApp::_Dlog($params,'AddEditContentElement');
@@ -623,7 +623,7 @@ class Templates extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function CancelAddEditContentElement($params = NULL) {
 	    $idTemplate = $params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
@@ -638,7 +638,7 @@ class Templates extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function AddEditContentElementRecord($params = NULL) {
 		// NApp::_Dlog($params,'AddEditContentElementRecord');
@@ -726,7 +726,7 @@ class Templates extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function MoveContentElement($params = NULL) {
 		// NApp::_Dlog($params,'MoveContentElement');
@@ -762,7 +762,7 @@ class Templates extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function DeleteContentElementRecord($params = NULL) {
 		// NApp::_Dlog($params,'DeleteContentElementRecord');
@@ -780,7 +780,7 @@ class Templates extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function CloneRecord($params = NULL) {
 		// NApp::_Dlog($params,'DeleteContentElementRecord');

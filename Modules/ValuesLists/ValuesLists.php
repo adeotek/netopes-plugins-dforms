@@ -16,7 +16,7 @@ use NETopes\Core\App\AppView;
 use NETopes\Core\App\Module;
 use NETopes\Core\Controls\Button;
 use NETopes\Core\Data\DataProvider;
-use PAF\AppException;
+use NETopes\Core\AppException;
 use NApp;
 use Translate;
 
@@ -35,7 +35,7 @@ class ValuesLists extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function Listing($params = NULL) {
 		$view = new AppView(get_defined_vars(),$this,'main');
@@ -52,7 +52,7 @@ class ValuesLists extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowAddForm($params = NULL) {
 		$view = new AppView(get_defined_vars(),$this,'modal');
@@ -69,7 +69,7 @@ class ValuesLists extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowEditForm($params = NULL) {
 		$id = $params->safeGet('id',NULL,'is_integer');
@@ -90,7 +90,7 @@ class ValuesLists extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function AddEditRecord($params = NULL) {
 		// NApp::_Dlog($params,'AddEditRecord');
@@ -121,7 +121,7 @@ class ValuesLists extends Module {
 				'in_name'=>$name,
 				'in_state'=>$params->safeGet('state',1,'is_integer'),
 			));
-			$id = get_array_param($result,0,0,'is_numeric','inserted_id');
+			$id = get_array_value($result,0,0,'is_numeric','inserted_id');
 			if($result!==FALSE && $id>0) {
 				$this->CloseForm();
 				NApp::arequest()->Execute("AjaxRequest('Components\DForms\ValuesLists\ValuesLists','ShowEditForm','id'|{$id})->main-content");
@@ -134,7 +134,7 @@ class ValuesLists extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function DeleteRecord($params = NULL) {
 		$id = $params->safeGet('id',NULL,'is_integer');
@@ -150,7 +150,7 @@ class ValuesLists extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function ValuesListing($params = NULL) {
 		// NApp::_Dlog($params,'ValuesListing');
@@ -180,7 +180,7 @@ class ValuesLists extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowValueAddEditForm($params = NULL) {
 		// NApp::_Dlog($params,'ShowValueAddEditForm');
@@ -208,7 +208,7 @@ class ValuesLists extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function AddEditValueRecord($params = NULL){
 		// NApp::_Dlog($params,'AddEditValueRecord');
@@ -239,7 +239,7 @@ class ValuesLists extends Module {
 				'in_state'=>$params->safeGet('state',1,'is_integer'),
 				'in_implicit'=>$params->safeGet('implicit',0,'is_integer'),
 			));
-			$result = get_array_param($result,0,0,'is_numeric','inserted_id')>0;
+			$result = get_array_value($result,0,0,'is_numeric','inserted_id')>0;
 		}//if($id)
 		if($result!==FALSE) {
 			$this->CloseForm();
@@ -253,7 +253,7 @@ class ValuesLists extends Module {
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
 	 * @access public
-	 * @throws \PAF\AppException
+	 * @throws \NETopes\Core\AppException
 	 */
 	public function DeleteValueRecord($params = NULL) {
 		$id = $params->safeGet('id',NULL,'is_integer');

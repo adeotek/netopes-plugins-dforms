@@ -7,25 +7,25 @@
 			array(
 				array(
 					'control_type'=>'TextBox',
-					'control_params'=>array('tagid'=>'df_lv_ae_value','tagname'=>'value','value'=>get_array_param($item,'value','','is_string'),'label'=>Translate::GetLabel('value'),'required'=>TRUE,'onenterbutton'=>'df_lv_ae_save'),
+					'control_params'=>array('tagid'=>'df_lv_ae_value','tagname'=>'value','value'=>get_array_value($item,'value','','is_string'),'label'=>Translate::GetLabel('value'),'required'=>TRUE,'onenterbutton'=>'df_lv_ae_save'),
 				),
 			),
 			array(
 				array(
 					'control_type'=>'TextBox',
-					'control_params'=>array('tagid'=>'df_lv_ae_name','tagname'=>'name','value'=>get_array_param($item,'name','','is_string'),'label'=>Translate::GetLabel('name'),'onenterbutton'=>'df_lv_ae_save'),
+					'control_params'=>array('tagid'=>'df_lv_ae_name','tagname'=>'name','value'=>get_array_value($item,'name','','is_string'),'label'=>Translate::GetLabel('name'),'onenterbutton'=>'df_lv_ae_save'),
 				),
 			),
 			array(
 				array(
 					'control_type'=>'CheckBox',
-					'control_params'=>array('tagid'=>'df_lv_ae_state','tagname'=>'state','value'=>get_array_param($item,'state',1,'is_numeric'),'label'=>Translate::GetLabel('active'),'class'=>'pull-left'),
+					'control_params'=>array('tagid'=>'df_lv_ae_state','tagname'=>'state','value'=>get_array_value($item,'state',1,'is_numeric'),'label'=>Translate::GetLabel('active'),'class'=>'pull-left'),
 				),
 			),
 			array(
 				array(
 					'control_type'=>'CheckBox',
-					'control_params'=>array('tagid'=>'df_lv_ae_implicit','tagname'=>'implicit','value'=>get_array_param($item,'implicit',0,'is_numeric'),'label'=>Translate::GetLabel('implicit'),'class'=>'pull-left'),
+					'control_params'=>array('tagid'=>'df_lv_ae_implicit','tagname'=>'implicit','value'=>get_array_value($item,'implicit',0,'is_numeric'),'label'=>Translate::GetLabel('implicit'),'class'=>'pull-left'),
 				),
 			),
 		),

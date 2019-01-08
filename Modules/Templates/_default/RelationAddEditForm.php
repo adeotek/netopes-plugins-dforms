@@ -10,7 +10,7 @@
 					'control_params'=>array('tagid'=>'df_template_rel_ae_type','label'=>Translate::GetLabel('type'),'required'=>TRUE,'disabled'=>(is_numeric($id) && $id>0),
 						'valfield'=>'id',
 						'displayfield'=>'name',
-						'selectedvalue'=>get_array_param($item,'id_relation_type',NULL,'is_numeric'),
+						'selectedvalue'=>get_array_value($item,'id_relation_type',NULL,'is_numeric'),
 						'allow_clear'=>TRUE,
 						'placeholder'=>Translate::GetLabel('please_select'),
 						'load_type'=>'database',
@@ -25,13 +25,13 @@
 			array(
 				array(
 					'control_type'=>'TextBox',
-					'control_params'=>array('tagid'=>'df_template_rel_ae_name','value'=>get_array_param($item,'name','','is_string'),'label'=>Translate::GetLabel('name'),'required'=>TRUE,'onenterbutton'=>'df_template_rel_ae_save'),
+					'control_params'=>array('tagid'=>'df_template_rel_ae_name','value'=>get_array_value($item,'name','','is_string'),'label'=>Translate::GetLabel('name'),'required'=>TRUE,'onenterbutton'=>'df_template_rel_ae_save'),
 				),
 			),
 			array(
 				array(
 					'control_type'=>'TextBox',
-					'control_params'=>array('tagid'=>'df_template_rel_ae_key','value'=>get_array_param($item,'key','','is_string'),'label'=>Translate::GetLabel('key'),'required'=>TRUE,'onenterbutton'=>'df_template_rel_ae_save'),
+					'control_params'=>array('tagid'=>'df_template_rel_ae_key','value'=>get_array_value($item,'key','','is_string'),'label'=>Translate::GetLabel('key'),'required'=>TRUE,'onenterbutton'=>'df_template_rel_ae_save'),
 				),
 			),
 			array(
@@ -40,7 +40,7 @@
 					'control_params'=>array('tagid'=>'df_template_rel_ae_rtype','label'=>Translate::GetLabel('value_type'),'required'=>TRUE,
 						'valfield'=>'id',
 						'displayfield'=>'name',
-						'selectedvalue'=>get_array_param($item,'rtype',NULL,'is_numeric'),
+						'selectedvalue'=>get_array_value($item,'rtype',NULL,'is_numeric'),
 						'load_type'=>'database',
 						'data_source'=>array(
 							'ds_class'=>'_Custom\Offline',
@@ -55,7 +55,7 @@
 					'control_params'=>array('tagid'=>'df_template_rel_ae_utype','label'=>Translate::GetLabel('usage_type'),'required'=>TRUE,
 						'valfield'=>'id',
 						'displayfield'=>'name',
-						'selectedvalue'=>get_array_param($item,'utype',NULL,'is_numeric'),
+						'selectedvalue'=>get_array_value($item,'utype',NULL,'is_numeric'),
 						'load_type'=>'database',
 						'data_source'=>array(
 							'ds_class'=>'_Custom\Offline',
@@ -67,7 +67,7 @@
 			array(
 				array(
 					'control_type'=>'CheckBox',
-					'control_params'=>array('tagid'=>'df_template_rel_ae_required','value'=>get_array_param($item,'required',0,'is_numeric'),'label'=>Translate::GetLabel('required'),'class'=>'pull-left'),
+					'control_params'=>array('tagid'=>'df_template_rel_ae_required','value'=>get_array_value($item,'required',0,'is_numeric'),'label'=>Translate::GetLabel('required'),'class'=>'pull-left'),
 				),
 			),
 		),

@@ -17,19 +17,19 @@
 							array(
 								array(
 									'control_type'=>'TextBox',
-									'control_params'=>array('tagid'=>'df_list_edit_ltype','tagname'=>'ltype','value'=>get_array_param($item,'ltype','','is_string'),'label'=>Translate::GetLabel('code'),'required'=>TRUE,'readonly'=>TRUE),
+									'control_params'=>array('tagid'=>'df_list_edit_ltype','tagname'=>'ltype','value'=>get_array_value($item,'ltype','','is_string'),'label'=>Translate::GetLabel('code'),'required'=>TRUE,'readonly'=>TRUE),
 								),
 							),
 							array(
 								array(
 									'control_type'=>'TextBox',
-									'control_params'=>array('tagid'=>'df_list_edit_name','tagname'=>'name','value'=>get_array_param($item,'name','','is_string'),'label'=>Translate::GetLabel('name'),'onenterbutton'=>'df_list_edit_save'),
+									'control_params'=>array('tagid'=>'df_list_edit_name','tagname'=>'name','value'=>get_array_value($item,'name','','is_string'),'label'=>Translate::GetLabel('name'),'onenterbutton'=>'df_list_edit_save'),
 								),
 							),
 							array(
 								array(
 									'control_type'=>'CheckBox',
-									'control_params'=>array('tagid'=>'df_list_edit_state','tagname'=>'state','value'=>get_array_param($item,'state',1,'is_numeric'),'label'=>Translate::GetLabel('active'),'class'=>'pull-left'),
+									'control_params'=>array('tagid'=>'df_list_edit_state','tagname'=>'state','value'=>get_array_value($item,'state',1,'is_numeric'),'label'=>Translate::GetLabel('active'),'class'=>'pull-left'),
 								),
 							),
 						),

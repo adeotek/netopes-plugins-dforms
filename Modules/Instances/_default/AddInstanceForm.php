@@ -1,9 +1,9 @@
 <?php
 	$basicform = NULL;
 	if(isset($ctrl_params) && is_array($ctrl_params)) {
-		$tname = get_array_param($ctrl_params,'tname',microtime(),'is_string');
-		$f_tagid = get_array_param($ctrl_params,'tagid','','is_string');
-		$f_rtarget = get_array_param($ctrl_params,'response_target','','is_string');
+		$tname = get_array_value($ctrl_params,'tname',microtime(),'is_string');
+		$f_tagid = get_array_value($ctrl_params,'tagid','','is_string');
+		$f_rtarget = get_array_value($ctrl_params,'response_target','','is_string');
 		if(strlen($f_tagid) && strlen($f_rtarget)) {
 			$ctrl_params['actions'] = array(
 				array(

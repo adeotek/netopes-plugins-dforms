@@ -2,33 +2,33 @@
 use NETopes\Core\Controls\BasicForm;
 use NETopes\Core\Controls\Button;
 use NETopes\Core\Controls\HiddenInput;
-use PAF\AppException;
+use NETopes\Core\AppException;
 
 if(is_array($fields) && count($fields)) {
     $iprefix = ($id_instance ? $id_instance.'_' : '');
     $tname = $iprefix.$id_template.'_'.$id_sub_form;
     $form_content = [];
     foreach($fields as $field) {
-        $row = get_array_param($field,'frow',0,'is_numeric');
+        $row = get_array_value($field,'frow',0,'is_numeric');
         if(!$row) { continue; }
         if(!isset($form_content[$row])) { $form_content[$row] = []; }
-        $fclass = get_array_param($field,'class','','is_string');
+        $fclass = get_array_value($field,'class','','is_string');
         // if($id_sub_form) { NApp::_Dlog($field,$fclass); }
-        $fparams = get_array_param($field,'params','','is_string');
+        $fparams = get_array_value($field,'params','','is_string');
         $f_params = strlen($fparams) ? @unserialize($fparams) : [];
         switch($fclass) {
             case 'FormTitle':
                 $form_content[$row] = array(
                     'separator'=>'title',
-                    'value'=>get_array_param($field,'label','','is_string'),
-                    'class'=>get_array_param($f_params,'class','','is_string'),
+                    'value'=>get_array_value($field,'label','','is_string'),
+                    'class'=>get_array_value($f_params,'class','','is_string'),
                 );
                 break;
             case 'FormSubTitle':
                 $form_content[$row] = array(
                     'separator'=>'subtitle',
-                    'value'=>get_array_param($field,'label','','is_string'),
-                    'class'=>get_array_param($f_params,'class','','is_string'),
+                    'value'=>get_array_value($field,'label','','is_string'),
+                    'class'=>get_array_value($f_params,'class','','is_string'),
                 );
                 break;
             case 'FormSeparator':
@@ -36,13 +36,13 @@ if(is_array($fields) && count($fields)) {
                 break;
             case 'BasicForm':
                 $f_params = ['value'=>''];
-                $tagid = $iprefix.get_array_param($field,'cell','','is_string').'_'.get_array_param($field,'name','','is_string').($index ? '_'.$index : '');
-                $f_itype = get_array_param($field,'itype',1,'is_not0_numeric');
-                $id_sub_form = get_array_param($field,'id_sub_form',-1,'is_not0_numeric');
-                $id_item = get_array_param($field,'id',NULL,'is_not0_numeric');
+                $tagid = $iprefix.get_array_value($field,'cell','','is_string').'_'.get_array_value($field,'name','','is_string').($index ? '_'.$index : '');
+                $f_itype = get_array_value($field,'itype',1,'is_not0_numeric');
+                $id_sub_form = get_array_value($field,'id_sub_form',-1,'is_not0_numeric');
+                $id_item = get_array_value($field,'id',NULL,'is_not0_numeric');
                 if($f_itype==2 && $id_instance) {
-                    $f_icount = get_array_param($field,'icount',1,'is_not0_numeric');
-                    // $f_value = get_array_param($field,'ivalues',NULL,'is_string');
+                    $f_icount = get_array_value($field,'icount',1,'is_not0_numeric');
+                    // $f_value = get_array_value($field,'ivalues',NULL,'is_string');
                 } else {
                     $f_icount = 1;
                     // $f_value = NULL;
@@ -71,21 +71,21 @@ if(is_array($fields) && count($fields)) {
                     $f_params['value'] .= $ctrl_ract->Show();
                 }//if($f_itype==2)
                 $form_content[$row][] = [
-                    'width'=>get_array_param($field,'width','','is_string'),
+                    'width'=>get_array_value($field,'width','','is_string'),
                     'control_type'=>'CustomControl',
                     'control_params'=>$f_params,
                 ];
                 break;
             default:
                 if(!is_array($f_params) || !count($f_params)) {
-                    if(strlen(get_array_param($form_content,$row,'','is_string','separator'))) { continue; }
+                    if(strlen(get_array_value($form_content,$row,'','is_string','separator'))) { continue; }
                     $form_content[$row][] = [];
                 } else {
-                    $f_itype = get_array_param($field,'itype',1,'is_not0_numeric');
+                    $f_itype = get_array_value($field,'itype',1,'is_not0_numeric');
                     if($f_itype==2) {
                         if($id_instance) {
-                            $f_icount = get_array_param($field,'icount',0,'is_numeric');
-                            $f_value = get_array_param($field,'ivalues',NULL,'is_string');
+                            $f_icount = get_array_value($field,'icount',0,'is_numeric');
+                            $f_value = get_array_value($field,'ivalues',NULL,'is_string');
                         } else {
                             $f_icount = 0;
                             $f_value = NULL;
@@ -93,7 +93,7 @@ if(is_array($fields) && count($fields)) {
                         $form_content[$row][] = $this->PrepareField($field,$f_params,$theme_type,$f_value,TRUE,$f_icount);
                     } else {
                         $f_value = NULL;
-                        if($id_instance) { $f_value = get_array_param($field,'ivalues',NULL,'is_string'); }
+                        if($id_instance) { $f_value = get_array_value($field,'ivalues',NULL,'is_string'); }
                         $form_content[$row][] = $this->PrepareField($field,$f_params,$theme_type,$f_value);
                     }//if($f_itype==2)
                 }//if(!is_array($f_params) || !count($f_params))
@@ -106,7 +106,7 @@ if(is_array($fields) && count($fields)) {
         foreach($relations as $rel) {
             switch($rel['rtype']) {
                 case 3://Programatically (input parameter)
-                    $r_value = get_array_param($params,$rel['key'],NULL,'is_string');
+                    $r_value = get_array_value($params,$rel['key'],NULL,'is_string');
                     break;
                 case 1: //AUTO (from SESSION)
                 case 2: //Form input
@@ -130,7 +130,7 @@ if(is_array($fields) && count($fields)) {
         'tname'=>$tname,
         'tagid'=>'df_'.$tname.'_form',
         'response_target'=>'df_'.$tname.'_errors',
-        'colsno'=>get_array_param($template,'colsno',1,'is_not0_numeric'),
+        'colsno'=>get_array_value($template,'colsno',1,'is_not0_numeric'),
     ];
     if(strlen($theme_type)) { $ctrl_params['theme_type'] = $theme_type; }
     if(is_numeric($label_cols) && $label_cols>=1 && $label_cols<=12) { $ctrl_params['label_cols'] = $label_cols; }
