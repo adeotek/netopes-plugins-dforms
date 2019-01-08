@@ -444,7 +444,7 @@ class Instances extends Module {
 		}//if($error)
 
 		$template = DataProvider::GetArray('Components\DForms\Instances','GetTemplate',array('for_id'=>$id_template));
-		$transaction = \NETopes\Core\App\AppSession::GetNewUID(get_array_value($template,'code','N/A','is_notempty_string'));
+		$transaction = \NETopes\Core\AppSession::GetNewUID(get_array_value($template,'code','N/A','is_notempty_string'));
 		DataProvider::StartTransaction('Components\DForms\Instances',$transaction);
 		try {
 			$result = DataProvider::GetArray('Components\DForms\Instances','SetNewInstance',array(
@@ -666,7 +666,7 @@ class Instances extends Module {
 		}//if($error)
 
 		$template = DataProvider::GetArray('Components\DForms\Instances','GetTemplate',array('for_id'=>$id_template));
-		$transaction = \NETopes\Core\App\AppSession::GetNewUID(get_array_value($template,'code','N/A','is_notempty_string'));
+		$transaction = \NETopes\Core\AppSession::GetNewUID(get_array_value($template,'code','N/A','is_notempty_string'));
 		DataProvider::StartTransaction('Components\DForms\Instances',$transaction);
 		try {
 			$result = DataProvider::GetArray('Components\DForms\Instances','UnsetInstanceValues',['instance_id'=>$id_instance],['transaction'=>$transaction]);

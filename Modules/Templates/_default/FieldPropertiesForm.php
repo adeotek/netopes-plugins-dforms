@@ -18,7 +18,7 @@ use NETopes\Core\Controls\TextBox;
 		case 'Message':
 			$ctrl = new HiddenInput(['tagid'=>'dft_fp_itype','tagname'=>'itype','value'=>$item->getProperty('itype',1,'is_integer')]);
 			$hfields[] = $ctrl->Show();
-			$ctrl = new HiddenInput(['tagid'=>'dft_fp_name','tagname'=>'name','value'=>$item->getProperty('name',\NETopes\Core\App\AppSession::GetNewUID($idTemplate.$cclass),'is_string')]);
+			$ctrl = new HiddenInput(['tagid'=>'dft_fp_name','tagname'=>'name','value'=>$item->getProperty('name',\NETopes\Core\AppSession::GetNewUID($idTemplate.$cclass),'is_string')]);
 			$hfields[] = $ctrl->Show();
 			if($cclass=='FormTitle') {
 				$ctrl = new EditBox(array('label'=>Translate::GetLabel('title'),'required'=>TRUE,'tagid'=>'dft_fp_label','tagname'=>'label','value'=>$item->getProperty('label','','is_string'),'height'=>50,'placeholder'=>'Title'));
