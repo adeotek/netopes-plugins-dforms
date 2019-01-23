@@ -2,7 +2,7 @@
 /**
  * description
  * description
- * @package    DKMed\Modules\Application
+ * @package    NETopes\Plugins\Modules\DForms
  * @author     George Benjamin-Schonberger
  * @copyright  Copyright (c) 2013 - 2019 AdeoTEK Software SRL
  * @license    LICENSE.md
@@ -22,7 +22,7 @@ use Translate;
 /**
  * description
  * description
- * @package  DKMed\Modules\Application
+ * @package  NETopes\Plugins\Modules\DForms
  */
 class Instances extends Module {
 	/**

@@ -28,7 +28,7 @@ use NETopes\Core\Data\DataSource;
  * return (array|bool) Returns database request result
  * @package  NETopes\Plugins\DataSources\DForms
  */
-abstract class Controls extends DataSource {
+abstract class BaseControls extends DataSource {
     /**
      * GetItems default parameters
      */
@@ -62,4 +62,4 @@ abstract class Controls extends DataSource {
      * @return array|bool
      */
 	abstract public function GetProperties($params = [],$extra_params = []);
-}//END abstract class Controls extends DataSource
+}//END abstract class BaseControls extends DataSource

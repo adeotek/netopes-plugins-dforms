@@ -2,7 +2,7 @@
 /**
  * PdfDocument class file
  * PDF document generator that implements abstract class PdfDocumentBase
- * @package    DKMed\Modules\Application
+ * @package    NETopes\Plugins\Modules\DForms
  * @author     George Benjamin-Schonberger
  * @copyright  Copyright (c) 2013 - 2019 AdeoTEK Software SRL
  * @license    LICENSE.txt
@@ -15,7 +15,7 @@ use Translate;
 /**
  * PdfDocument class
  * PDF document generator that implements abstract class PdfDocumentBase
- * @package  DKMed\Modules\Application
+ * @package  NETopes\Plugins\Modules\DForms
  */
 class InstancesPdf extends PdfDocument {
 

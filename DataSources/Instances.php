@@ -28,7 +28,7 @@ use NETopes\Core\Data\DataSource;
  * return (array|bool) Returns database request result
  * @package  NETopes\Plugins\DataSources\DForms
  */
-abstract class Instances extends DataSource {
+abstract class BaseInstances extends DataSource {
 	/**
 	 * Gets a DynamicForm template
 	 */
@@ -81,4 +81,4 @@ abstract class Instances extends DataSource {
 	 * Sets a new DynamicForm instance relation value
 	 */
 	abstract public function SetNewInstanceRelation($params = [],$extra_params = []);
-}//END abstract class Instances extends DataSource
+}//END abstract class BaseInstances extends DataSource

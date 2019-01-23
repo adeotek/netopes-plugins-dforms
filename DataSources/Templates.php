@@ -28,7 +28,7 @@ use NETopes\Core\Data\DataSource;
  * return (array|bool) Returns database request result
  * @package  NETopes\Plugins\DataSources\DForms
  */
-abstract class Templates extends DataSource {
+abstract class BaseTemplates extends DataSource {
     /**
      * GetItems default parameters
      */
@@ -314,4 +314,4 @@ abstract class Templates extends DataSource {
      * @return mixed
      */
 	abstract public function CloneItem($params = [],$extra_params = []);
-}//END abstract class Templates extends DataSource
+}//END abstract class BaseTemplates extends DataSource

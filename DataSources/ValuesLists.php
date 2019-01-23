@@ -28,7 +28,7 @@ use NETopes\Core\Data\DataSource;
  * return (array|bool) Returns database request result
  * @package  NETopes\Plugins\DataSources\DForms
  */
-abstract class ValuesLists extends DataSource {
+abstract class BaseValuesLists extends DataSource {
     /**
      * GetItems default parameters
      */
@@ -39,6 +39,12 @@ abstract class ValuesLists extends DataSource {
      * @param array $extra_params
      */
 	abstract public function GetItems($params = [],$extra_params = []);
+	/**
+     * Gets forms values list item
+     * @param array $params ['for_id'=>NULL,'for_state'=>NULL,'for_text'=>NULL]
+     * @param array $extra_params
+     */
+	abstract public function GetItem($params = [],$extra_params = []);
     /**
      * SetNewItem default parameters
      */
@@ -80,6 +86,12 @@ abstract class ValuesLists extends DataSource {
 	 */
 	abstract public function GetValues($params = [],$extra_params = []);
     /**
+	 * Gets forms lists values item
+     * @param array $params ['for_id'=>NULL,'list_id'=>NULL,'for_ltype'=>NULL,'for_state'=>NULL,'for_implicit'=>NULL,'for_text'=>NULL]
+     * @param array $extra_params
+	 */
+	abstract public function GetValue($params = [],$extra_params = []);
+    /**
      * GetValueItems default parameters
      */
     const GET_VALUE_ITEMS = ['for_id'=>NULL,'list_id'=>NULL,'for_ltype'=>NULL,'for_state'=>NULL];
@@ -119,4 +131,4 @@ abstract class ValuesLists extends DataSource {
      * @param array $extra_params
 	 */
 	abstract public function UnsetValue($params = [],$extra_params = []);
-}//END class ValuesLists extends DataSource
+}//END class BaseValuesLists extends DataSource
