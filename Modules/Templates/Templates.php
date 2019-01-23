@@ -1,17 +1,15 @@
 <?php
 /**
  * description
- *
  * description
- *
  * @package    DKMed\Modules\Application
  * @author     George Benjamin-Schonberger
- * @copyright  Copyright (c) 2019 AdeoTEK Software
+ * @copyright  Copyright (c) 2013 - 2019 AdeoTEK Software SRL
  * @license    LICENSE.md
  * @version    1.0.1.0
  * @filesource
  */
-namespace NETopes\Plugins\DForms\Templates;
+namespace NETopes\Plugins\Modules\DForms\Templates;
 use NETopes\Core\App\AppView;
 use NETopes\Core\App\Module;
 use NETopes\Core\App\ModulesProvider;
@@ -26,29 +24,22 @@ use Translate;
 
 /**
  * description
- *
  * description
- *
  * @package  DKMed\Modules\Application
- * @access   public
  */
 class Templates extends Module {
 	/**
 	 * @var string Name of field to be used as label for the form items ('label'/'name')
-	 * @access public
 	 */
 	public $item_label = 'label';
 	/**
 	 * @var int Maximum box title length (in characters)
-	 * @access public
 	 */
 	public $max_box_title_length = 29;
 	/**
 	 * Get item box title
-	 *
 	 * @param  array $field Item parameters array
 	 * @return string Returns item box title
-	 * @access public
 	 */
 	public function GetItemTitle($field) {
 		$title = $field->getProperty($this->item_label,'','is_string');
@@ -58,10 +49,8 @@ class Templates extends Module {
 	}//END public function GetItemTitle
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function Listing($params = NULL) {
@@ -77,10 +66,8 @@ class Templates extends Module {
 	}//END public function Listing
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowAddForm($params = NULL){
@@ -95,10 +82,8 @@ class Templates extends Module {
 	}//END public function ShowAddForm
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowEditForm($params = NULL) {
@@ -118,10 +103,8 @@ class Templates extends Module {
 	}//END public function ShowEditForm
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function AddEditRecord($params = NULL){
@@ -179,10 +162,8 @@ class Templates extends Module {
 	}//END public function AddEditRecord
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function SetPrintTemplate($params = NULL) {
@@ -201,10 +182,8 @@ class Templates extends Module {
 	}//END public function SetPrintTemplate
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function DeleteRecord($params = NULL) {
@@ -215,10 +194,8 @@ class Templates extends Module {
 	}//END public function DeleteRecord
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function EditRecordState($params = NULL) {
@@ -233,10 +210,8 @@ class Templates extends Module {
 	}//END public function EditRecordState
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function CreateNewVersion($params = NULL) {
@@ -247,10 +222,8 @@ class Templates extends Module {
 	}//END public function CreateNewVersion
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function ValidateRecord($params = NULL) {
@@ -266,10 +239,8 @@ class Templates extends Module {
 	}//END public function ValidateRecord
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowDesignEditForm($params = NULL) {
@@ -283,10 +254,8 @@ class Templates extends Module {
 	}//END public function ShowDesignEditForm
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function EditDesignRecord($params = NULL){
@@ -317,10 +286,8 @@ class Templates extends Module {
 	}//END public function EditDesignRecord
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowRelationsEditForm($params = NULL) {
@@ -332,10 +299,8 @@ class Templates extends Module {
 	}//END public function ShowRelationsEditForm
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowRelationAddEditForm($params = NULL) {
@@ -357,10 +322,8 @@ class Templates extends Module {
 	}//END public function ShowRelationAddEditForm
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function AddEditRelationRecord($params = NULL){
@@ -407,10 +370,8 @@ class Templates extends Module {
 	}//END public function AddEditRelationRecord
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function DeleteRelationRecord($params = NULL) {
@@ -423,10 +384,8 @@ class Templates extends Module {
 	}//END public function DeleteRelationRecord
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowContentEditForm($params = NULL) {
@@ -441,10 +400,8 @@ class Templates extends Module {
 	}//END public function ShowContentEditForm
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowContentTable($params = NULL) {
@@ -460,10 +417,8 @@ class Templates extends Module {
 	}//END public function ShowContentTable
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowAddPageForm($params = NULL) {
@@ -481,10 +436,8 @@ class Templates extends Module {
 	}//END public function ShowAddPageForm
     /**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function UpdatePagesList($params = NULL) {
@@ -515,10 +468,8 @@ class Templates extends Module {
 	}//END public function UpdatePagesList
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowAddTableElementForm($params = NULL) {
@@ -539,10 +490,8 @@ class Templates extends Module {
 	}//END public function ShowAddTableElementForm
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function UpdateContentTable($params = NULL) {
@@ -582,10 +531,8 @@ class Templates extends Module {
 	}//END public function UpdateContentTable
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function AddEditContentElement($params = NULL) {
@@ -619,10 +566,8 @@ class Templates extends Module {
 	}//END public function AddEditContentElement
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function CancelAddEditContentElement($params = NULL) {
@@ -634,10 +579,8 @@ class Templates extends Module {
 	}//END public function CancelAddEditContentElement
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function AddEditContentElementRecord($params = NULL) {
@@ -722,10 +665,8 @@ class Templates extends Module {
 	}//END public function AddEditContentElementRecord
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function MoveContentElement($params = NULL) {
@@ -758,10 +699,8 @@ class Templates extends Module {
 	}//END public function MoveContentElement
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function DeleteContentElementRecord($params = NULL) {
@@ -776,10 +715,8 @@ class Templates extends Module {
 	}//END public function DeleteContentElementRecord
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function CloneRecord($params = NULL) {

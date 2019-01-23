@@ -1,26 +1,21 @@
 <?php
 /**
  * PdfDocument class file
- *
  * PDF document generator that implements abstract class PdfDocumentBase
- *
  * @package    DKMed\Modules\Application
  * @author     George Benjamin-Schonberger
- * @copyright  Copyright (c) 2019 AdeoTEK Software
+ * @copyright  Copyright (c) 2013 - 2019 AdeoTEK Software SRL
  * @license    LICENSE.txt
  * @version    1.0.1.0
  * @filesource
  */
-namespace NETopes\Plugins\DForms\Instances\PdfTemplates;
+namespace NETopes\Plugins\Modules\DForms\Instances\PdfTemplates;
 use NETopes\Core\Reporting\PdfDocument;
 use Translate;
 /**
  * PdfDocument class
- *
  * PDF document generator that implements abstract class PdfDocumentBase
- *
  * @package  DKMed\Modules\Application
- * @access   public
  */
 class InstancesPdf extends PdfDocument {
 

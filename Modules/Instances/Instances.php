@@ -1,17 +1,15 @@
 <?php
 /**
  * description
- *
  * description
- *
  * @package    DKMed\Modules\Application
  * @author     George Benjamin-Schonberger
- * @copyright  Copyright (c) 2019 AdeoTEK Software
+ * @copyright  Copyright (c) 2013 - 2019 AdeoTEK Software SRL
  * @license    LICENSE.md
  * @version    1.0.1.0
  * @filesource
  */
-namespace NETopes\Plugins\DForms\Instances;
+namespace NETopes\Plugins\Modules\DForms\Instances;
 use NETopes\Core\App\AppView;
 use NETopes\Core\App\Module;
 use NETopes\Core\App\Validator;
@@ -23,36 +21,28 @@ use NApp;
 use Translate;
 /**
  * description
- *
  * description
- *
  * @package  DKMed\Modules\Application
- * @access   public
  */
 class Instances extends Module {
 	/**
 	 * @var integer Dynamic form template ID
-	 * @access protected
 	 */
 	public $idTemplate = NULL;
 	/**
 	 * @var integer Dynamic form template code (numeric)
-	 * @access protected
 	 */
 	public $templateCode = NULL;
 	/**
 	 * @var integer Flag for modal add/edit forms (1=modal; 0=non-modal)
-	 * @access protected
 	 */
 	public $isModal = 0;
 	/**
 	 * @var array List of header fields to be displayed in Listing
-	 * @access protected
 	 */
 	public $showInListing = ['template_code','template_name','create_date','user_full_name','last_modified','last_user_full_name'];
 	/**
 	 * @var array List CSS styles to be used for generating view HTML
-	 * @access protected
 	 */
 	protected $html_styles = [
 		'table_attr'=>'border="0" ',
@@ -68,16 +58,13 @@ class Instances extends Module {
 	];
 	/**
 	 * Module class initializer
-	 *
 	 * @return void
-	 * @access protected
 	 */
 	protected function _Init() {
 		$this->templateCode = NULL;
 	}//END protected function _Init
     /**
      * description
-     *
      * @param      $field
      * @param      $f_params
      * @param      $theme_type
@@ -85,7 +72,6 @@ class Instances extends Module {
      * @param int  $icount
      * @return array
      * @throws \NETopes\Core\AppException
-     * @access protected
      */
 	protected function PrepareRepeatableField(&$field,&$f_params,$theme_type,$fvalue = NULL,$icount = 0) {
 		// NApp::_Dlog($icount,'$icount');
@@ -157,7 +143,6 @@ class Instances extends Module {
 	}//protected function PrepareRepeatableField
     /**
      * description
-     *
      * @param      $field
      * @param      $f_params
      * @param      $theme_type
@@ -165,7 +150,6 @@ class Instances extends Module {
      * @param bool $repeatable
      * @param int  $icount
      * @return array
-     * @access protected
      * @throws \NETopes\Core\AppException
      */
 	protected function PrepareField(&$field,&$f_params,$theme_type,$fvalue = NULL,$repeatable = FALSE,$icount = 0) {
@@ -203,7 +187,6 @@ class Instances extends Module {
 	}//END protected function PrepareField
     /**
      * Prepare add/edit form/sub-form
-     *
      * @param        $mtemplate
      * @param  array $params An array of parameters
      * @param null   $id_instance
@@ -212,7 +195,6 @@ class Instances extends Module {
      * @param null   $index
      * @return array Returns BasicForm configuration array
      * @throws \NETopes\Core\AppException
-     * @access protected
      */
 	protected function PrepareForm(&$mtemplate,$params = NULL,$id_instance = NULL,$id_sub_form = NULL,$id_item = NULL,$index = NULL) {
 		// NApp::_Dlog(['$mtemplate'=>$mtemplate,'$id_instance'=>$id_instance,'$id_sub_form'=>$id_sub_form,'$id_item'=>$id_item,'$index'=>$index],'PrepareForm');
@@ -260,10 +242,8 @@ class Instances extends Module {
 	}//END protected function PrepareForm
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function Listing($params = NULL) {
@@ -290,10 +270,8 @@ class Instances extends Module {
 	}//END public function Listing
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function GlobalListing($params = NULL) {
@@ -309,10 +287,8 @@ class Instances extends Module {
 	}//END public function GlobalListing
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowAddForm($params = NULL) {
@@ -342,10 +318,8 @@ class Instances extends Module {
 	}//END public function ShowAddForm
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function SaveNewRecord($params = NULL){
@@ -502,10 +476,8 @@ class Instances extends Module {
 	}//END public function SaveNewRecord
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowEditForm($params = NULL) {
@@ -534,10 +506,8 @@ class Instances extends Module {
 	}//END public function ShowEditForm
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowAddEditForm($params = NULL) {
@@ -566,10 +536,8 @@ class Instances extends Module {
 	}//END public function ShowAddEditForm
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function SaveRecord($params = NULL) {
@@ -725,10 +693,8 @@ class Instances extends Module {
 	}//END public function SaveRecord
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function SaveInstance($params = NULL) {
@@ -741,10 +707,8 @@ class Instances extends Module {
 	}//END public function SaveInstance
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function DeleteRecord($params = NULL) {
@@ -760,10 +724,8 @@ class Instances extends Module {
 	}//END public function DeleteRecord
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function EditRecordState($params = NULL) {
@@ -778,10 +740,8 @@ class Instances extends Module {
 	}//END public function EditRecordState
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowViewForm($params = NULL) {
@@ -800,10 +760,8 @@ class Instances extends Module {
 	}//END public function ShowViewForm
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function PrepareFormHtml($params = NULL) {
@@ -848,10 +806,8 @@ class Instances extends Module {
 	}//END public function PrepareFormHtml
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return mixed return description
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function GetInstancePdf($params = NULL) {

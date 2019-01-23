@@ -1,17 +1,15 @@
 <?php
 /**
  * description
- *
  * description
- *
  * @package    DKMed\Modules\Application
  * @author     George Benjamin-Schonberger
- * @copyright  Copyright (c) 2019 AdeoTEK Software
+ * @copyright  Copyright (c) 2013 - 2019 AdeoTEK Software SRL
  * @license    LICENSE.md
  * @version    1.0.1.0
  * @filesource
  */
-namespace NETopes\Plugins\DForms\Controls;
+namespace NETopes\Plugins\Modules\DForms\Controls;
 use NETopes\Core\App\Module;
 use NETopes\Core\Controls\TabControl;
 use NETopes\Core\Data\DataProvider;
@@ -20,23 +18,18 @@ use Translate;
 
 /**
  * description
- *
  * description
- *
  * @package  DKMed\Modules\Application
- * @access   public
  */
 class Controls extends Module {
 	/**
 	 * description
-	 *
 	 * @param      $data
 	 * @param      $id_control
 	 * @param int  $id_parent
 	 * @param null $parent_group_name
 	 * @return array
 	 * @throws \NETopes\Core\AppException
-	 * @access protected
 	 */
 	protected function GetTabControlStructure($data,$id_control,$id_parent = 0,$parent_group_name = NULL) {
 		// NApp::_Dlog($data,'$data');
@@ -180,10 +173,8 @@ class Controls extends Module {
 	}//END protected function GetTabControlStructure
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return \NETopes\Core\Controls\TabControl
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function GetControlPropertiesTab($params = NULL) {
@@ -205,10 +196,8 @@ class Controls extends Module {
 	}//END public function GetControlPropertiesTab
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return mixed
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function ProcessFieldProperties($params = NULL) {

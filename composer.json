@@ -12,11 +12,12 @@
 	"minimum-stability": "stable",
     "require": {
         "php": ">=7.2",
-        "netopes/core": "2.2.*",
+        "netopes/core": "3.0.*@dev"
     },
     "autoload": {
         "psr-4": {
-            "NETopes\\Plugins\\": ""
+            "NETopes\\Plugins\\DataSources\\DForms\\": "DataSources",
+            "NETopes\\Plugins\\Modules\\DForms\\": "Modules"
         }
     }
 }

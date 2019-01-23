@@ -1,17 +1,15 @@
 <?php
 /**
  * description
- *
  * description
- *
  * @package    DKMed\Modules\Application
  * @author     George Benjamin-Schonberger
- * @copyright  Copyright (c) 2019 AdeoTEK Software
+ * @copyright  Copyright (c) 2013 - 2019 AdeoTEK Software SRL
  * @license    LICENSE.md
  * @version    1.0.1.0
  * @filesource
  */
-namespace NETopes\Plugins\DForms\ValuesLists;
+namespace NETopes\Plugins\Modules\DForms\ValuesLists;
 use NETopes\Core\App\AppView;
 use NETopes\Core\App\Module;
 use NETopes\Core\Controls\Button;
@@ -22,19 +20,14 @@ use Translate;
 
 /**
  * description
- *
  * description
- *
  * @package  DKMed\Modules\Application
- * @access   public
  */
 class ValuesLists extends Module {
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function Listing($params = NULL) {
@@ -48,10 +41,8 @@ class ValuesLists extends Module {
 	}//END public function Listing
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowAddForm($params = NULL) {
@@ -65,10 +56,8 @@ class ValuesLists extends Module {
 	}//END public function ShowAddForm
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowEditForm($params = NULL) {
@@ -86,10 +75,8 @@ class ValuesLists extends Module {
 	}//END public function ShowEditForm
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function AddEditRecord($params = NULL) {
@@ -130,10 +117,8 @@ class ValuesLists extends Module {
 	}//END public function AddEditRecord
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function DeleteRecord($params = NULL) {
@@ -146,10 +131,8 @@ class ValuesLists extends Module {
 	}//END public function DeleteRecord
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function ValuesListing($params = NULL) {
@@ -176,10 +159,8 @@ class ValuesLists extends Module {
 	}//END public function ValuesListing
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowValueAddEditForm($params = NULL) {
@@ -204,10 +185,8 @@ class ValuesLists extends Module {
 	}//END public function ShowValueAddEditForm
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function AddEditValueRecord($params = NULL){
@@ -249,10 +228,8 @@ class ValuesLists extends Module {
 	}//END public function AddEditValueRecord
 	/**
 	 * description
-	 *
 	 * @param object|null $params Parameters object (instance of [Params])
 	 * @return void
-	 * @access public
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function DeleteValueRecord($params = NULL) {
