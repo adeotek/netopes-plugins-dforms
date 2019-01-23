@@ -24,7 +24,7 @@
 <?php
     if($templateProps->getProperty('render_type',1,'is_integer')>1) {
         $pagesNo = $templateProps->getProperty('pagesno',1,'is_integer');
-        $btn_add_page = new NETopes\Core\Controls\Button(['value'=>Translate::GetButton('add_page'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-sm pull-left'),'icon'=>'fa fa-plus-circle','onclick'=>NApp::arequest()->Prepare("AjaxRequest('{$this->name}','ShowAddPageForm','id_template'|'{$idTemplate}'~'pagesno'|'{$pagesNo}','{$target}')->modal")]);
+        $btn_add_page = new NETopes\Core\Controls\Button(['value'=>Translate::GetButton('add_page'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-sm pull-left'),'icon'=>'fa fa-plus-circle','onclick'=>NApp::arequest()->Prepare("AjaxRequest('{$this->class}','ShowAddPageForm','id_template'|'{$idTemplate}'~'pagesno'|'{$pagesNo}','{$target}')->modal")]);
         echo $btn_add_page->Show();
     }//if($templateProps->getProperty('render_type',1,'is_integer')>1)
 ?>

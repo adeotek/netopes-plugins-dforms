@@ -1,7 +1,6 @@
 <?php
 /**
  * description
- * description
  * @package    NETopes\Plugins\Modules\DForms
  * @author     George Benjamin-Schonberger
  * @copyright  Copyright (c) 2013 - 2019 AdeoTEK Software SRL
@@ -23,27 +22,27 @@ use NApp;
 use Translate;
 
 /**
- * description
- * description
- * @package  NETopes\Plugins\Modules\DForms
+ * Class Templates
+ *
+ * @package NETopes\Plugins\Modules\DForms
  */
 class Templates extends Module {
 	/**
 	 * @var string Name of field to be used as label for the form items ('label'/'name')
 	 */
-	public $item_label = 'label';
+	public $itemLabel = 'label';
 	/**
 	 * @var int Maximum box title length (in characters)
 	 */
-	public $max_box_title_length = 29;
+	public $maxBoxTitleLength = 29;
 	/**
 	 * Get item box title
 	 * @param  array $field Item parameters array
 	 * @return string Returns item box title
 	 */
 	public function GetItemTitle($field) {
-		$title = $field->getProperty($this->item_label,'','is_string');
-		if(strlen($title)>($this->max_box_title_length+2)) { $title = substr($title,0,$this->max_box_title_length).'...'; }
+		$title = $field->getProperty($this->itemLabel,'','is_string');
+		if(strlen($title)>($this->maxBoxTitleLength+2)) { $title = substr($title,0,$this->maxBoxTitleLength).'...'; }
 		if($field->getProperty('required',0,'is_integer')==1) { $title .= '*'; }
 		return $title;
 	}//END public function GetItemTitle
@@ -54,31 +53,32 @@ class Templates extends Module {
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function Listing($params = NULL) {
-		// $this->Exec('ShowContentEditForm',array('id_template'=>1));
-		$ftypes = DataProvider::GetKeyValueArray('_Custom\Offline','GetDynamicFormsTemplatesFTypes');
+	    // $this->Exec('ShowContentEditForm',array('id_template'=>1));
+		$listingTarget = 'dforms_listing';
 		$view = new AppView(get_defined_vars(),$this,'main');
         $view->SetTitle('dynamic_forms_templates');
-        $view->SetTargetId('listing_content');
-        $btn_add = new Button(array('value'=>Translate::GetButton('add').' '.Translate::GetLabel('template'),'class'=>NApp::$theme->GetBtnInfoClass(),'icon'=>'fa fa-plus','onclick'=>NApp::arequest()->Prepare("AjaxRequest('{$this->name}','ShowAddForm')->modal")));
-	    $view->AddAction($btn_add->Show());
+        $view->SetTargetId($listingTarget);
+        if(!$this->AddDRights()) {
+            $btnAdd = new Button(['value'=>Translate::GetButton('add').' '.Translate::GetLabel('template'),'class'=>NApp::$theme->GetBtnPrimaryClass(),'icon'=>'fa fa-plus','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','ShowAddForm')->modal")]);
+	        $view->AddAction($btnAdd->Show());
+        }//if(!$this->AddDRights())
         $view->AddTableView($this->GetViewFile('Listing'));
         $view->Render();
 	}//END public function Listing
 	/**
 	 * description
-	 * @param object|null $params Parameters object (instance of [Params])
+	 * @param \NETopes\Core\App\Params|array|null $params Parameters
 	 * @return void
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowAddForm($params = NULL){
-		$ftypes = DataProvider::GetKeyValueArray('_Custom\Offline','GetDynamicFormsTemplatesFTypes');
 		$view = new AppView(get_defined_vars(),$this,'modal');
         $view->SetIsModalView(true);
         $view->AddBasicForm($this->GetViewFile('AddForm'));
         $view->SetTitle(Translate::GetButton('add').' '.Translate::GetLabel('template'));
         $view->SetModalWidth(620);
         $view->Render();
-        NApp::arequest()->ExecuteJs("$('#df_template_add_code').focus();");
+        NApp::Ajax()->ExecuteJs("$('#df_template_add_code').focus();");
 	}//END public function ShowAddForm
 	/**
 	 * description
@@ -87,17 +87,18 @@ class Templates extends Module {
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowEditForm($params = NULL) {
-		$id = $params->getOrFail('id','is_numeric','Invalid record identifier!');
-		$item = DataProvider::Get('Components\DForms\Templates','GetItem',array('for_id'=>$id));
-		if(!is_object($item)) { throw new AppException('Invalid record!'); }
-		$ftypes = DataProvider::GetKeyValueArray('_Custom\Offline','GetDynamicFormsTemplatesFTypes');
+		$id = $params->getOrFail('id','is_not0_integer','Invalid record identifier!');
+		$item = DataProvider::Get('Components\DForms\Templates','GetItem',['for_id'=>$id]);
+		if(!is_object($item) || !count($item)) { throw new AppException('Invalid record!'); }
 		$view = new AppView(get_defined_vars(),$this,'main');
         $view->AddTabControl($this->GetViewFile('EditForm'));
         $view->SetTitle(Translate::GetButton('edit').' '.Translate::GetLabel('template'));
-        $btn_validate = new Button(array('value'=>Translate::GetButton('validate'),'class'=>NApp::$theme->GetBtnSuccessClass('mr10'),'icon'=>'fa fa-check-square-o','onclick'=>NApp::arequest()->PrepareAjaxRequest(['module'=>$this->name,'method'=>'ValidateRecord','target'=>'errors','params'=>['id'=>$id]])));
-	    $view->AddAction($btn_validate->Show());
-	    $btn_back = new Button(array('value'=>Translate::GetButton('back'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-chevron-left','onclick'=>NApp::arequest()->Prepare("AjaxRequest('{$this->name}','Listing')->main-content")));
-	    $view->AddAction($btn_back->Show());
+        if(!$this->ValidateDRights()) {
+            $btnValidate = new Button(array('value'=>Translate::GetButton('validate'),'class'=>NApp::$theme->GetBtnSuccessClass('mr10'),'icon'=>'fa fa-check-square-o','onclick'=>NApp::arequest()->PrepareAjaxRequest(['module'=>$this->class,'method'=>'ValidateRecord','target'=>'errors','params'=>['id'=>$id]])));
+	        $view->AddAction($btnValidate->Show());
+        }//if(!$this->ValidateDRights()) {
+	    $btnBack = new Button(['value'=>Translate::GetButton('back'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-chevron-left','onclick'=>NApp::arequest()->Prepare("AjaxRequest('{$this->class}','Listing')->main-content")]);
+	    $view->AddAction($btnBack->Show());
         $view->Render();
         NApp::arequest()->ExecuteJs("$('#df_template_edit_code').focus();");
 	}//END public function ShowEditForm
@@ -108,17 +109,16 @@ class Templates extends Module {
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function AddEditRecord($params = NULL){
-		// NApp::_Dlog($params,'AddEditRecord');
 		$id = $params->safeGet('id',NULL,'is_not0_numeric');
 		$ftype = $params->safeGet('ftype',NULL,'is_numeric');
 		$code = $params->safeGet('code',NULL,'is_numeric');
-		$name = $params->safeGet('name',NULL,'is_notempty_string');
+		$name = trim($params->safeGet('name',NULL,'is_notempty_string'));
 		$target = $params->safeGet('target','','is_string');
-		if(!$ftype || !$code || !$name) {
+		if(!$ftype || !$code || !strlen($name)) {
 			NApp::arequest()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
 			echo Translate::GetMessage('required_fields');
 			return;
-		}//if(!$ftype || !$code || !$name)
+		}//if(!$ftype || !$code || !strlen($name))
 		$state = $params->safeGet('state',NULL,'is_numeric');
 		$colsno = $params->safeGet('colsno',NULL,'is_numeric');
 		$rowsno = $params->safeGet('rowsno',NULL,'is_numeric');
@@ -126,7 +126,7 @@ class Templates extends Module {
 		$iso_code = $params->safeGet('separator_width','','is_string');
 		$print_template = $params->safeGet('print_template','','is_string');
 		if($id) {
-			$result = DataProvider::GetArray('Components\DForms\Templates','SetItem',array(
+			$result = DataProvider::Get('Components\DForms\Templates','SetItem',[
 				'for_id'=>$id,
 				'in_name'=>$name,
 				'in_ftype'=>$ftype,
@@ -135,14 +135,15 @@ class Templates extends Module {
 				'in_iso_code'=>$iso_code,
 				'in_print_template'=>$print_template,
 				'user_id'=>NApp::_GetCurrentUserId(),
-			));
-			if($result===FALSE || $params->safeGet('close',1,'is_numeric')!=1) {
+			]);
+			if($result===FALSE) { throw new AppException('Unknown database error!'); }
+			if($params->safeGet('close',1,'is_numeric')!=1) {
 			    echo Translate::GetMessage('save_done').' ('.date('Y-m-d H:i:s').')';
 				return;
 			}//if($result!==FALSE)
 			$this->Exec('Listing',[],'main-content');
 		} else {
-			$result = DataProvider::GetArray('Components\DForms\Templates','SetNewItem',array(
+			$result = DataProvider::Get('Components\DForms\Templates','SetNewItem',[
 				'in_code'=>$code,
 				'in_name'=>$name,
 				'in_ftype'=>$ftype,
@@ -153,9 +154,10 @@ class Templates extends Module {
 				'in_iso_code'=>$iso_code,
 				'in_print_template'=>$print_template,
 				'user_id'=>NApp::_GetCurrentUserId(),
-			));
-			$id = get_array_value($result,0,0,'is_numeric','inserted_id');
-			if($result===FALSE || $id<=0) { throw new AppException('Unknown database error!'); }
+			]);
+			if(!is_object($result) || !count($result)) { throw new AppException('Unknown database error!'); }
+			$id = $result->first()->getProperty('inserted_id',0,'is_integer');
+			if($id<=0) { throw new AppException('Unknown database error!'); }
 			$this->CloseForm();
 			$this->Exec('ShowEditForm',['id'=>$id],'main-content');
 		}//if($id)
@@ -167,17 +169,17 @@ class Templates extends Module {
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function SetPrintTemplate($params = NULL) {
-		// NApp::_Dlog($params,'SetPrintTemplate');
 		$id = $params->getOrFail('id','is_not0_integer','Invalid record identifier!');
-		$result = DataProvider::GetArray('Components\DForms\Templates','SetItem',array(
+		$result = DataProvider::Get('Components\DForms\Templates','SetItem',[
             'for_id'=>$id,
             'in_print_template'=>$params->safeGet('print_template','','is_string'),
             'user_id'=>NApp::_GetCurrentUserId(),
-        ));
-        if($result===FALSE || $params->safeGet('close',1,'is_numeric')!=1) {
+        ]);
+        if($result===FALSE) { throw new AppException('Unknown database error!'); }
+        if($params->safeGet('close',1,'is_numeric')!=1) {
             echo Translate::GetMessage('save_done').' ('.date('Y-m-d H:i:s').')';
             return;
-        }//if($result===FALSE || $params->safeGet('close',1,'is_numeric')!=1)
+        }//if($result!==FALSE)
         $this->Exec('Listing',[],'main-content');
 	}//END public function SetPrintTemplate
 	/**
@@ -188,8 +190,8 @@ class Templates extends Module {
 	 */
 	public function DeleteRecord($params = NULL) {
 		$id = $params->getOrFail('id','is_not0_integer','Invalid template identifier!');
-		$result = DataProvider::GetArray('Components\DForms\Templates','UnsetItem',array('for_id'=>$id));
-		if($result===FALSE) { return; }
+		$result = DataProvider::GetArray('Components\DForms\Templates','UnsetItem',['for_id'=>$id]);
+		if($result===FALSE) { throw new AppException('Unknown database error!'); }
 		$this->Exec('Listing',[],'main-content');
 	}//END public function DeleteRecord
 	/**
@@ -365,7 +367,7 @@ class Templates extends Module {
 		if($result!==FALSE) {
 			$this->CloseForm();
 			$ctarget = $params->safeGet('ctarget','','is_string');
-			NApp::arequest()->Execute("AjaxRequest('{$this->name}','ShowRelationsEditForm','id_template'|{$id_template},'{$ctarget}')->{$ctarget}");
+			NApp::arequest()->Execute("AjaxRequest('{$this->class}','ShowRelationsEditForm','id_template'|{$id_template},'{$ctarget}')->{$ctarget}");
 		}//if($result!==FALSE)
 	}//END public function AddEditRelationRecord
 	/**
@@ -559,7 +561,7 @@ class Templates extends Module {
 		$view = new AppView(get_defined_vars(),$this,'modal');
 		$view->SetIsModalView(TRUE);
 		$view->SetModalWidth(560);
-		$view->SetModalCustomClose('"'.$custom_close = addcslashes(NApp::arequest()->Prepare("AjaxRequest('{$this->name}','CancelAddEditContentElement','id_template'|{$idTemplate}~'pindex'|'{$pindex}','{$target}')->dft_fp_errors"),'\\').'"');
+		$view->SetModalCustomClose('"'.$custom_close = addcslashes(NApp::arequest()->Prepare("AjaxRequest('{$this->class}','CancelAddEditContentElement','id_template'|{$idTemplate}~'pindex'|'{$pindex}','{$target}')->dft_fp_errors"),'\\').'"');
 		$view->SetTitle(Translate::GetLabel('field_properties'));
         $view->AddBasicForm($this->GetViewFile('FieldPropertiesForm'));
         $view->Render();
@@ -694,7 +696,7 @@ class Templates extends Module {
 		]);
 		// if($result!==FALSE) {
 		// 	$target = $params->safeGetValue('target','');
-		// 	NApp::arequest()->Execute("AjaxRequest('{$this->name}','ShowContentTable','id_template'|{$id_template},'{$target}')->{$target}");
+		// 	NApp::arequest()->Execute("AjaxRequest('{$this->class}','ShowContentTable','id_template'|{$id_template},'{$target}')->{$target}");
 		// }//if($result!==FALSE)
 	}//END public function MoveContentElement
 	/**

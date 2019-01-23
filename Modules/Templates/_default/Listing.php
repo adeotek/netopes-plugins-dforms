@@ -87,7 +87,7 @@ $ctrl_params = array(
             'data_type'=>'numeric',
             'type'=>'control',
             'control_type'=>'JqCheckBox',
-            'control_params'=>array('container'=>FALSE,'no_label'=>TRUE,'tagid'=>'df_template_update_state','jqparams'=>'{ type: 5 }','onchange'=>"AjaxRequest('{$this->name}','EditRecordState','id'|'{{id}}'~'state'|df_template_update_state_{{id}}:value)->errors"),
+            'control_params'=>array('container'=>FALSE,'no_label'=>TRUE,'tagid'=>'df_template_update_state','jqparams'=>'{ type: 5 }','onchange'=>"AjaxRequest('{$this->class}','EditRecordState','id'|'{{id}}'~'state'|df_template_update_state_{{id}}:value)->errors"),
             'control_pafreq'=>array('onchange'),
             'label'=>Translate::GetLabel('active'),
             'sortable'=>TRUE,
@@ -138,32 +138,32 @@ $ctrl_params = array(
             'actions'=>array(
                 array(
                     'type'=>'DivButton',
-                    'command_string'=>"AjaxRequest('{$this->name}','ShowViewForm','id'|{{id}})->main-content",
+                    'command_string'=>"AjaxRequest('{$this->class}','ShowViewForm','id'|{{id}})->main-content",
                     'params'=>array('tooltip'=>Translate::GetButton('view'),'class'=>NApp::$theme->GetBtnInfoClass('btn-xxs'),'icon'=>'fa fa-eye','conditions'=>array(array('field'=>'version','type'=>'>','value'=>0))),
                 ),
                 array(
                     'type'=>'DivButton',
-                    'command_string'=>"AjaxRequest('{$this->name}','CloneRecord','id'|{{id}})->errors",
+                    'command_string'=>"AjaxRequest('{$this->class}','CloneRecord','id'|{{id}})->errors",
                     'params'=>array('tooltip'=>Translate::GetButton('clone'),'class'=>NApp::$theme->GetBtnSpecialLightClass('btn-xxs'),'icon'=>'fa fa-copy'),
                 ),
                 array(
                     'type'=>'DivButton',
-                    'command_string'=>"AjaxRequest('{$this->name}','ShowEditForm','id'|{{id}})->main-content",
+                    'command_string'=>"AjaxRequest('{$this->class}','ShowEditForm','id'|{{id}})->main-content",
                     'params'=>array('tooltip'=>Translate::GetButton('edit'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-xxs'),'icon'=>'fa fa-pencil-square-o','conditions'=>array(array('field'=>'validated','type'=>'==','value'=>0))),
                 ),
                 array(
                     'type'=>'DivButton',
-                    'command_string'=>"AjaxRequest('{$this->name}','ValidateRecord','id'|{{id}}~'new_value'|'-1')->errors",
+                    'command_string'=>"AjaxRequest('{$this->class}','ValidateRecord','id'|{{id}}~'new_value'|'-1')->errors",
                     'params'=>array('tooltip'=>Translate::GetButton('delete_unvalidated_version'),'class'=>NApp::$theme->GetBtnWarningClass('btn-xxs'),'icon'=>'fa fa-minus','conditions'=>array(array('field'=>'validated','type'=>'==','value'=>0),array('field'=>'version','type'=>'>','value'=>0))),
                 ),
                 array(
                     'type'=>'DivButton',
-                    'command_string'=>"AjaxRequest('{$this->name}','CreateNewVersion','id'|{{id}})->errors",
+                    'command_string'=>"AjaxRequest('{$this->class}','CreateNewVersion','id'|{{id}})->errors",
                     'params'=>array('tooltip'=>Translate::GetButton('new_version'),'class'=>NApp::$theme->GetBtnWarningClass('btn-xxs'),'icon'=>'fa fa-code-fork','conditions'=>array(array('field'=>'validated','type'=>'==','value'=>1))),
                 ),
                 array(
                     'type'=>'DivButton',
-                    'command_string'=>"AjaxRequest('{$this->name}','DeleteRecord','id'|{{id}})->errors",
+                    'command_string'=>"AjaxRequest('{$this->class}','DeleteRecord','id'|{{id}})->errors",
                     'params'=>array('tooltip'=>Translate::GetButton('delete'),'class'=>NApp::$theme->GetBtnInfoClass('btn-xxs pull-right'),'icon'=>'fa fa-times','confirm_text'=>Translate::GetMessage('confirm_delete')),
                 ),
             ),

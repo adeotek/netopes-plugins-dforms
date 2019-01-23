@@ -32,12 +32,12 @@
 				'actions'=>array(
 					array(
 						'type'=>'DivButton',
-						'command_string'=>"AjaxRequest('{$this->name}','DeleteRelationRecord','id'|{{id}}~'id_template'|{{id_template}},'{$target}')->errors",
+						'command_string'=>"AjaxRequest('{$this->class}','DeleteRelationRecord','id'|{{id}}~'id_template'|{{id_template}},'{$target}')->errors",
 						'params'=>array('tagid'=>'df_list_delete_btn','tooltip'=>Translate::GetButton('delete'),'class'=>'btn btn-danger btn-xxs','icon'=>'fa fa-times','confirm_text'=>Translate::GetMessage('confirm_delete')),
 					),
 					array(
 						'type'=>'DivButton',
-						'command_string'=>"AjaxRequest('{$this->name}','ShowRelationAddEditForm','id'|{{id}}~'id_template'|{{id_template}},'{$target}')->modal",
+						'command_string'=>"AjaxRequest('{$this->class}','ShowRelationAddEditForm','id'|{{id}}~'id_template'|{{id_template}},'{$target}')->modal",
 						'params'=>array('tagid'=>'df_list_edit_btn','tooltip'=>Translate::GetButton('edit'),'class'=>'btn btn-primary btn-xxs','icon'=>'fa fa-pencil-square-o'),
 					),
 				),

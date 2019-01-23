@@ -7,7 +7,7 @@
 		if(strlen($f_tagid) && strlen($f_rtarget)) {
 			$ctrl_params['actions'] = array(
 				array(
-					'params'=>array('tagid'=>'df_'.$tname.'_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','class'=>'btn btn-primary','clear_base_class'=>TRUE,'onclick'=>NApp::arequest()->Prepare("AjaxRequest('{$this->name}','SaveNewRecord','id_template'|{$id_template}~'data'|df_{$tname}_form:form~'is_modal'|'{$is_modal}'~'cmodule'|'{$cmodule}'~'cmethod'|'{$cmethod}'~'ctarget'|'{$ctarget}','{$f_tagid}')->{$f_rtarget}")),
+					'params'=>array('tagid'=>'df_'.$tname.'_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','class'=>'btn btn-primary','clear_base_class'=>TRUE,'onclick'=>NApp::arequest()->Prepare("AjaxRequest('{$this->class}','SaveNewRecord','id_template'|{$id_template}~'data'|df_{$tname}_form:form~'is_modal'|'{$is_modal}'~'cmodule'|'{$cmodule}'~'cmethod'|'{$cmethod}'~'ctarget'|'{$ctarget}','{$f_tagid}')->{$f_rtarget}")),
 				),
 			);
 			if($is_modal) {

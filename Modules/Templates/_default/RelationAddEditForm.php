@@ -73,7 +73,7 @@
 		),
 		'actions'=>array(
 			array(
-				'params'=>array('tagid'=>'df_template_rel_ae_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::arequest()->Prepare("AjaxRequest('{$this->name}','AddEditRelationRecord',
+				'params'=>array('tagid'=>'df_template_rel_ae_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::arequest()->Prepare("AjaxRequest('{$this->class}','AddEditRelationRecord',
 					'id_template'|{$id_template}
 					~'id'|'{$id}'
 					~'type'|df_template_rel_ae_type:value

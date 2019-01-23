@@ -1,42 +1,41 @@
 <?php
-	$ctrl_params = array(
-		'tagid'=>'df_lv_ae_form',
-		'response_target'=>'df_lv_ae_errors',
-		'colsno'=>1,
-		'content'=>array(
-			array(
-				array(
-					'control_type'=>'TextBox',
-					'control_params'=>array('tagid'=>'df_lv_ae_value','tagname'=>'value','value'=>get_array_value($item,'value','','is_string'),'label'=>Translate::GetLabel('value'),'required'=>TRUE,'onenterbutton'=>'df_lv_ae_save'),
-				),
-			),
-			array(
-				array(
-					'control_type'=>'TextBox',
-					'control_params'=>array('tagid'=>'df_lv_ae_name','tagname'=>'name','value'=>get_array_value($item,'name','','is_string'),'label'=>Translate::GetLabel('name'),'onenterbutton'=>'df_lv_ae_save'),
-				),
-			),
-			array(
-				array(
-					'control_type'=>'CheckBox',
-					'control_params'=>array('tagid'=>'df_lv_ae_state','tagname'=>'state','value'=>get_array_value($item,'state',1,'is_numeric'),'label'=>Translate::GetLabel('active'),'class'=>'pull-left'),
-				),
-			),
-			array(
-				array(
-					'control_type'=>'CheckBox',
-					'control_params'=>array('tagid'=>'df_lv_ae_implicit','tagname'=>'implicit','value'=>get_array_value($item,'implicit',0,'is_numeric'),'label'=>Translate::GetLabel('implicit'),'class'=>'pull-left'),
-				),
-			),
-		),
-		'actions'=>array(
-			array(
-				'params'=>array('tagid'=>'df_lv_ae_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::arequest()->Prepare("AjaxRequest('Components\DForms\ValuesLists\ValuesLists','AddEditValueRecord','id_list'|{$id_list}~'id'|'{$id}'~'ctarget'|'{$target}'~df_lv_ae_form:form,'df_lv_ae_form')->df_lv_ae_errors")),
-			),
-			array(
-				'type'=>'CloseModal',
-				'params'=>array('tagid'=>'df_lv_ae_cancel','value'=>Translate::GetButton('cancel'),'icon'=>'fa fa-ban'),
-			),
-		),
-	);
-?>
+$ctrl_params = array(
+    'tagid'=>'df_lv_ae_form',
+    'response_target'=>'df_lv_ae_errors',
+    'colsno'=>1,
+    'content'=>array(
+        array(
+            array(
+                'control_type'=>'TextBox',
+                'control_params'=>array('tagid'=>'df_lv_ae_value','tagname'=>'value','value'=>$item->getProperty('value','','is_string'),'label'=>Translate::GetLabel('value'),'required'=>TRUE,'onenterbutton'=>'df_lv_ae_save'),
+            ),
+        ),
+        array(
+            array(
+                'control_type'=>'TextBox',
+                'control_params'=>array('tagid'=>'df_lv_ae_name','tagname'=>'name','value'=>$item->getProperty('name','','is_string'),'label'=>Translate::GetLabel('name'),'onenterbutton'=>'df_lv_ae_save'),
+            ),
+        ),
+        array(
+            array(
+                'control_type'=>'CheckBox',
+                'control_params'=>array('tagid'=>'df_lv_ae_state','tagname'=>'state','value'=>$item->getProperty('state',1,'is_numeric'),'label'=>Translate::GetLabel('active'),'class'=>'pull-left'),
+            ),
+        ),
+        array(
+            array(
+                'control_type'=>'CheckBox',
+                'control_params'=>array('tagid'=>'df_lv_ae_implicit','tagname'=>'implicit','value'=>$item->getProperty('implicit',0,'is_numeric'),'label'=>Translate::GetLabel('implicit'),'class'=>'pull-left'),
+            ),
+        ),
+    ),
+    'actions'=>array(
+        array(
+            'params'=>array('value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::arequest()->Prepare("AjaxRequest('{$this->class}','AddEditValueRecord','id_list'|{$idList}~'id'|'{$id}'~'ctarget'|'{$target}'~df_lv_ae_form:form,'df_lv_ae_form')->df_lv_ae_errors")),
+        ),
+        array(
+            'type'=>'CloseModal',
+            'params'=>array('value'=>Translate::GetButton('cancel'),'icon'=>'fa fa-ban'),
+        ),
+    ),
+);

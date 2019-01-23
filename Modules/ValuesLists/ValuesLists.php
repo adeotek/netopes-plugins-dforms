@@ -33,8 +33,10 @@ class ValuesLists extends Module {
 		$view = new AppView(get_defined_vars(),$this,'main');
 		$view->AddTableView($this->GetViewFile('Listing'));
 		$view->SetTitle(Translate::GetLabel('values_lists'));
-		$btn_add = new Button(['value'=>Translate::GetButton('add').' '.Translate::GetLabel('values_list'),'class'=>NApp::$theme->GetBtnInfoClass(),'icon'=>'fa fa-plus','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->name}','ShowAddForm')->modal")]);
-		$view->AddAction($btn_add->Show());
+		if(!$this->AddDRights()) {
+		    $btn_add = new Button(['value'=>Translate::GetButton('add').' '.Translate::GetLabel('values_list'),'class'=>NApp::$theme->GetBtnInfoClass(),'icon'=>'fa fa-plus','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','ShowAddForm')->modal")]);
+		    $view->AddAction($btn_add->Show());
+        }//if(!$this->AddDRights())
 		$view->SetTargetId('listing_content');
 		$view->Render();
 	}//END public function Listing
@@ -68,10 +70,8 @@ class ValuesLists extends Module {
 		$view = new AppView(get_defined_vars(),$this,'main');
 		$view->AddTabControl($this->GetViewFile('EditForm'));
 		$view->SetTitle($title);
-		if(!$this->AddDRights()) {
-            $btnCancel = new Button(['value'=>Translate::GetButton('back'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-chevron-left','onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->name,'method'=>'Listing','target'=>'main-content'])]);
-            $view->AddAction($btnCancel->Show());
-        }//if(!$this->AddDRights())
+        $btnCancel = new Button(['value'=>Translate::GetButton('back'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-chevron-left','onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->name,'method'=>'Listing','target'=>'main-content'])]);
+        $view->AddAction($btnCancel->Show());
         $view->Render();
 		NApp::Ajax()->ExecuteJs("$('#df_list_edit_code').focus();");
 	}//END public function ShowEditForm
