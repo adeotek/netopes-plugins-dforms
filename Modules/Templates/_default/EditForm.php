@@ -25,19 +25,19 @@ $ctrl_params = array(
                         array(
                             array(
                                 'control_type'=>'NumericTextBox',
-                                'control_params'=>array('tag_id'=>'df_template_edit_code','value'=>$item->getProperty('code',0,'is_numeric'),'label'=>Translate::GetLabel('code').' ('.Translate::GetLabel('numeric').')','align'=>'center','numberformat'=>'0|||','disabled'=>TRUE,'required'=>TRUE),
+                                'control_params'=>array('tag_id'=>'df_template_edit_code','value'=>$item->getProperty('code',0,'is_numeric'),'label'=>Translate::GetLabel('code').' ('.Translate::GetLabel('numeric').')','align'=>'center','number_format'=>'0|||','disabled'=>TRUE,'required'=>TRUE),
                             ),
                         ),
                         array(
                             array(
                                 'control_type'=>'TextBox',
-                                'control_params'=>array('tag_id'=>'df_template_edit_name','value'=>$item->getProperty('name','','is_string'),'label'=>Translate::GetLabel('name'),'onenterbutton'=>'df_template_edit_save','required'=>TRUE,'disabled'=>($item->getProperty('version',0,'is_numeric')>0)),
+                                'control_params'=>array('tag_id'=>'df_template_edit_name','value'=>$item->getProperty('name','','is_string'),'label'=>Translate::GetLabel('name'),'onenter_button'=>'df_template_edit_save','required'=>TRUE,'disabled'=>($item->getProperty('version',0,'is_numeric')>0)),
                             ),
                         ),
                         array(
                             array(
                                 'control_type'=>'ComboBox',
-                                'control_params'=>array('tag_id'=>'df_template_edit_ftype','value'=>DataProvider::GetKeyValue('_Custom\Offline','GetDynamicFormsTemplatesFTypes'),'label'=>Translate::GetLabel('type'),'valfield'=>'id','displayfield'=>'name','selectedvalue'=>$item->getProperty('ftype',0,'is_numeric'),'required'=>TRUE,'disabled'=>TRUE),
+                                'control_params'=>array('tag_id'=>'df_template_edit_ftype','value'=>DataProvider::GetKeyValue('_Custom\Offline','GetDynamicFormsTemplatesFTypes'),'label'=>Translate::GetLabel('type'),'value_field'=>'id','display_field'=>'name','selected_value'=>$item->getProperty('ftype',0,'is_numeric'),'required'=>TRUE,'disabled'=>TRUE),
                             ),
                         ),
                         // array(
@@ -57,7 +57,7 @@ $ctrl_params = array(
                         array(
                             array(
                                 'control_type'=>'TextBox',
-                                'control_params'=>array('tag_id'=>'df_template_edit_iso_code','value'=>$item->getProperty('t_iso_code','','is_string'),'label'=>Translate::GetLabel('iso_code'),'onenterbutton'=>'df_template_edit_save'),
+                                'control_params'=>array('tag_id'=>'df_template_edit_iso_code','value'=>$item->getProperty('t_iso_code','','is_string'),'label'=>Translate::GetLabel('iso_code'),'onenter_button'=>'df_template_edit_save'),
                             ),
                         ),
                     ),

@@ -1,6 +1,6 @@
 <?php
 $ctrl_params = array(
-    'module'=>$this->name,
+    'module'=>$this->class,
     'method'=>$this->GetCurrentMethod(),
     'persistent_state'=>TRUE,
     'target'=>$listingTarget,
@@ -12,7 +12,7 @@ $ctrl_params = array(
     'qsearch'=>'for_text',
     'data_source'=>'Plugins\DForms\Instances',
     'ds_method'=>'GetInstancesList',
-    'ds_params'=>array('for_id'=>NULL,'template_id'=>$id_template,'for_template_code'=>$template_code,'for_state'=>NULL,'for_text'=>NULL),
+    'ds_params'=>array('for_id'=>NULL,'template_id'=>$idTemplate,'for_template_code'=>$template_code,'for_state'=>NULL,'for_text'=>NULL),
     'auto_load_data'=>TRUE,
     'columns'=>array(
         'actions'=>array(
@@ -71,7 +71,7 @@ $ctrl_params = array(
             'filterable'=>TRUE,
             'filter_type'=>'combobox',
             'show_filter_cond_type'=>FALSE,
-            'filter_params'=>array('valfield'=>'id','displayfield'=>'name','selectedvalue'=>NULL),
+            'filter_params'=>array('value_field'=>'id','display_field'=>'name','selected_value'=>NULL),
             'filter_data_call'=>array(
                 'data_source'=>'_Custom\Offline',
                 'ds_method'=>'GetDynamicFormsTemplatesFTypes',
@@ -90,7 +90,7 @@ $ctrl_params = array(
             'filterable'=>TRUE,
             'filter_type'=>'combobox',
             'show_filter_cond_type'=>FALSE,
-            'filter_params'=>array('valfield'=>'id','displayfield'=>'name','selectedvalue'=>NULL),
+            'filter_params'=>array('value_field'=>'id','display_field'=>'name','selected_value'=>NULL),
             'filter_data_call'=>array(
                 'data_source'=>'_Custom\Offline',
                 'ds_method'=>'GetGenericArrays',

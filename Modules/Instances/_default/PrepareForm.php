@@ -6,7 +6,7 @@ use NETopes\Core\AppException;
 
 if(is_array($fields) && count($fields)) {
     $iprefix = ($id_instance ? $id_instance.'_' : '');
-    $tname = $iprefix.$id_template.'_'.$id_sub_form;
+    $tname = $iprefix.$idTemplate.'_'.$id_sub_form;
     $form_content = [];
     foreach($fields as $field) {
         $row = get_array_value($field,'frow',0,'is_numeric');

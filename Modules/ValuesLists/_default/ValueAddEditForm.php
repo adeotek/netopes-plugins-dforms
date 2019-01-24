@@ -7,25 +7,25 @@ $ctrl_params = array(
         array(
             array(
                 'control_type'=>'TextBox',
-                'control_params'=>array('tag_id'=>'df_lv_ae_value','tagname'=>'value','value'=>$item->getProperty('value','','is_string'),'label'=>Translate::GetLabel('value'),'required'=>TRUE,'onenterbutton'=>'df_lv_ae_save'),
+                'control_params'=>array('tag_id'=>'df_lv_ae_value','tag_name'=>'value','value'=>$item->getProperty('value','','is_string'),'label'=>Translate::GetLabel('value'),'required'=>TRUE,'onenter_button'=>'df_lv_ae_save'),
             ),
         ),
         array(
             array(
                 'control_type'=>'TextBox',
-                'control_params'=>array('tag_id'=>'df_lv_ae_name','tagname'=>'name','value'=>$item->getProperty('name','','is_string'),'label'=>Translate::GetLabel('name'),'onenterbutton'=>'df_lv_ae_save'),
+                'control_params'=>array('tag_id'=>'df_lv_ae_name','tag_name'=>'name','value'=>$item->getProperty('name','','is_string'),'label'=>Translate::GetLabel('name'),'onenter_button'=>'df_lv_ae_save'),
             ),
         ),
         array(
             array(
                 'control_type'=>'CheckBox',
-                'control_params'=>array('tag_id'=>'df_lv_ae_state','tagname'=>'state','value'=>$item->getProperty('state',1,'is_numeric'),'label'=>Translate::GetLabel('active'),'class'=>'pull-left'),
+                'control_params'=>array('tag_id'=>'df_lv_ae_state','tag_name'=>'state','value'=>$item->getProperty('state',1,'is_numeric'),'label'=>Translate::GetLabel('active'),'class'=>'pull-left'),
             ),
         ),
         array(
             array(
                 'control_type'=>'CheckBox',
-                'control_params'=>array('tag_id'=>'df_lv_ae_implicit','tagname'=>'implicit','value'=>$item->getProperty('implicit',0,'is_numeric'),'label'=>Translate::GetLabel('implicit'),'class'=>'pull-left'),
+                'control_params'=>array('tag_id'=>'df_lv_ae_implicit','tag_name'=>'implicit','value'=>$item->getProperty('implicit',0,'is_numeric'),'label'=>Translate::GetLabel('implicit'),'class'=>'pull-left'),
             ),
         ),
     ),

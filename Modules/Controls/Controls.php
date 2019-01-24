@@ -18,7 +18,6 @@ use Translate;
 
 /**
  * description
- * description
  * @package  NETopes\Plugins\Modules\DForms
  */
 class Controls extends Module {
@@ -32,16 +31,16 @@ class Controls extends Module {
 	 * @throws \NETopes\Core\AppException
 	 */
 	protected function GetTabControlStructure($data,$id_control,$id_parent = 0,$parent_group_name = NULL) {
-		// NApp::_Dlog($data,'$data');
-		// NApp::_Dlog($id_control,'$id_control');
-		// NApp::_Dlog($id_parent,'$id_parent');
-		// NApp::_Dlog($parent_group_name,'$parent_group_name');
-		$field_properties = DataProvider::GetArray('Plugins\DForms\Controls','GetProperties',array(
+		// NApp::Dlog($data,'$data');
+		// NApp::Dlog($id_control,'$id_control');
+		// NApp::Dlog($id_parent,'$id_parent');
+		// NApp::Dlog($parent_group_name,'$parent_group_name');
+		$field_properties = DataProvider::GetArray('Components\DForms\Controls','GetProperties',array(
 			'control_id'=>$id_control,
 			'for_state'=>-1,
 			'parent_id'=>$id_parent,
 		));
-		// NApp::_Dlog($field_properties,'$field_properties');
+		// NApp::Dlog($field_properties,'$field_properties');
 		$result = [];
 		if(!is_array($field_properties)) { return $result; }
 		foreach($field_properties as $fpi) {
@@ -84,7 +83,7 @@ class Controls extends Module {
 						$fp_nval = '';
 					}//if(get_array_value($fpi,'allow_null',0,'is_numeric')>0)
 					$fp_value = get_array_value($data,$fp_key,get_array_value($fpi,'default_value',$fp_nval,'is_numeric'),'is_numeric');
-					$fp_sparams['numberformat'] = '0|||';
+					$fp_sparams['number_format'] = '0|||';
 					$fp_sparams['align'] = 'center';
 					$fp_cwidth = 100;
 					$fp_ccols = 4;
@@ -103,8 +102,8 @@ class Controls extends Module {
 						$fp_sparams['placeholder'] = '['.Translate::GetLabel('default').']';
 					}//if($fp_required)
 					$fp_sparams['minimum_results_for_search'] = 0;
-					$fp_sparams['selectedvalue'] = get_array_value($data,$fp_key,get_array_value($fpi,'default_value','','is_string'),'is_string');
-					$fp_sparams['selectedtext'] = $fp_sparams['selectedvalue'];
+					$fp_sparams['selected_value'] = get_array_value($data,$fp_key,get_array_value($fpi,'default_value','','is_string'),'is_string');
+					$fp_sparams['selected_text'] = $fp_sparams['selected_value'];
 					break;
 				case 'kvlist':
 					$fp_ctype = 'KVList';
@@ -139,7 +138,7 @@ class Controls extends Module {
 						'width'=>'500',
 						'hidden_row'=>$hidden,
 						'control_type'=>$fp_ctype,
-						'control_params'=>array_merge(array('container'=>'simpletable','tag_id'=>$fp_key,'tagname'=>$fp_key,'value'=>$fp_value,'label'=>$fp_label,'labelwidth'=>150,'width'=>$fp_cwidth,'cols'=>$fp_ccols,'required'=>$fp_required),$fp_sparams),
+						'control_params'=>array_merge([,'tag_id'=>$fp_key,'tag_name'=>$fp_key,'value'=>$fp_value,'label'=>$fp_label,'label_width'=>150,'width'=>$fp_cwidth,'cols'=>$fp_ccols,'required'=>$fp_required],$fp_sparams),
 					),
 				);
 			} else {
@@ -153,7 +152,7 @@ class Controls extends Module {
 							'control_type'=>'BasicForm',
 							'control_params'=>array(
 								'tag_id'=>'ctrlp_'.$group_name.'_form',
-								'colsno'=>1,
+								'cols_no'=>1,
 								'content'=>[],
 							),
 						),
@@ -164,7 +163,7 @@ class Controls extends Module {
 						'width'=>'500',
 						'hidden_row'=>$hidden,
 						'control_type'=>$fp_ctype,
-						'control_params'=>array_merge(array('container'=>'simpletable','tag_id'=>$fp_key,'tagname'=>$fp_key,'value'=>$fp_value,'label'=>$fp_label,'labelwidth'=>150,'width'=>$fp_cwidth,'cols'=>$fp_ccols,'required'=>get_array_value($fpi,'required',FALSE,'bool')),$fp_sparams),
+						'control_params'=>array_merge(['tag_id'=>$fp_key,'tag_name'=>$fp_key,'value'=>$fp_value,'label'=>$fp_label,'label_width'=>150,'width'=>$fp_cwidth,'cols'=>$fp_ccols,'required'=>get_array_value($fpi,'required',FALSE,'bool')],$fp_sparams),
 					),
 				);
 			}//if($id_parent>0)
@@ -173,7 +172,7 @@ class Controls extends Module {
 	}//END protected function GetTabControlStructure
 	/**
 	 * description
-	 * @param object|null $params Parameters object (instance of [Params])
+	 * @param \NETopes\Core\App\Params|array|null $params Parameters
 	 * @return \NETopes\Core\Controls\TabControl
 	 * @throws \NETopes\Core\AppException
 	 */
@@ -196,12 +195,12 @@ class Controls extends Module {
 	}//END public function GetControlPropertiesTab
 	/**
 	 * description
-	 * @param object|null $params Parameters object (instance of [Params])
+	 * @param \NETopes\Core\App\Params|array|null $params Parameters
 	 * @return mixed
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function ProcessFieldProperties($params = NULL) {
-		// NApp::_Dlog($params,'ProcessFieldProperties');
+		// NApp::Dlog($params,'ProcessFieldProperties');
 		$id_control = $params->safeGet('id_control',NULL,'is_not0_numeric');
 		if(!$id_control) { throw new AppException('Invalid control identifier!'); }
 		$data = $params->safeGet('data',[],'is_array');

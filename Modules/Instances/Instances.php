@@ -81,7 +81,7 @@ class Instances extends Module {
 		$fvalues = explode('|::|',$fvalue);
 		$field = array_merge($field,array(
 			'tag_id'=>$tagid.'-0',
-			'tagname'=>get_array_value($field,'id',NULL,'is_numeric').'[]',
+			'tag_name'=>get_array_value($field,'id',NULL,'is_numeric').'[]',
 			'value'=>get_array_value($fvalues,0,NULL,'isset'),
 		));
 		$fclass = get_array_value($field,'class','','is_string');
@@ -159,7 +159,7 @@ class Instances extends Module {
 		$tagid = ($id_instance ? $id_instance.'_' : '').get_array_value($field,'cell','','is_string').'_'.get_array_value($field,'name','','is_string');
 		$field = array_merge($field,array(
 			'tag_id'=>$tagid,
-			'tagname'=>get_array_value($field,'id',NULL,'is_numeric'),
+			'tag_name'=>get_array_value($field,'id',NULL,'is_numeric'),
 			'value'=>$fvalue,
 		));
 		// if(strlen($theme_type)) { $f_params['theme_type'] = $theme_type; }
@@ -198,8 +198,8 @@ class Instances extends Module {
      */
 	protected function PrepareForm(&$mtemplate,$params = NULL,$id_instance = NULL,$id_sub_form = NULL,$id_item = NULL,$index = NULL) {
 		// NApp::_Dlog(['$mtemplate'=>$mtemplate,'$id_instance'=>$id_instance,'$id_sub_form'=>$id_sub_form,'$id_item'=>$id_item,'$index'=>$index],'PrepareForm');
-		$id_template = get_array_value($mtemplate,'id',NULL,'is_integer');
-		if(!$id_template) { return NULL; }
+		$idTemplate = get_array_value($mtemplate,'id',NULL,'is_integer');
+		if(!$idTemplate) { return NULL; }
 		if($id_sub_form) {
 			$template = DataProvider::GetArray('Plugins\DForms\Instances','GetTemplate',array(
 				'for_id'=>$id_sub_form,
@@ -214,7 +214,7 @@ class Instances extends Module {
 			if(!$id_sub_form || !$id_item) { return NULL; }
 			$relations = NULL;
 			$fields = DataProvider::GetArray('Plugins\DForms\Instances','GetStructure',[
-				'template_id'=>$id_template,
+				'template_id'=>$idTemplate,
 				'instance_id'=>($id_instance ? $id_instance : NULL),
 				'item_id'=>$id_item,
 				'for_index'=>(is_numeric($index) ? $index : NULL),
@@ -225,10 +225,10 @@ class Instances extends Module {
 			if($id_instance) {
 				$relations = DataProvider::GetArray('Plugins\DForms\Instances','GetRelations',array('instance_id'=>$id_instance));
 			} else {
-				$relations = DataProvider::GetArray('Plugins\DForms\Templates','GetRelations',array('template_id'=>$id_template));
+				$relations = DataProvider::GetArray('Plugins\DForms\Templates','GetRelations',array('template_id'=>$idTemplate));
 			}//if($id_instance)
 			$fields = DataProvider::GetArray('Plugins\DForms\Instances','GetStructure',[
-				'template_id'=>$id_template,
+				'template_id'=>$idTemplate,
 				'instance_id'=>($id_instance ? $id_instance : NULL),
 			]);
 			// NApp::_Dlog($fields,'$fields');
@@ -242,7 +242,7 @@ class Instances extends Module {
 	}//END protected function PrepareForm
 	/**
 	 * description
-	 * @param object|null $params Parameters object (instance of [Params])
+	 * @param \NETopes\Core\App\Params|array|null $params Parameters
 	 * @return void
 	 * @throws \NETopes\Core\AppException
 	 */
@@ -256,9 +256,9 @@ class Instances extends Module {
 			'for_listing'=>1,
 		]);
 		$ftypes = DataProvider::GetKeyValue('_Custom\Offline','GetDynamicFormsTemplatesFTypes');
-		$cmodule = $params->safeGet('cmodule',$this->name,'is_notempty_string');
+		$cmodule = $params->safeGet('cmodule',$this->class,'is_notempty_string');
 		$cmethod = $params->safeGet('cmethod',call_back_trace(0),'is_notempty_string');
-		$ctarget = $params->safeGet('ctarget','main-content','is_notempty_string');
+		$cTarget = $params->safeGet('ctarget','main-content','is_notempty_string');
 		$target = $params->safeGet('target','main-content','is_notempty_string');
 		$listingTarget = $target.'_listing';
 
@@ -270,12 +270,12 @@ class Instances extends Module {
 	}//END public function Listing
 	/**
 	 * description
-	 * @param object|null $params Parameters object (instance of [Params])
+	 * @param \NETopes\Core\App\Params|array|null $params Parameters
 	 * @return void
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function GlobalListing($params = NULL) {
-		$id_template = $params->safeGet('for_id',$this->id_template,'is_not0_integer');
+		$idTemplate = $params->safeGet('for_id',$this->id_template,'is_not0_integer');
 		$template_code = $params->safeGet('for_code',$this->template_code,'is_not0_integer');
 		$ftypes = DataProvider::GetKeyValueArray('_Custom\Offline','GetDynamicFormsTemplatesFTypes');
 		$listingTarget = 'listing-content';
@@ -287,26 +287,26 @@ class Instances extends Module {
 	}//END public function GlobalListing
 	/**
 	 * description
-	 * @param object|null $params Parameters object (instance of [Params])
+	 * @param \NETopes\Core\App\Params|array|null $params Parameters
 	 * @return void
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowAddForm($params = NULL) {
 		// NApp::_Dlog($params,'ShowAddForm');
-		$id_template = $params->safeGet('id_template',$this->id_template,'is_not0_integer');
+		$idTemplate = $params->safeGet('id_template',$this->id_template,'is_not0_integer');
 		$template_code = $params->safeGet('template_code',$this->template_code,'is_not0_integer');
-		if(!$id_template && !$template_code) { throw new AppException('Invalid DynamicForm template identifier!'); }
+		if(!$idTemplate && !$template_code) { throw new AppException('Invalid DynamicForm template identifier!'); }
 		$template = DataProvider::GetArray('Plugins\DForms\Instances','GetTemplate',array(
-			'for_id'=>(is_numeric($id_template) ? $id_template : NULL),
+			'for_id'=>(is_numeric($idTemplate) ? $idTemplate : NULL),
 			'for_code'=>(is_numeric($template_code) ? $template_code : NULL),
 			'instance_id'=>NULL,
 			'for_state'=>1,
 		));
-		$id_template = get_array_value($template,'id',NULL,'is_integer');
-		if(!$id_template) { throw new AppException('Invalid DynamicForm template!'); }
+		$idTemplate = get_array_value($template,'id',NULL,'is_integer');
+		if(!$idTemplate) { throw new AppException('Invalid DynamicForm template!'); }
 		$cmodule = $params->safeGet('cmodule',get_called_class(),'is_notempty_string');
 		$cmethod = $params->safeGet('cmethod',call_back_trace(0),'is_notempty_string');
-		$ctarget = $params->safeGet('ctarget','main-content','is_notempty_string');
+		$cTarget = $params->safeGet('ctarget','main-content','is_notempty_string');
 		$ctrl_params = $this->PrepareForm($template,$this->GetParams(),NULL);
 		if(!$ctrl_params) { throw new AppException('Invalid DynamicForm configuration!'); }
 		$is_modal = $params->safeGet('is_modal',$this->is_modal,'is_integer');
@@ -318,14 +318,14 @@ class Instances extends Module {
 	}//END public function ShowAddForm
 	/**
 	 * description
-	 * @param object|null $params Parameters object (instance of [Params])
+	 * @param \NETopes\Core\App\Params|array|null $params Parameters
 	 * @return void
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function SaveNewRecord($params = NULL){
 		// NApp::_Dlog($params,'SaveNewRecord');
-		$id_template = $params->safeGet('id_template',$this->id_template,'is_not0_integer');
-		if(!$id_template) { throw new AppException('Invalid DynamicForm template identifier!'); }
+		$idTemplate = $params->safeGet('id_template',$this->id_template,'is_not0_integer');
+		if(!$idTemplate) { throw new AppException('Invalid DynamicForm template identifier!'); }
 		$target = $params->safeGet('target','','is_string');
 		$data = $params->safeGet('data',[],'is_array');
 		if(!count($data)) {
@@ -335,7 +335,7 @@ class Instances extends Module {
 		}//if(!count($data))
 		$error = FALSE;
 
-		$fields = DataProvider::GetArray('Plugins\DForms\Instances','GetFields',array('template_id'=>$id_template));
+		$fields = DataProvider::GetArray('Plugins\DForms\Instances','GetFields',array('template_id'=>$idTemplate));
 		foreach($fields as $k=>$field) {
 			if($field['itype']==2 || $field['parent_itype']==2) {
 				$fvals = get_array_value($data,$field['id'],NULL,'is_array');
@@ -376,7 +376,7 @@ class Instances extends Module {
 			$fields[$k]['value'] = $fval;
 		}//END foreach
 
-		$relations = DataProvider::GetArray('Plugins\DForms\Templates','GetRelations',array('template_id'=>$id_template));
+		$relations = DataProvider::GetArray('Plugins\DForms\Templates','GetRelations',array('template_id'=>$idTemplate));
 		foreach($relations as $k=>$rel) {
 			$dtype = get_array_value($rel,'dtype','','is_string');
 			$relations[$k]['ivalue'] = 0;
@@ -417,13 +417,13 @@ class Instances extends Module {
 			return;
 		}//if($error)
 
-		$template = DataProvider::GetArray('Plugins\DForms\Instances','GetTemplate',array('for_id'=>$id_template));
+		$template = DataProvider::GetArray('Plugins\DForms\Instances','GetTemplate',array('for_id'=>$idTemplate));
 		$transaction = \NETopes\Core\AppSession::GetNewUID(get_array_value($template,'code','N/A','is_notempty_string'));
 		DataProvider::StartTransaction('Plugins\DForms\Instances',$transaction);
 		try {
 			$result = DataProvider::GetArray('Plugins\DForms\Instances','SetNewInstance',array(
-				'template_id'=>$id_template,
-				'user_id'=>NApp::_GetCurrentUserId(),
+				'template_id'=>$idTemplate,
+				'user_id'=>NApp::GetCurrentUserId(),
 			),['transaction'=>$transaction]);
 			$id_instance = get_array_value($result,0,0,'is_numeric','inserted_id');
 			if($id_instance<=0) { throw new AppException('Database error on instance insert!'); }
@@ -471,12 +471,12 @@ class Instances extends Module {
 		if($params->safeGet('is_modal',$this->is_modal,'is_numeric')==1) { $this->CloseForm(); }
 		$cmodule = $params->safeGet('cmodule',get_called_class(),'is_notempty_string');
 		$cmethod = $params->safeGet('cmethod','Listing','is_notempty_string');
-		$ctarget = $params->safeGet('ctarget','main-content','is_notempty_string');
-		NApp::Ajax()->Execute("AjaxRequest('{$cmodule}','{$cmethod}','id_template'|{$id_template},'{$ctarget}')->{$ctarget}");
+		$cTarget = $params->safeGet('ctarget','main-content','is_notempty_string');
+		NApp::Ajax()->Execute("AjaxRequest('{$cmodule}','{$cmethod}','id_template'|{$idTemplate},'{$cTarget}')->{$cTarget}");
 	}//END public function SaveNewRecord
 	/**
 	 * description
-	 * @param object|null $params Parameters object (instance of [Params])
+	 * @param \NETopes\Core\App\Params|array|null $params Parameters
 	 * @return void
 	 * @throws \NETopes\Core\AppException
 	 */
@@ -490,12 +490,12 @@ class Instances extends Module {
 			'instance_id'=>$id_instance,
 			'for_state'=>1,
 		));
-		$id_template = get_array_value($template,'id',NULL,'is_integer');
+		$idTemplate = get_array_value($template,'id',NULL,'is_integer');
 		$template_code = get_array_value($template,'code',NULL,'is_integer');
-		if(!$id_template) { throw new AppException('Invalid DynamicForm template!'); }
+		if(!$idTemplate) { throw new AppException('Invalid DynamicForm template!'); }
 		$cmodule = $params->safeGet('cmodule',get_called_class(),'is_notempty_string');
 		$cmethod = $params->safeGet('cmethod','Listing','is_notempty_string');
-		$ctarget = $params->safeGet('ctarget','main-content','is_notempty_string');
+		$cTarget = $params->safeGet('ctarget','main-content','is_notempty_string');
 		$ctrl_params = $this->PrepareForm($template,$this->GetParams(),$id_instance);
 		if(!$ctrl_params) { throw new AppException('Invalid DynamicForm configuration!'); }
 		$is_modal = $params->safeGet('is_modal',$this->is_modal,'is_integer');
@@ -506,7 +506,7 @@ class Instances extends Module {
 	}//END public function ShowEditForm
 	/**
 	 * description
-	 * @param object|null $params Parameters object (instance of [Params])
+	 * @param \NETopes\Core\App\Params|array|null $params Parameters
 	 * @return void
 	 * @throws \NETopes\Core\AppException
 	 */
@@ -520,12 +520,12 @@ class Instances extends Module {
 			'instance_id'=>$id_instance,
 			'for_state'=>1,
 		));
-		$id_template = get_array_value($template,'id',NULL,'is_integer');
+		$idTemplate = get_array_value($template,'id',NULL,'is_integer');
 		$template_code = get_array_value($template,'code',NULL,'is_integer');
-		if(!$id_template) { throw new AppException('Invalid DynamicForm template!'); }
+		if(!$idTemplate) { throw new AppException('Invalid DynamicForm template!'); }
 		$cmodule = $params->safeGet('cmodule',get_called_class(),'is_notempty_string');
 		$cmethod = $params->safeGet('cmethod','Listing','is_notempty_string');
-		$ctarget = $params->safeGet('ctarget','main-content','is_notempty_string');
+		$cTarget = $params->safeGet('ctarget','main-content','is_notempty_string');
 		$ctrl_params = $this->PrepareForm($template,$params,$id_instance);
 		if(!$ctrl_params) { throw new AppException('Invalid DynamicForm configuration!'); }
 		$is_modal = $params->safeGet('is_modal',$this->is_modal,'is_integer');
@@ -536,15 +536,15 @@ class Instances extends Module {
 	}//END public function ShowAddEditForm
 	/**
 	 * description
-	 * @param object|null $params Parameters object (instance of [Params])
+	 * @param \NETopes\Core\App\Params|array|null $params Parameters
 	 * @return void
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function SaveRecord($params = NULL) {
 		// NApp::_Dlog($params,'SaveRecord');
-		$id_template = $params->safeGet('id_template',$this->id_template,'is_not0_integer');
+		$idTemplate = $params->safeGet('id_template',$this->id_template,'is_not0_integer');
 		$id_instance = $params->safeGet('id',NULL,'is_not0_integer');
-		if(!$id_template || !$id_instance) { throw new AppException('Invalid DynamicForm instance identifier!'); }
+		if(!$idTemplate || !$id_instance) { throw new AppException('Invalid DynamicForm instance identifier!'); }
 		$target = $params->safeGet('target','','is_string');
 		$data = $params->safeGet('data',[],'is_array');
 		if(!count($data)) {
@@ -553,7 +553,7 @@ class Instances extends Module {
 			return;
 		}//if(!count($data))
 		$error = FALSE;
-		$fields = DataProvider::GetArray('Plugins\DForms\Instances','GetFields',array('template_id'=>$id_template,'instance_id'=>$id_instance));
+		$fields = DataProvider::GetArray('Plugins\DForms\Instances','GetFields',array('template_id'=>$idTemplate,'instance_id'=>$id_instance));
 		foreach($fields as $k=>$field) {
 			if($field['itype']==2 || $field['parent_itype']==2) {
 				$fvals = get_array_value($data,$field['id'],NULL,'is_array');
@@ -594,7 +594,7 @@ class Instances extends Module {
 			$fields[$k]['value'] = $fval;
 		}//END foreach
 
-		// $relations = DataProvider::GetArray('Plugins\DForms\Instances','GetRelations',array('template_id'=>$id_template,'instance_id'=>$id_instance));
+		// $relations = DataProvider::GetArray('Plugins\DForms\Instances','GetRelations',array('template_id'=>$idTemplate,'instance_id'=>$id_instance));
 		// foreach($relations as $k=>$rel) {
 		// 	$dtype = get_array_value($rel,'dtype','','is_string');
 		// 	$relations[$k]['ivalue'] = 0;
@@ -633,7 +633,7 @@ class Instances extends Module {
 			return;
 		}//if($error)
 
-		$template = DataProvider::GetArray('Plugins\DForms\Instances','GetTemplate',array('for_id'=>$id_template));
+		$template = DataProvider::GetArray('Plugins\DForms\Instances','GetTemplate',array('for_id'=>$idTemplate));
 		$transaction = \NETopes\Core\AppSession::GetNewUID(get_array_value($template,'code','N/A','is_notempty_string'));
 		DataProvider::StartTransaction('Plugins\DForms\Instances',$transaction);
 		try {
@@ -677,7 +677,7 @@ class Instances extends Module {
 
 			DataProvider::GetArray('Plugins\DForms\Instances','SetInstanceState',[
 				'for_id'=>$id_instance,
-				'user_id'=>NApp::_GetCurrentUserId(),
+				'user_id'=>NApp::GetCurrentUserId(),
 			],['transaction'=>$transaction]);
 			DataProvider::CloseTransaction('Plugins\DForms\Instances',$transaction,FALSE);
 		} catch(AppException $e) {
@@ -688,12 +688,12 @@ class Instances extends Module {
 		if($params->safeGet('is_modal',$this->is_modal,'is_numeric')==1) { $this->CloseForm(); }
 		$cmodule = $params->safeGet('cmodule',get_called_class(),'is_notempty_string');
 		$cmethod = $params->safeGet('cmethod','Listing','is_notempty_string');
-		$ctarget = $params->safeGet('ctarget','main-content','is_notempty_string');
-		NApp::Ajax()->Execute("AjaxRequest('{$cmodule}','{$cmethod}','id_template'|{$id_template},'{$ctarget}')->{$ctarget}");
+		$cTarget = $params->safeGet('ctarget','main-content','is_notempty_string');
+		NApp::Ajax()->Execute("AjaxRequest('{$cmodule}','{$cmethod}','id_template'|{$idTemplate},'{$cTarget}')->{$cTarget}");
 	}//END public function SaveRecord
 	/**
 	 * description
-	 * @param object|null $params Parameters object (instance of [Params])
+	 * @param \NETopes\Core\App\Params|array|null $params Parameters
 	 * @return void
 	 * @throws \NETopes\Core\AppException
 	 */
@@ -707,24 +707,24 @@ class Instances extends Module {
 	}//END public function SaveInstance
 	/**
 	 * description
-	 * @param object|null $params Parameters object (instance of [Params])
+	 * @param \NETopes\Core\App\Params|array|null $params Parameters
 	 * @return void
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function DeleteRecord($params = NULL) {
-		$id_template = $params->safeGet('id_template',$this->id_template,'is_not0_integer');
+		$idTemplate = $params->safeGet('id_template',$this->id_template,'is_not0_integer');
 		$id = $params->safeGet('id',NULL,'is_not0_integer');
-		if(!$id_template || !$id) { throw new AppException('Invalid DynamicForm instance identifier!'); }
+		if(!$idTemplate || !$id) { throw new AppException('Invalid DynamicForm instance identifier!'); }
 		$result = DataProvider::GetArray('Plugins\DForms\Instances','UnsetInstance',array('for_id'=>$id));
 		if($result===FALSE) { return; }
 		$cmodule = $params->safeGet('cmodule',get_called_class(),'is_notempty_string');
 		$cmethod = $params->safeGet('cmethod','Listing','is_notempty_string');
-		$ctarget = $params->safeGet('ctarget','main-content','is_notempty_string');
-		NApp::Ajax()->Execute("AjaxRequest('{$cmodule}','{$cmethod}','id_template'|{$id_template},'{$ctarget}')->{$ctarget}");
+		$cTarget = $params->safeGet('ctarget','main-content','is_notempty_string');
+		NApp::Ajax()->Execute("AjaxRequest('{$cmodule}','{$cmethod}','id_template'|{$idTemplate},'{$cTarget}')->{$cTarget}");
 	}//END public function DeleteRecord
 	/**
 	 * description
-	 * @param object|null $params Parameters object (instance of [Params])
+	 * @param \NETopes\Core\App\Params|array|null $params Parameters
 	 * @return void
 	 * @throws \NETopes\Core\AppException
 	 */
@@ -734,13 +734,13 @@ class Instances extends Module {
 		$result = DataProvider::GetArray('Plugins\DForms\Instances','SetInstanceState',array(
 			'for_id'=>$id,
 			'in_state'=>$params->safeGet('state',NULL,'is_integer'),
-			'user_id'=>NApp::_GetCurrentUserId(),
+			'user_id'=>NApp::GetCurrentUserId(),
 		));
 		if($result===FALSE) { throw new AppException('Failed database operation!'); }
 	}//END public function EditRecordState
 	/**
 	 * description
-	 * @param object|null $params Parameters object (instance of [Params])
+	 * @param \NETopes\Core\App\Params|array|null $params Parameters
 	 * @return void
 	 * @throws \NETopes\Core\AppException
 	 */
@@ -749,9 +749,9 @@ class Instances extends Module {
 		$id_instance = $params->safeGet('id',NULL,'is_not0_integer');
 		if(!$id_instance) { throw new AppException('Invalid DynamicForm instance identifier!'); }
 		$instance = DataProvider::GetArray('Plugins\DForms\Instances','GetInstanceItem',array('for_id'=>$id_instance));
-		$id_template = get_array_value($template,'id',NULL,'is_integer');
-		$id_template = $params->safeGet('id_template',$this->id_template,'is_not0_integer');
-		if(!$id_template) { throw new AppException('Invalid DynamicForm template!'); }
+		$idTemplate = get_array_value($template,'id',NULL,'is_integer');
+		$idTemplate = $params->safeGet('id_template',$this->id_template,'is_not0_integer');
+		if(!$idTemplate) { throw new AppException('Invalid DynamicForm template!'); }
 		$is_modal = $params->safeGet('is_modal',$this->is_modal,'is_integer');
 		require($this->GetViewFile('ViewInstanceForm'));
 		if($is_modal) {
@@ -760,7 +760,7 @@ class Instances extends Module {
 	}//END public function ShowViewForm
 	/**
 	 * description
-	 * @param object|null $params Parameters object (instance of [Params])
+	 * @param \NETopes\Core\App\Params|array|null $params Parameters
 	 * @return void
 	 * @throws \NETopes\Core\AppException
 	 */
@@ -806,7 +806,7 @@ class Instances extends Module {
 	}//END public function PrepareFormHtml
 	/**
 	 * description
-	 * @param object|null $params Parameters object (instance of [Params])
+	 * @param \NETopes\Core\App\Params|array|null $params Parameters
 	 * @return mixed return description
 	 * @throws \NETopes\Core\AppException
 	 */
@@ -823,7 +823,7 @@ class Instances extends Module {
 		} else {
 			$filename = str_replace(' ','_',trim($filename)).'.pdf';
 		}//if(!strlen($filename))
-		$category = get_array_value($instance,'category',get_array_value($instance,'template_code',$this->name,'is_notempty_string'),'is_notempty_string');
+		$category = get_array_value($instance,'category',get_array_value($instance,'template_code',$this->class,'is_notempty_string'),'is_notempty_string');
 		if($cache && strlen($filename) && file_exists(NAPP::_GetRepositoryPath().'forms/'.$category.'/'.$filename)) {
 			if($result_type==1) {
 				$data = [

@@ -9,11 +9,11 @@ $ctrl_params = array(
             array(
                 'control_type'=>'SmartComboBox',
                 'control_params'=>array('tag_id'=>'df_template_design_edit_render_type','label'=>Translate::GetLabel('render_type'),
-                    'tagname'=>'render_type',
+                    'tag_name'=>'render_type',
                     'required'=>TRUE,
-                    'valfield'=>'id',
-                    'displayfield'=>'name',
-                    'selectedvalue'=>$item->getProperty('render_type',1,'is_integer'),
+                    'value_field'=>'id',
+                    'display_field'=>'name',
+                    'selected_value'=>$item->getProperty('render_type',1,'is_integer'),
                     'state_field'=>'state',
                     'load_type'=>'database',
                     'data_source'=>array(
@@ -27,25 +27,25 @@ $ctrl_params = array(
         array(
             array(
                 'control_type'=>'TextBox',
-                'control_params'=>array('tag_id'=>'df_template_design_edit_theme_type','tagname'=>'theme_type','value'=>$item->getProperty('theme_type','','is_string'),'label'=>Translate::GetLabel('theme_type'),'onenterbutton'=>'df_template_design_edit_save'),
+                'control_params'=>array('tag_id'=>'df_template_design_edit_theme_type','tag_name'=>'theme_type','value'=>$item->getProperty('theme_type','','is_string'),'label'=>Translate::GetLabel('theme_type'),'onenter_button'=>'df_template_design_edit_save'),
             ),
         ),
         array(
             array(
                 'control_type'=>'TextBox',
-                'control_params'=>array('tag_id'=>'df_template_design_edit_controls_size','tagname'=>'controls_size','value'=>$item->getProperty('controls_size','','is_string'),'label'=>Translate::GetLabel('controls_size'),'onenterbutton'=>'df_template_design_edit_save'),
+                'control_params'=>array('tag_id'=>'df_template_design_edit_controls_size','tag_name'=>'controls_size','value'=>$item->getProperty('controls_size','','is_string'),'label'=>Translate::GetLabel('controls_size'),'onenter_button'=>'df_template_design_edit_save'),
             ),
         ),
         array(
             array(
                 'control_type'=>'NumericTextBox',
-                'control_params'=>array('tag_id'=>'df_template_design_edit_label_cols','tagname'=>'label_cols','value'=>$item->getProperty('label_cols','','is_integer'),'label'=>Translate::GetLabel('label_cols'),'allownull'=>TRUE,'numberformat'=>'0|||','onenterbutton'=>'df_template_design_edit_save'),
+                'control_params'=>array('tag_id'=>'df_template_design_edit_label_cols','tag_name'=>'label_cols','value'=>$item->getProperty('label_cols','','is_integer'),'label'=>Translate::GetLabel('label_cols'),'allownull'=>TRUE,'number_format'=>'0|||','onenter_button'=>'df_template_design_edit_save'),
             ),
         ),
         array(
             array(
                 'control_type'=>'TextBox',
-                'control_params'=>array('tag_id'=>'df_template_design_edit_separator_width','tagname'=>'separator_width','value'=>$item->getProperty('separator_width','','is_string'),'label'=>Translate::GetLabel('separator_width'),'onenterbutton'=>'df_template_design_edit_save'),
+                'control_params'=>array('tag_id'=>'df_template_design_edit_separator_width','tag_name'=>'separator_width','value'=>$item->getProperty('separator_width','','is_string'),'label'=>Translate::GetLabel('separator_width'),'onenter_button'=>'df_template_design_edit_save'),
             ),
         ),
     ),

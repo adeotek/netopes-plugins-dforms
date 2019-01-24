@@ -7,19 +7,19 @@ $ctrl_params = array(
         array(
             array(
                 'control_type'=>'TextBox',
-                'control_params'=>array('tag_id'=>'df_list_add_ltype','tagname'=>'ltype','value'=>'','label'=>Translate::GetLabel('code'),'required'=>TRUE,'onenterbutton'=>'df_list_add_save'),
+                'control_params'=>array('tag_id'=>'df_list_add_ltype','tag_name'=>'ltype','value'=>'','label'=>Translate::GetLabel('code'),'required'=>TRUE,'onenter_button'=>'df_list_add_save'),
             ),
         ),
         array(
             array(
                 'control_type'=>'TextBox',
-                'control_params'=>array('tag_id'=>'df_list_add_name','tagname'=>'name','value'=>'','label'=>Translate::GetLabel('name'),'onenterbutton'=>'df_list_add_save'),
+                'control_params'=>array('tag_id'=>'df_list_add_name','tag_name'=>'name','value'=>'','label'=>Translate::GetLabel('name'),'onenter_button'=>'df_list_add_save'),
             ),
         ),
         array(
             array(
                 'control_type'=>'CheckBox',
-                'control_params'=>array('tag_id'=>'df_list_add_state','tagname'=>'state','value'=>1,'label'=>Translate::GetLabel('active'),'class'=>'pull-left'),
+                'control_params'=>array('tag_id'=>'df_list_add_state','tag_name'=>'state','value'=>1,'label'=>Translate::GetLabel('active'),'class'=>'pull-left'),
             ),
         ),
     ),

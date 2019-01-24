@@ -37,7 +37,7 @@ abstract class BaseTemplates extends DataSource {
      * Gets templates
      * @param array $params ['for_id'=>NULL,'for_validated'=>NULL,'for_state'=>NULL,'for_text'=>NULL,'for_ftype'=>NULL,'exclude_id'=>NULL]
      * @param array $extra_params
-     * @return array|bool
+     * @return mixed
      */
 	abstract public function GetItems($params = [],$extra_params = []);
     /**
@@ -114,7 +114,7 @@ abstract class BaseTemplates extends DataSource {
      * Gets template pages
      * @param array $params ['for_id'=>NULL,'template_id'=>NULL,'for_pindex'=>NULL]
      * @param array $extra_params
-     * @return array|bool
+     * @return mixed
      */
 	abstract public function GetItemPages($params = [],$extra_params = []);
 	/**
@@ -125,7 +125,7 @@ abstract class BaseTemplates extends DataSource {
      * Gets a template page
      * @param array $params ['for_id'=>NULL,'template_id'=>NULL,'for_pindex'=>NULL]
      * @param array $extra_params
-     * @return array|bool
+     * @return mixed
      */
 	abstract public function GetItemPage($params = [],$extra_params = []);
 	/**
@@ -229,23 +229,65 @@ abstract class BaseTemplates extends DataSource {
      */
 	abstract public function SetPropertiesItem($params = [],$extra_params = []);
 	/**
-	 * Gets relations types
-	 */
+     * GetRelationsTypes default parameters
+     */
+    const GET_RELATIONS_TYPES = ['for_id'=>NULL,'for_text'=>NULL];
+	/**
+     * Gets relations types
+     * @param array $params ['for_id'=>NULL,'for_text'=>NULL]
+     * @param array $extra_params
+     * @return mixed
+     */
 	abstract public function GetRelationsTypes($params = [],$extra_params = []);
 	/**
+     * GetRelations default parameters
+     */
+	const GET_RELATIONS_ITEMS = ['for_id'=>NULL,'template_id'=>NULL,'for_version'=>NULL,'for_text'=>NULL];
+	/**
 	 * Gets templates relations
+     * @param array $params ['for_id'=>NULL,'template_id'=>NULL,'for_version'=>NULL,'for_text'=>NULL]
+     * @param array $extra_params
+     * @return mixed
 	 */
 	abstract public function GetRelations($params = [],$extra_params = []);
 	/**
+     * Gets templates relations
+     * @param array $params ['for_id'=>NULL,'template_id'=>NULL,'for_version'=>NULL,'for_text'=>NULL]
+     * @param array $extra_params
+     * @return array|mixed
+     */
+	abstract public function GetRelation($params = [],$extra_params = []);
+	/**
+     * SetNewRelation default parameters
+     */
+	const SET_NEW_RELATION = ['template_id'=>NULL,'relation_type_id'=>NULL,'in_name'=>NULL,'in_key'=>NULL,'in_required'=>NULL,'in_rtype'=>NULL,'in_utype'=>NULL,'in_category_column'=>NULL];
+	/**
 	 * Sets a new template relation
+     * @param array $params ['template_id'=>NULL,'relation_type_id'=>NULL,'in_name'=>NULL,'in_key'=>NULL,'in_required'=>NULL,'in_rtype'=>NULL,'in_utype'=>NULL,'in_category_column'=>NULL]
+     * @param array $extra_params
+     * @return mixed
 	 */
 	abstract public function SetNewRelation($params = [],$extra_params = []);
 	/**
+     * SetRelation default parameters
+     */
+	const SET_RELATION = ['for_id'=>NULL,'in_name'=>NULL,'in_key'=>NULL,'in_required'=>NULL,'in_rtype'=>NULL,'in_utype'=>NULL,'in_category_column'=>NULL];
+	/**
 	 * Sets a relation
+     * @param array $params ['for_id'=>NULL,'in_name'=>NULL,'in_key'=>NULL,'in_required'=>NULL,'in_rtype'=>NULL,'in_utype'=>NULL,'in_category_column'=>NULL]
+     * @param array $extra_params
+     * @return mixed
 	 */
 	abstract public function SetRelation($params = [],$extra_params = []);
 	/**
+     * UnsetRelation default parameters
+     */
+	const UNSET_RELATION = ['for_id'=>NULL];
+	/**
 	 * Unets a relation
+     * @param array $params ['for_id'=>NULL]
+     * @param array $extra_params
+     * @return mixed
 	 */
 	abstract public function UnsetRelation($params = [],$extra_params = []);
 	/**
@@ -256,7 +298,7 @@ abstract class BaseTemplates extends DataSource {
      * Gets templates page fields
      * @param array $params ['for_id'=>NULL,'template_id'=>NULL,'for_version'=>NULL,'for_pindex'=>NULL,'sub_form_id'=>NULL,'for_text'=>NULL]
      * @param array $extra_params
-     * @return array|bool
+     * @return mixed
      */
 	abstract public function GetFields($params = [],$extra_params = []);
 	/**
@@ -267,7 +309,7 @@ abstract class BaseTemplates extends DataSource {
      * Gets template page field
      * @param array $params ['for_id'=>NULL,'template_id'=>NULL,'for_version'=>NULL,'for_pindex'=>NULL,'sub_form_id'=>NULL,'for_text'=>NULL]
      * @param array $extra_params
-     * @return array|bool
+     * @return mixed
      */
 	abstract public function GetField($params = [],$extra_params = []);
 	/**

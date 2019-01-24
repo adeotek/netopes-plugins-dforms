@@ -16,35 +16,35 @@ use NETopes\Core\Controls\TextBox;
 		case 'FormSeparator':
 		case 'FormSubTitle':
 		case 'Message':
-			$ctrl = new HiddenInput(['tag_id'=>'dft_fp_itype','tagname'=>'itype','value'=>$item->getProperty('itype',1,'is_integer')]);
+			$ctrl = new HiddenInput(['tag_id'=>'dft_fp_itype','tag_name'=>'itype','value'=>$item->getProperty('itype',1,'is_integer')]);
 			$hfields[] = $ctrl->Show();
-			$ctrl = new HiddenInput(['tag_id'=>'dft_fp_name','tagname'=>'name','value'=>$item->getProperty('name',\NETopes\Core\AppSession::GetNewUID($idTemplate.$cclass),'is_string')]);
+			$ctrl = new HiddenInput(['tag_id'=>'dft_fp_name','tag_name'=>'name','value'=>$item->getProperty('name',\NETopes\Core\AppSession::GetNewUID($idTemplate.$cclass),'is_string')]);
 			$hfields[] = $ctrl->Show();
 			if($cclass=='FormTitle') {
-				$ctrl = new EditBox(array('label'=>Translate::GetLabel('title'),'required'=>TRUE,'tag_id'=>'dft_fp_label','tagname'=>'label','value'=>$item->getProperty('label','','is_string'),'height'=>50,'placeholder'=>'Title'));
+				$ctrl = new EditBox(array('label'=>Translate::GetLabel('title'),'required'=>TRUE,'tag_id'=>'dft_fp_label','tag_name'=>'label','value'=>$item->getProperty('label','','is_string'),'height'=>50,'placeholder'=>'Title'));
 				$vfields[] = $ctrl->Show();
 			} elseif($cclass=='FormSubTitle') {
-				$ctrl = new EditBox(array('label'=>Translate::GetLabel('sub_title'),'required'=>TRUE,'tag_id'=>'dft_fp_label','tagname'=>'label','value'=>$item->getProperty('label','','is_string'),'height'=>50,'placeholder'=>'Sub-title'));
+				$ctrl = new EditBox(array('label'=>Translate::GetLabel('sub_title'),'required'=>TRUE,'tag_id'=>'dft_fp_label','tag_name'=>'label','value'=>$item->getProperty('label','','is_string'),'height'=>50,'placeholder'=>'Sub-title'));
 				$vfields[] = $ctrl->Show();
 			} elseif($cclass=='Message') {
-				$ctrl = new TextBox(array('label'=>Translate::GetLabel('short_text').' (max: 255)','tag_id'=>'dft_fp_label','tagname'=>'label','value'=>$item->getProperty('label','','is_string'),'placeholder'=>'Field displayed label'));
+				$ctrl = new TextBox(array('label'=>Translate::GetLabel('short_text').' (max: 255)','tag_id'=>'dft_fp_label','tag_name'=>'label','value'=>$item->getProperty('label','','is_string'),'placeholder'=>'Field displayed label'));
 				$vfields[] = $ctrl->Show();
-				$ctrl = new EditBox(array('label'=>Translate::GetLabel('long_text'),'tag_id'=>'dft_fp_description','tagname'=>'description','value'=>$item->getProperty('description','','is_string'),'height'=>50));
+				$ctrl = new EditBox(array('label'=>Translate::GetLabel('long_text'),'tag_id'=>'dft_fp_description','tag_name'=>'description','value'=>$item->getProperty('description','','is_string'),'height'=>50));
 				$vfields[] = $ctrl->Show();
 			} else {
-				$ctrl = new HiddenInput(['tag_id'=>'dft_fp_label','tagname'=>'label','value'=>$item->getProperty('label',$cclass,'is_string')]);
+				$ctrl = new HiddenInput(['tag_id'=>'dft_fp_label','tag_name'=>'label','value'=>$item->getProperty('label',$cclass,'is_string')]);
 				$hfields[] = $ctrl->Show();
 			}//if($cclass=='FormTitle')
-			$ctrl = new HiddenInput(['tag_id'=>'dft_fp_required','tagname'=>'required','value'=>$item->getProperty('required',0,'is_integer')]);
+			$ctrl = new HiddenInput(['tag_id'=>'dft_fp_required','tag_name'=>'required','value'=>$item->getProperty('required',0,'is_integer')]);
 			$hfields[] = $ctrl->Show();
-			$ctrl = new HiddenInput(['tag_id'=>'dft_fp_listing','tagname'=>'listing','value'=>$item->getProperty('listing',0,'is_integer')]);
+			$ctrl = new HiddenInput(['tag_id'=>'dft_fp_listing','tag_name'=>'listing','value'=>$item->getProperty('listing',0,'is_integer')]);
 			$hfields[] = $ctrl->Show();
 			break;
 		case 'BasicForm':
-			$ctrl = new SmartComboBox(array('label'=>Translate::GetLabel('field_type'),'tag_id'=>'dft_fp_itype','tagname'=>'itype',
-				'valfield'=>'id',
-				'displayfield'=>'name',
-				'selectedvalue'=>$item->getProperty('itype',1,'is_integer'),
+			$ctrl = new SmartComboBox(array('label'=>Translate::GetLabel('field_type'),'tag_id'=>'dft_fp_itype','tag_name'=>'itype',
+				'value_field'=>'id',
+				'display_field'=>'name',
+				'selected_value'=>$item->getProperty('itype',1,'is_integer'),
 				'allow_clear'=>FALSE,
 				'load_type'=>'database',
 				'data_source'=>array(
@@ -53,18 +53,18 @@ use NETopes\Core\Controls\TextBox;
 				),
 			));
 			$vfields[] = $ctrl->Show();
-			$ctrl = new HiddenInput(['tag_id'=>'dft_fp_name','tagname'=>'name','value'=>$item->getProperty('name',NULL,'is_string')]);
+			$ctrl = new HiddenInput(['tag_id'=>'dft_fp_name','tag_name'=>'name','value'=>$item->getProperty('name',NULL,'is_string')]);
 			$hfields[] = $ctrl->Show();
-			$ctrl = new HiddenInput(['tag_id'=>'dft_fp_label','tagname'=>'label','value'=>$item->getProperty('label',$cclass,'is_string')]);
+			$ctrl = new HiddenInput(['tag_id'=>'dft_fp_label','tag_name'=>'label','value'=>$item->getProperty('label',$cclass,'is_string')]);
 			$hfields[] = $ctrl->Show();
-			$ctrl = new HiddenInput(['tag_id'=>'dft_fp_required','tagname'=>'required','value'=>$item->getProperty('required',0,'is_integer')]);
+			$ctrl = new HiddenInput(['tag_id'=>'dft_fp_required','tag_name'=>'required','value'=>$item->getProperty('required',0,'is_integer')]);
 			$hfields[] = $ctrl->Show();
-			$ctrl = new HiddenInput(['tag_id'=>'dft_fp_listing','tagname'=>'listing','value'=>$item->getProperty('listing',0,'is_integer')]);
+			$ctrl = new HiddenInput(['tag_id'=>'dft_fp_listing','tag_name'=>'listing','value'=>$item->getProperty('listing',0,'is_integer')]);
 			$hfields[] = $ctrl->Show();
-			$ctrl = new SmartComboBox(array('label'=>Translate::GetLabel('form'),'tag_id'=>'dft_fp_id_sub_form','tagname'=>'id_sub_form','required'=>TRUE,'disabled'=>(is_numeric($id) && $id>0),
-				'valfield'=>'id',
-				'displayfield'=>'full_name',
-				'selectedvalue'=>$item->getProperty('id_sub_form',1,'is_integer'),
+			$ctrl = new SmartComboBox(array('label'=>Translate::GetLabel('form'),'tag_id'=>'dft_fp_id_sub_form','tag_name'=>'id_sub_form','required'=>TRUE,'disabled'=>(is_numeric($id) && $id>0),
+				'value_field'=>'id',
+				'display_field'=>'full_name',
+				'selected_value'=>$item->getProperty('id_sub_form',1,'is_integer'),
 				'allow_clear'=>TRUE,
 				'placeholder'=>Translate::GetLabel('please_select_template'),
 				'load_type'=>'database',
@@ -77,10 +77,10 @@ use NETopes\Core\Controls\TextBox;
 			$vfields[] = $ctrl->Show();
 			break;
 		default:
-			$ctrl = new SmartComboBox(array('label'=>Translate::GetLabel('field_type'),'tag_id'=>'dft_fp_itype','tagname'=>'itype',
-				'valfield'=>'id',
-				'displayfield'=>'name',
-				'selectedvalue'=>$item->getProperty('itype',1,'is_numeric'),
+			$ctrl = new SmartComboBox(array('label'=>Translate::GetLabel('field_type'),'tag_id'=>'dft_fp_itype','tag_name'=>'itype',
+				'value_field'=>'id',
+				'display_field'=>'name',
+				'selected_value'=>$item->getProperty('itype',1,'is_numeric'),
 				'allow_clear'=>FALSE,
 				'load_type'=>'database',
 				'data_source'=>array(
@@ -89,20 +89,20 @@ use NETopes\Core\Controls\TextBox;
 				),
 			));
 			$vfields[] = $ctrl->Show();
-			$ctrl = new TextBox(array('label'=>Translate::GetLabel('field_name'),'required'=>TRUE,'tag_id'=>'dft_fp_name','tagname'=>'name','value'=>$item->getProperty('name','','is_string'),'placeholder'=>'Field name (no spaces)'));
+			$ctrl = new TextBox(array('label'=>Translate::GetLabel('field_name'),'required'=>TRUE,'tag_id'=>'dft_fp_name','tag_name'=>'name','value'=>$item->getProperty('name','','is_string'),'placeholder'=>'Field name (no spaces)'));
 			$vfields[] = $ctrl->Show();
-			$ctrl = new TextBox(array('label'=>Translate::GetLabel('field_label'),'required'=>TRUE,'tag_id'=>'dft_fp_label','tagname'=>'label','value'=>$item->getProperty('label','','is_string'),'placeholder'=>'Field displayed label'));
+			$ctrl = new TextBox(array('label'=>Translate::GetLabel('field_label'),'required'=>TRUE,'tag_id'=>'dft_fp_label','tag_name'=>'label','value'=>$item->getProperty('label','','is_string'),'placeholder'=>'Field displayed label'));
 			$vfields[] = $ctrl->Show();
-			$ctrl = new CheckBox(array('label'=>Translate::GetLabel('required_field'),'tag_id'=>'dft_fp_required','tagname'=>'required','value'=>$item->getProperty('required',0,'is_integer'),'class'=>'pull-left'));
+			$ctrl = new CheckBox(array('label'=>Translate::GetLabel('required_field'),'tag_id'=>'dft_fp_required','tag_name'=>'required','value'=>$item->getProperty('required',0,'is_integer'),'class'=>'pull-left'));
 			$vfields[] = $ctrl->Show();
-			$ctrl = new CheckBox(array('label'=>Translate::GetLabel('show_in_listing'),'tag_id'=>'dft_fp_listing','tagname'=>'listing','value'=>$item->getProperty('listing',0,'is_integer'),'class'=>'pull-left'));
+			$ctrl = new CheckBox(array('label'=>Translate::GetLabel('show_in_listing'),'tag_id'=>'dft_fp_listing','tag_name'=>'listing','value'=>$item->getProperty('listing',0,'is_integer'),'class'=>'pull-left'));
 			$vfields[] = $ctrl->Show();
 			if(in_array($cclass,['SmartComboBox','GroupCheckBox'])) {
-				$ctrl = new SmartComboBox(array('label'=>Translate::GetLabel('values_list'),'tag_id'=>'dft_fp_values_list','tagname'=>'id_values_list',
+				$ctrl = new SmartComboBox(array('label'=>Translate::GetLabel('values_list'),'tag_id'=>'dft_fp_values_list','tag_name'=>'id_values_list',
 				'placeholder'=>Translate::GetLabel('none'),
-				'valfield'=>'id',
-				'displayfield'=>'name',
-				'selectedvalue'=>$item->getProperty('id_values_list',NULL,'is_string'),
+				'value_field'=>'id',
+				'display_field'=>'name',
+				'selected_value'=>$item->getProperty('id_values_list',NULL,'is_string'),
 				'selectedtext'=>$item->getProperty('values_list','','is_string'),
 				'allow_clear'=>TRUE,
 				'load_type'=>'database',
@@ -154,7 +154,7 @@ use NETopes\Core\Controls\TextBox;
 	    [
 	        'params'=>['value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','AddEditContentElementRecord',
                     'id_template'|{$idTemplate}
-                    ~'pindex'|'{$pindex}'
+                    ~'pindex'|'{$pIndex}'
                     ~'id_item'|'{$id}'
                     ~'class'|'{$cclass}'
                     ~'data_type'|'{$cdatatype}'

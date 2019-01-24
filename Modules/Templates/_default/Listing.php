@@ -3,7 +3,7 @@ use NETopes\Core\Controls\Button;
 use NETopes\Core\Controls\TableView;
 
 $ctrl_params = array(
-    'module'=>$this->name,
+    'module'=>$this->class,
     'method'=>$this->GetCurrentMethod(),
     'persistent_state'=>TRUE,
     'target'=>'listing_content',
@@ -48,7 +48,7 @@ $ctrl_params = array(
             'filterable'=>TRUE,
             'filter_type'=>'combobox',
             'show_filter_cond_type'=>FALSE,
-            'filter_params'=>array('valfield'=>'id','displayfield'=>'name','selectedvalue'=>NULL),
+            'filter_params'=>array('value_field'=>'id','display_field'=>'name','selected_value'=>NULL),
             'filter_data_call'=>array(
                 'data_source'=>'_Custom\Offline',
                 'ds_method'=>'GetDynamicFormsTemplatesFTypes',
@@ -74,7 +74,7 @@ $ctrl_params = array(
             'filterable'=>TRUE,
             'filter_type'=>'combobox',
             'show_filter_cond_type'=>FALSE,
-            'filter_params'=>array('valfield'=>'id','displayfield'=>'name','selectedvalue'=>NULL),
+            'filter_params'=>array('value_field'=>'id','display_field'=>'name','selected_value'=>NULL),
             'filter_data_call'=>array(
                 'data_source'=>'_Custom\Offline',
                 'ds_method'=>'GetGenericArrays',
@@ -94,7 +94,7 @@ $ctrl_params = array(
             'filterable'=>TRUE,
             'filter_type'=>'combobox',
             'show_filter_cond_type'=>FALSE,
-            'filter_params'=>array('valfield'=>'id','displayfield'=>'name','selectedvalue'=>NULL),
+            'filter_params'=>array('value_field'=>'id','display_field'=>'name','selected_value'=>NULL),
             'filter_data_call'=>array(
                 'data_source'=>'_Custom\Offline',
                 'ds_method'=>'GetGenericArrays',

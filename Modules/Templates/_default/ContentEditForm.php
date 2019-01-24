@@ -38,7 +38,7 @@
 		    $pageTargetId = 'df_template_fields_p'.$pageIndex;
 ?>
             <div class="dft-content-page clearfix" id="<?=$pageTargetId?>">
-                <?php \NETopes\Core\App\ModulesProvider::Exec($this->name,'ShowContentTable',['id_template'=>$idTemplate,'pindex'=>$pageIndex,'target'=>$pageTargetId,'ctarget'=>$target]); ?>
+                <?php \NETopes\Core\App\ModulesProvider::Exec($this->class,'ShowContentTable',['id_template'=>$idTemplate,'pindex'=>$pageIndex,'target'=>$pageTargetId,'ctarget'=>$target]); ?>
             </div>
 <?php
 		}//END foreach
@@ -48,12 +48,12 @@
     </div>
 </div>
 <?php
-    $this->AddJsScript("
-        $('.draggable.clone').draggable({
-            revert: 'invalid',
-            cursor: 'move',
-            containment: '#dft-container',
-            helper: 'clone',
-            snap: true
-        });
-    ");
+$this->AddJsScript("
+    $('.draggable.clone').draggable({
+        revert: 'invalid',
+        cursor: 'move',
+        containment: '#dft-container',
+        helper: 'clone',
+        snap: true
+    });
+");

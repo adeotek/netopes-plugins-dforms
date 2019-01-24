@@ -12,7 +12,7 @@ $ctrl_params = array(
     'qsearch'=>'for_text',
     'data_source'=>'Plugins\DForms\Instances',
     'ds_method'=>'GetInstances',
-    'ds_params'=>array('for_id'=>NULL,'template_id'=>($id_template ? $id_template : NULL),'for_template_code'=>($template_code ? $template_code : NULL),'for_state'=>NULL,'for_text'=>NULL),
+    'ds_params'=>array('for_id'=>NULL,'template_id'=>($idTemplate ? $idTemplate : NULL),'for_template_code'=>($template_code ? $template_code : NULL),'for_state'=>NULL,'for_text'=>NULL),
     'auto_load_data'=>TRUE,
     'columns'=>array(
         'actions'=>array(
@@ -33,7 +33,7 @@ $ctrl_params = array(
                             'dbg'=>1,
                         ],
                         'session_params'=>[
-                            'module'=>$this->name,
+                            'module'=>$this->class,
                             'method'=>'GetInstancePdf',
                             'params'=>['id'=>'{{id}}','result_type'=>1,'cache'=>TRUE]
                         ],
@@ -42,7 +42,7 @@ $ctrl_params = array(
                 array(
                     'dright'=>'edit',
                     'type'=>'DivButton',
-                    'command_string'=>"AjaxRequest('{$this->class}','ShowEditForm','id'|{{id}}~'id_template'|'{{id_template}}'~'cmodule'|'{$cmodule}'~'cmethod'|'{$cmethod}'~'ctarget'|'{$ctarget}')->main-content",
+                    'command_string'=>"AjaxRequest('{$this->class}','ShowEditForm','id'|{{id}}~'id_template'|'{{id_template}}'~'cmodule'|'{$cmodule}'~'cmethod'|'{$cmethod}'~'ctarget'|'{$cTarget}')->main-content",
                     'params'=>array('tag_id'=>'df_instance_edit_btn','tooltip'=>Translate::GetButton('edit'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-xxs'),'icon'=>'fa fa-pencil-square-o'),
                 ),
                 array(
@@ -138,7 +138,7 @@ if(is_array($this->show_in_listing)) {
                     'filterable'=>TRUE,
                     'filter_type'=>'combobox',
                     'show_filter_cond_type'=>FALSE,
-                    'filter_params'=>array('valfield'=>'id','displayfield'=>'name','selectedvalue'=>NULL),
+                    'filter_params'=>array('value_field'=>'id','display_field'=>'name','selected_value'=>NULL),
                     'filter_data_call'=>array(
                         'data_source'=>'_Custom\Offline',
                         'ds_method'=>'GetDynamicFormsTemplatesFTypes',
@@ -171,7 +171,7 @@ if(is_array($this->show_in_listing)) {
                     'filterable'=>TRUE,
                     'filter_type'=>'combobox',
                     'show_filter_cond_type'=>FALSE,
-                    'filter_params'=>array('valfield'=>'id','displayfield'=>'name','selectedvalue'=>NULL),
+                    'filter_params'=>array('value_field'=>'id','display_field'=>'name','selected_value'=>NULL),
                     'filter_data_call'=>array(
                         'data_source'=>'_Custom\Offline',
                         'ds_method'=>'GetGenericArrays',
@@ -238,7 +238,7 @@ $ctrl_params['columns']['end_actions'] = array(
         array(
             'dright'=>'delete',
             'type'=>'DivButton',
-            'command_string'=>"AjaxRequest('{$this->class}','DeleteRecord','id'|{{id}}~'id_template'|'{{id_template}}'~'cmodule'|'{$cmodule}'~'cmethod'|'{$cmethod}'~'ctarget'|'{$ctarget}')->errors",
+            'command_string'=>"AjaxRequest('{$this->class}','DeleteRecord','id'|{{id}}~'id_template'|'{{id_template}}'~'cmodule'|'{$cmodule}'~'cmethod'|'{$cmethod}'~'ctarget'|'{$cTarget}')->errors",
             'params'=>array('tooltip'=>Translate::GetButton('delete'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs'),'icon'=>'fa fa-times','confirm_text'=>Translate::GetMessage('confirm_delete'),'conditions'=>array(array('field'=>'ftype','type'=>'!=','value'=>2))),
         ),
     ),

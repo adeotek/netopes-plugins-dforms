@@ -77,7 +77,7 @@ class ValuesLists extends Module {
 		$view = new AppView(get_defined_vars(),$this,'main');
 		$view->AddTabControl($this->GetViewFile('EditForm'));
 		$view->SetTitle($title);
-        $btnCancel = new Button(['value'=>Translate::GetButton('back'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-chevron-left','onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->name,'method'=>'Listing','target'=>'main-content'])]);
+        $btnCancel = new Button(['value'=>Translate::GetButton('back'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-chevron-left','onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->class,'method'=>'Listing','target'=>'main-content'])]);
         $view->AddAction($btnCancel->Show());
         $view->Render();
 		NApp::Ajax()->ExecuteJs("$('#df_list_edit_code').focus();");
@@ -150,15 +150,14 @@ class ValuesLists extends Module {
 		$target = $params->safeGet('target','','is_string');
 		if($edit) {
 			$dgtarget = 'dg-'.$target;
-			$view = new AppView(get_defined_vars(),$this,'secondary');
+			$view = new AppView(get_defined_vars(),$this,'default');
 			$view->SetTargetId($dgtarget);
 			if(!$this->AddDRights()) {
 				$btnAdd = new Button([
-					'tag_id'=>'df_list_edit_add',
 					'value'=>Translate::GetButton('add'),
-					'class'=>NApp::$theme->GetBtnInfoClass('btn-xs pull-left'),
+					'class'=>NApp::$theme->GetBtnPrimaryClass(),
 					'icon'=>'fa fa-plus-circle',
-					'onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->name,'method'=>'ShowValueAddEditForm','target'=>'modal','params'=>['id_list'=>$idList,'target'=>$target]])]);
+					'onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->class,'method'=>'ShowValueAddEditForm','target'=>'modal','params'=>['id_list'=>$idList,'target'=>$target]])]);
 				$view->AddAction($btnAdd->Show());
         	}//if(!$this->AddDRights())
 		} else {
@@ -233,8 +232,8 @@ class ValuesLists extends Module {
 			if(!is_object($result) || !count($result) || $result->first()->getProperty('inserted_id',0,'is_integer')<=0) { throw new AppException('Unknown database error!'); }
 		}//if($id)
 		$this->CloseForm();
-		$ctarget = $params->safeGet('ctarget','','is_string');
-		$this->Exec('ValuesListing',['id_list'=>$idList,'edit'=>1,'target'=>$ctarget],$ctarget);
+		$cTarget = $params->safeGet('ctarget','','is_string');
+		$this->Exec('ValuesListing',['id_list'=>$idList,'edit'=>1,'target'=>$cTarget],$cTarget);
 	}//END public function AddEditValueRecord
 	/**
 	 * description
