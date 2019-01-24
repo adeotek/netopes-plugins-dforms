@@ -27,6 +27,13 @@ use Translate;
  * @package NETopes\Plugins\Modules\DForms
  */
 class Templates extends Module {
+    /**
+	 * Module class initializer
+	 * @return void
+	 */
+	protected function _Init() {
+	    $this->viewsExtension = '.php';
+	}//END protected function _Init
 	/**
 	 * @var string Name of field to be used as label for the form items ('label'/'name')
 	 */
@@ -88,7 +95,7 @@ class Templates extends Module {
 	 */
 	public function ShowEditForm($params = NULL) {
 		$id = $params->getOrFail('id','is_not0_integer','Invalid record identifier!');
-		$item = DataProvider::Get('Components\DForms\Templates','GetItem',['for_id'=>$id]);
+		$item = DataProvider::Get('Plugins\DForms\Templates','GetItem',['for_id'=>$id]);
 		if(!is_object($item) || !count($item)) { throw new AppException('Invalid record!'); }
 		$view = new AppView(get_defined_vars(),$this,'main');
         $view->AddTabControl($this->GetViewFile('EditForm'));
@@ -126,7 +133,7 @@ class Templates extends Module {
 		$iso_code = $params->safeGet('separator_width','','is_string');
 		$print_template = $params->safeGet('print_template','','is_string');
 		if($id) {
-			$result = DataProvider::Get('Components\DForms\Templates','SetItem',[
+			$result = DataProvider::Get('Plugins\DForms\Templates','SetItem',[
 				'for_id'=>$id,
 				'in_name'=>$name,
 				'in_ftype'=>$ftype,
@@ -143,7 +150,7 @@ class Templates extends Module {
 			}//if($result!==FALSE)
 			$this->Exec('Listing',[],'main-content');
 		} else {
-			$result = DataProvider::Get('Components\DForms\Templates','SetNewItem',[
+			$result = DataProvider::Get('Plugins\DForms\Templates','SetNewItem',[
 				'in_code'=>$code,
 				'in_name'=>$name,
 				'in_ftype'=>$ftype,
@@ -170,7 +177,7 @@ class Templates extends Module {
 	 */
 	public function SetPrintTemplate($params = NULL) {
 		$id = $params->getOrFail('id','is_not0_integer','Invalid record identifier!');
-		$result = DataProvider::Get('Components\DForms\Templates','SetItem',[
+		$result = DataProvider::Get('Plugins\DForms\Templates','SetItem',[
             'for_id'=>$id,
             'in_print_template'=>$params->safeGet('print_template','','is_string'),
             'user_id'=>NApp::_GetCurrentUserId(),
@@ -190,7 +197,7 @@ class Templates extends Module {
 	 */
 	public function DeleteRecord($params = NULL) {
 		$id = $params->getOrFail('id','is_not0_integer','Invalid template identifier!');
-		$result = DataProvider::GetArray('Components\DForms\Templates','UnsetItem',['for_id'=>$id]);
+		$result = DataProvider::GetArray('Plugins\DForms\Templates','UnsetItem',['for_id'=>$id]);
 		if($result===FALSE) { throw new AppException('Unknown database error!'); }
 		$this->Exec('Listing',[],'main-content');
 	}//END public function DeleteRecord
@@ -204,7 +211,7 @@ class Templates extends Module {
 		$id = $params->safeGet('id',NULL,'is_not0_numeric');
 		$state = $params->safeGet('state',NULL,'is_numeric');
 		if(!$id || is_null($state)) { throw new AppException('Invalid record identifier!'); }
-		$result = DataProvider::GetArray('Components\DForms\Templates','SetItemState',array(
+		$result = DataProvider::GetArray('Plugins\DForms\Templates','SetItemState',array(
 			'for_id'=>$id,
 			'in_state'=>$state,
 			'user_id'=>NApp::_GetCurrentUserId(),
@@ -218,7 +225,7 @@ class Templates extends Module {
 	 */
 	public function CreateNewVersion($params = NULL) {
 		$id = $params->getOrFail('id','is_not0_integer','Invalid template identifier!');
-		$result = DataProvider::GetArray('Components\DForms\Templates','SetItemValidated',array('for_id'=>$id,'new_value'=>0));
+		$result = DataProvider::GetArray('Plugins\DForms\Templates','SetItemValidated',array('for_id'=>$id,'new_value'=>0));
 		if($result===FALSE) { return; }
 		$this->Exec('ShowEditForm',['id'=>$id],'main-content');
 	}//END public function CreateNewVersion
@@ -231,7 +238,7 @@ class Templates extends Module {
 	public function ValidateRecord($params = NULL) {
 		$id = $params->getOrFail('id','is_not0_integer','Invalid template identifier!');
 		$new_value = $params->safeGet('new_value',1,'is_numeric');
-		$result = DataProvider::GetArray('Components\DForms\Templates','SetItemValidated',array(
+		$result = DataProvider::GetArray('Plugins\DForms\Templates','SetItemValidated',array(
 			'for_id'=>$id,
 			'new_value'=>$new_value,
 			'user_id'=>NApp::_GetCurrentUserId(),
@@ -247,7 +254,7 @@ class Templates extends Module {
 	 */
 	public function ShowDesignEditForm($params = NULL) {
 		$idTemplate = $params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
-		$item = DataProvider::Get('Components\DForms\Templates','GetItemProperties',['template_id'=>$idTemplate]);
+		$item = DataProvider::Get('Plugins\DForms\Templates','GetItemProperties',['template_id'=>$idTemplate]);
 		if(!is_object($item) || $item instanceof DataSet) { $item = new VirtualEntity([]); }
 		$target = $params->safeGet('target','','is_string');
 		$view = new AppView(get_defined_vars(),$this,'secondary');
@@ -270,7 +277,7 @@ class Templates extends Module {
 			echo Translate::GetMessage('required_fields');
 			return;
 		}//if(!$renderType)
-		$result = DataProvider::Get('Components\DForms\Templates','SetPropertiesItem',array(
+		$result = DataProvider::Get('Plugins\DForms\Templates','SetPropertiesItem',array(
             'template_id'=>$id_template,
             'in_render_type'=>$renderType,
             'in_theme_type'=>$params->safeGet('theme_type','','is_string'),
@@ -310,7 +317,7 @@ class Templates extends Module {
 		$id_template = $params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
 		$id = $params->safeGet('id',NULL,'is_not0_numeric');
 		if($id) {
-			$item = DataProvider::GetArray('Components\DForms\Templates','GetRelations',array('for_id'=>$id));
+			$item = DataProvider::GetArray('Plugins\DForms\Templates','GetRelations',array('for_id'=>$id));
 			$item = $item[0];
 		} else {
 			$item = [];
@@ -344,7 +351,7 @@ class Templates extends Module {
 			return;
 		}//if(!strlen($name) || !strlen($key) || !is_numeric($rtype) || !is_numeric($utype) || (!$id && !$type))
 		if($id) {
-			$result = DataProvider::GetArray('Components\DForms\Templates','SetRelation',array(
+			$result = DataProvider::GetArray('Plugins\DForms\Templates','SetRelation',array(
 				'for_id'=>$id,
 				'in_name'=>$name,
 				'in_key'=>$key,
@@ -353,7 +360,7 @@ class Templates extends Module {
 				'in_utype'=>$utype,
 			));
 		} else {
-			$result = DataProvider::GetArray('Components\DForms\Templates','SetNewRelation',array(
+			$result = DataProvider::GetArray('Plugins\DForms\Templates','SetNewRelation',array(
 				'template_id'=>$id_template,
 				'relation_type_id'=>$id_type,
 				'in_name'=>$name,
@@ -379,7 +386,7 @@ class Templates extends Module {
 	public function DeleteRelationRecord($params = NULL) {
 		$id = $params->getOrFail('id','is_not0_integer','Invalid record identifier!');
 		$id_template = $params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
-		$result = DataProvider::GetArray('Components\DForms\Templates','UnsetRelation',array('for_id'=>$id));
+		$result = DataProvider::GetArray('Plugins\DForms\Templates','UnsetRelation',array('for_id'=>$id));
 		if($result===FALSE) { return; }
 		$target = $params->safeGet('target','','is_string');
 		$this->Exec('ShowRelationsEditForm',['id_template'=>$id_template,'target'=>$target],$target);
@@ -392,9 +399,9 @@ class Templates extends Module {
 	 */
 	public function ShowContentEditForm($params = NULL) {
 		$idTemplate = $params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
-		$templateProps = DataProvider::Get('Components\DForms\Templates','GetItemProperties',['template_id'=>$idTemplate]);
-		$fieldsTypes = DataProvider::Get('Components\DForms\Controls','GetItems',['for_state'=>1]);
-		$templatePages = DataProvider::Get('Components\DForms\Templates','GetItemPages',['template_id'=>$idTemplate],['sort'=>['pindex'=>'asc']]);
+		$templateProps = DataProvider::Get('Plugins\DForms\Templates','GetItemProperties',['template_id'=>$idTemplate]);
+		$fieldsTypes = DataProvider::Get('Plugins\DForms\Controls','GetItems',['for_state'=>1]);
+		$templatePages = DataProvider::Get('Plugins\DForms\Templates','GetItemPages',['template_id'=>$idTemplate],['sort'=>['pindex'=>'asc']]);
 		$target = $params->safeGet('target','','is_string');
 		$view = new AppView(get_defined_vars(),$this,NULL);
         $view->AddContent($this->GetViewFile('ContentEditForm'));
@@ -409,8 +416,8 @@ class Templates extends Module {
 	public function ShowContentTable($params = NULL) {
 		$idTemplate = $params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
 		$pindex = $params->getOrFail('pindex','is_integer','Invalid template page identifier!');
-		$templatePage = DataProvider::Get('Components\DForms\Templates','GetItemPage',['template_id'=>$idTemplate,'for_pindex'=>$pindex]);
-		$fields = DataProvider::GetKeyValue('Components\DForms\Templates','GetFields',['template_id'=>$idTemplate,'for_pindex'=>$pindex],['keyfield'=>'cell']);
+		$templatePage = DataProvider::Get('Plugins\DForms\Templates','GetItemPage',['template_id'=>$idTemplate,'for_pindex'=>$pindex]);
+		$fields = DataProvider::GetKeyValue('Plugins\DForms\Templates','GetFields',['template_id'=>$idTemplate,'for_pindex'=>$pindex],['keyfield'=>'cell']);
 		$target = $params->safeGet('target','','is_string');
 		$ctarget = $params->safeGet('ctarget','','is_string');
 		$view = new AppView(get_defined_vars(),$this,NULL);
@@ -448,17 +455,17 @@ class Templates extends Module {
 		$type = $params->getOrFail('type','is_integer','Invalid action type!');
 		$pindex = $params->getOrFail('pindex','is_integer','Invalid page position!');
 		if($type<0) {
-			$result = DataProvider::Get('Components\DForms\Templates','UnsetTemplatePage',[
+			$result = DataProvider::Get('Plugins\DForms\Templates','UnsetTemplatePage',[
 				'for_id'=>$idTemplate,
 				'in_pindex'=>$pindex,
 			]);
 		} elseif($type==0) {
-			$result = DataProvider::Get('Components\DForms\Templates','SetTemplatePage',[
+			$result = DataProvider::Get('Plugins\DForms\Templates','SetTemplatePage',[
 				'for_id'=>$idTemplate,
 				'in_pindex'=>$pindex,
 			]);
 		} else {
-			$result = DataProvider::Get('Components\DForms\Templates','SetNewTemplatePage',[
+			$result = DataProvider::Get('Plugins\DForms\Templates','SetNewTemplatePage',[
 				'for_id'=>$idTemplate,
 				'in_pindex'=>$pindex,
 			]);
@@ -505,21 +512,21 @@ class Templates extends Module {
 		$rowsno = $params->safeGet('rowsno',NULL,'is_not0_integer');
 		if($colsno===NULL && $rowsno===NULL) { return; }
 		if($type<0) {
-			$result = DataProvider::GetArray('Components\DForms\Templates','UnsetTableCell',array(
+			$result = DataProvider::GetArray('Plugins\DForms\Templates','UnsetTableCell',array(
 				'for_id'=>$idTemplate,
 				'in_col'=>$colsno,
 				'in_row'=>$rowsno,
 				'in_pindex'=>$pindex,
 			));
 		} elseif($type==0) {
-			$result = DataProvider::GetArray('Components\DForms\Templates','SetTableCell',array(
+			$result = DataProvider::GetArray('Plugins\DForms\Templates','SetTableCell',array(
 				'for_id'=>$idTemplate,
 				'in_col'=>$colsno,
 				'in_row'=>$rowsno,
 				'in_pindex'=>$pindex,
 			));
 		} else {
-			$result = DataProvider::GetArray('Components\DForms\Templates','SetNewTableCell',array(
+			$result = DataProvider::GetArray('Plugins\DForms\Templates','SetNewTableCell',array(
 				'for_id'=>$idTemplate,
 				'in_col'=>$colsno,
 				'in_row'=>$rowsno,
@@ -542,10 +549,10 @@ class Templates extends Module {
 		$idTemplate = $params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
 		$pindex = $params->getOrFail('pindex','is_integer','Invalid page position!');
 		$idControl = $params->getOrFail('id_control','is_not0_integer','Invalid control identifier!');
-		$fieldType = DataProvider::Get('Components\DForms\Controls','GetItem',['for_id'=>$idControl]);
+		$fieldType = DataProvider::Get('Plugins\DForms\Controls','GetItem',['for_id'=>$idControl]);
 		$id = $params->safeGet('id_item',NULL,'is_not0_integer');
 		if($id) {
-			$item = DataProvider::Get('Components\DForms\Templates','GetField',['for_id'=>$id]);
+			$item = DataProvider::Get('Plugins\DForms\Templates','GetField',['for_id'=>$id]);
 			$frow = $item->getProperty('frow',0,'is_integer');
 			$fcol = $item->getProperty('fcol',0,'is_integer');
 		} else {
@@ -603,12 +610,12 @@ class Templates extends Module {
 		$listing = $params->safeGet('listing',0,'is_integer');
 		$id_values_list = $params->safeGet('id_values_list',NULL,'is_numeric');
 		// process field properties
-		$fparams = ModulesProvider::Exec('Components\DForms\Controls\Controls','ProcessFieldProperties',[
+		$fparams = ModulesProvider::Exec('Plugins\DForms\Controls\Controls','ProcessFieldProperties',[
 			'id_control'=>$params->safeGet('id_control',NULL,'is_integer'),
 			'data'=>$params->safeGet('properties',NULL,'is_array'),
 		]);
 		if($id) {
-			$result = DataProvider::Get('Components\DForms\Templates','SetField',[
+			$result = DataProvider::Get('Plugins\DForms\Templates','SetField',[
 				'for_id'=>$id,
 				'in_itype'=>$params->safeGet('itype',NULL,'is_not0_integer'),
 				'in_frow'=>NULL,
@@ -642,7 +649,7 @@ class Templates extends Module {
 			} else {
 				$id_sub_form = NULL;
 			}//if($class=='BasicForm' && !$id_sub_form)
-			$result = DataProvider::Get('Components\DForms\Templates','SetNewField',[
+			$result = DataProvider::Get('Plugins\DForms\Templates','SetNewField',[
 				'template_id'=>$idTemplate,
 				'sub_form_id'=>$id_sub_form,
 				'in_pindex'=>$pindex,
@@ -682,7 +689,7 @@ class Templates extends Module {
 		$frow = $cell_arr[1];
 		$fcol = $cell_arr[2];
 		if(!$frow || !$fcol) { throw new AppException('Invalid field data!'); }
-		$result = DataProvider::Get('Components\DForms\Templates','SetField',[
+		$result = DataProvider::Get('Plugins\DForms\Templates','SetField',[
 			'for_id'=>$id,
 			'in_itype'=>NULL,
 			'in_frow'=>$frow,
@@ -710,7 +717,7 @@ class Templates extends Module {
 		$idTemplate = $params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
 		$pindex = $params->getOrFail('pindex','is_integer','Invalid page position!');
 		$id = $params->getOrFail('id','is_not0_integer','Invalid field identifier!');
-		$result = DataProvider::Get('Components\DForms\Templates','UnsetField',['for_id'=>$id]);
+		$result = DataProvider::Get('Plugins\DForms\Templates','UnsetField',['for_id'=>$id]);
 		if($result===FALSE) { throw new AppException('Unknown database error!'); }
 		$target = $params->safeGet('target','','is_string');
 		$this->Exec('ShowContentTable',['id_template'=>$idTemplate,'pindex'=>$pindex,'target'=>$target],$target);
@@ -724,7 +731,7 @@ class Templates extends Module {
 	public function CloneRecord($params = NULL) {
 		// NApp::_Dlog($params,'DeleteContentElementRecord');
 		$id = $params->getOrFail('id','is_not0_integer','Invalid field identifier!');
-		$result = DataProvider::Get('Components\DForms\Templates','CloneItem',['for_id'=>$id,'user_id'=>NApp::_GetCurrentUserId()]);
+		$result = DataProvider::Get('Plugins\DForms\Templates','CloneItem',['for_id'=>$id,'user_id'=>NApp::_GetCurrentUserId()]);
 		if($result===FALSE) { throw new AppException('Unknown database error!'); }
 		$this->Exec('Listing',[],'main-content');
     }//END public function CloneRecord

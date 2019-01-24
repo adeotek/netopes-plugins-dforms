@@ -126,7 +126,7 @@
 					$f_value = get_array_value($field,'ivalues',NULL,'is_string');
 					$id_values_list = get_array_value($field,'id_values_list',0,'is_numeric');
 					if($id_values_list>0) {
-						$vl_value = DataProvider::GetArray('Components\DForms\ValuesLists','GetValueItems',['for_id'=>$f_value,'list_id'=>$id_values_list]);
+						$vl_value = DataProvider::GetArray('Plugins\DForms\ValuesLists','GetValueItems',['for_id'=>$f_value,'list_id'=>$id_values_list]);
 						$fvalue = get_array_value($vl_value,[0,'name'],$empty_val,'is_notempty_string');
 					} else {
 						$fvalue = $empty_val;

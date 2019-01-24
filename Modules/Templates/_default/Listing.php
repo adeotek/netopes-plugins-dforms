@@ -13,7 +13,7 @@ $ctrl_params = array(
     'with_pagination'=>TRUE,
     'sortby'=>array('column'=>'name','direction'=>'asc'),
     'qsearch'=>'for_text',
-    'data_source'=>'Components\DForms\Templates',
+    'data_source'=>'Plugins\DForms\Templates',
     'ds_method'=>'GetItems',
     'ds_params'=>array('for_id'=>NULL,'for_validated'=>NULL,'for_state'=>NULL,'for_text'=>NULL,'for_ftype'=>NULL,'exclude_id'=>NULL),
     'auto_load_data'=>TRUE,

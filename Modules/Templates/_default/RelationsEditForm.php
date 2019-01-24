@@ -4,7 +4,7 @@
 	use NETopes\Core\Controls\TableView;
 
 	$dgtarget = 'dg-'.$target;
-	$btn_add = new Button(array('tagid'=>'df_trelations_add','value'=>Translate::GetButton('add'),'class'=>'btn btn-primary btn-xs pull-left','icon'=>'fa fa-plus-circle','onclick'=>NApp::arequest()->PrepareAjaxRequest(['module'=>'Components\DForms\Templates\Templates','method'=>'ShowRelationAddEditForm','target'=>'modal','params'=>['id_template'=>$id_template,'target'=>$target]])));
+	$btn_add = new Button(array('tagid'=>'df_trelations_add','value'=>Translate::GetButton('add'),'class'=>'btn btn-primary btn-xs pull-left','icon'=>'fa fa-plus-circle','onclick'=>NApp::arequest()->PrepareAjaxRequest(['module'=>'Plugins\DForms\Templates\Templates','method'=>'ShowRelationAddEditForm','target'=>'modal','params'=>['id_template'=>$id_template,'target'=>$target]])));
 	echo $btn_add->Show();
 ?>
 		</div>
@@ -21,7 +21,7 @@
 		'with_pagination'=>TRUE,
 		'sortby'=>array('column'=>'name','direction'=>'asc'),
 		'qsearch'=>'for_text',
-		'data_source'=>'Components\DForms\Templates',
+		'data_source'=>'Plugins\DForms\Templates',
 		'ds_method'=>'GetRelations',
 		'ds_params'=>array('for_id'=>NULL,'template_id'=>$id_template,'for_text'=>NULL),
 		'auto_load_data'=>TRUE,

@@ -22,6 +22,13 @@ use Translate;
  * @package  NETopes\Plugins\Modules\DForms
  */
 class ValuesLists extends Module {
+    /**
+	 * Module class initializer
+	 * @return void
+	 */
+	protected function _Init() {
+	    $this->viewsExtension = '.php';
+	}//END protected function _Init
 	/**
 	 * description
 	 * @param \NETopes\Core\App\Params|array|null $params Parameters
@@ -65,7 +72,7 @@ class ValuesLists extends Module {
 	 */
 	public function ShowEditForm($params = NULL) {
 		$id = $params->getOrFail('id','is_not0_integer','Invalid record identifier!');
-		$item = DataProvider::Get('Components\DForms\ValuesLists','GetItem',['for_id'=>$id]);
+		$item = DataProvider::Get('Plugins\DForms\ValuesLists','GetItem',['for_id'=>$id]);
 		$title = Translate::GetLabel('values_list').' - '.Translate::GetButton('edit').' : ' . $item['name'] . ' [ '.$item['ltype']  .' ]';
 		$view = new AppView(get_defined_vars(),$this,'main');
 		$view->AddTabControl($this->GetViewFile('EditForm'));
@@ -93,7 +100,7 @@ class ValuesLists extends Module {
 			return;
 		}//if(!strlen($name) || (!$id && !$lType))
 		if($id) {
-			$result = DataProvider::Get('Components\DForms\ValuesLists','SetItem',[
+			$result = DataProvider::Get('Plugins\DForms\ValuesLists','SetItem',[
 				'for_id'=>$id,
 				'in_name'=>$name,
 				'in_state'=>$params->safeGet('state',1,'is_integer'),
@@ -105,7 +112,7 @@ class ValuesLists extends Module {
 			}//if($params->safeGet('close',1,'is_integer')!=1)
 			$this->Exec('Listing',[],'main-content');
 		} else {
-			$result = DataProvider::Get('Components\DForms\ValuesLists','SetNewItem',array(
+			$result = DataProvider::Get('Plugins\DForms\ValuesLists','SetNewItem',array(
 				'in_ltype'=>$lType,
 				'in_name'=>$name,
 				'in_state'=>$params->safeGet('state',1,'is_integer'),
@@ -126,7 +133,7 @@ class ValuesLists extends Module {
 	 */
 	public function DeleteRecord($params = NULL) {
 		$id = $params->getOrFail('id','is_not0_integer','Invalid record identifier!');
-		$result = DataProvider::Get('Components\DForms\ValuesLists','UnsetItem',['for_id'=>$id]);
+		$result = DataProvider::Get('Plugins\DForms\ValuesLists','UnsetItem',['for_id'=>$id]);
 		if($result===FALSE) { throw new AppException('Unknown database error!'); }
 		$this->Exec('Listing',[],'main-content');
 	}//END public function DeleteRecord
@@ -175,7 +182,7 @@ class ValuesLists extends Module {
 		$idList = $params->getOrFail('id_list','is_not0_integer','Invalid list identifier!');
 		$id = $params->safeGet('id',NULL,'is_integer');
 		if($id) {
-			$item = DataProvider::Get('Components\DForms\ValuesLists','GetValue',['for_id'=>$id]);
+			$item = DataProvider::Get('Plugins\DForms\ValuesLists','GetValue',['for_id'=>$id]);
 		} else {
 			$item = new VirtualEntity();
 		}//if($id)
@@ -207,7 +214,7 @@ class ValuesLists extends Module {
 			return;
 		}//if(!strlen($value))
 		if($id) {
-			$result = DataProvider::Get('Components\DForms\ValuesLists','SetValue',[
+			$result = DataProvider::Get('Plugins\DForms\ValuesLists','SetValue',[
 				'for_id'=>$id,
 				'in_value'=>$value,
 				'in_name'=>$name,
@@ -216,7 +223,7 @@ class ValuesLists extends Module {
 			]);
 			if($result===FALSE) { throw new AppException('Unknown database error!'); }
 		} else {
-			$result = DataProvider::GetArray('Components\DForms\ValuesLists','SetNewValue',[
+			$result = DataProvider::GetArray('Plugins\DForms\ValuesLists','SetNewValue',[
 				'list_id'=>$idList,
 				'in_value'=>$value,
 				'in_name'=>$name,
@@ -239,7 +246,7 @@ class ValuesLists extends Module {
 	public function DeleteValueRecord($params = NULL) {
 		$id = $params->getOrFail('id','is_not0_integer','Invalid record identifier!');
 		$idList = $params->safeGet('id_list','is_not0_integer','Invalid list identifier!');
-		$result = DataProvider::Get('Components\DForms\ValuesLists','UnsetValue',['for_id'=>$id]);
+		$result = DataProvider::Get('Plugins\DForms\ValuesLists','UnsetValue',['for_id'=>$id]);
 		if($result===FALSE) { throw new AppException('Unknown database error!'); }
 		$target = $params->safeGet('target','','is_string');
 		$this->Exec('ValuesListing',['id_list'=>$idList,'edit'=>1,'target'=>$target],$target);

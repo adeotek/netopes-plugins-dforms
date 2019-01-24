@@ -10,7 +10,7 @@ $ctrl_params = array(
     'with_pagination'=>TRUE,
     'sortby'=>array('column'=>'name','direction'=>'asc'),
     'qsearch'=>'for_text',
-    'data_source'=>'Components\DForms\ValuesLists',
+    'data_source'=>'Plugins\DForms\ValuesLists',
     'ds_method'=>'GetItems',
     'ds_params'=>array('for_id'=>NULL,'for_state'=>NULL,'for_text'=>NULL),
     'auto_load_data'=>TRUE,

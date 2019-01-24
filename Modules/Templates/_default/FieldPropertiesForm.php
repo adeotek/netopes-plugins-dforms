@@ -69,7 +69,7 @@ use NETopes\Core\Controls\TextBox;
 				'placeholder'=>Translate::GetLabel('please_select_template'),
 				'load_type'=>'database',
 				'data_source'=>array(
-					'ds_class'=>'Components\DForms\Templates',
+					'ds_class'=>'Plugins\DForms\Templates',
 					'ds_method'=>'GetItems',
 					'ds_params'=>array('for_id'=>NULL,'for_validated'=>1,'for_state'=>1,'for_text'=>NULL,'for_ftype'=>1,'exclude_id'=>$idTemplate),
 				),
@@ -107,7 +107,7 @@ use NETopes\Core\Controls\TextBox;
 				'allow_clear'=>TRUE,
 				'load_type'=>'database',
 				'data_source'=>array(
-					'ds_class'=>'Components\DForms\ValuesLists',
+					'ds_class'=>'Plugins\DForms\ValuesLists',
 					'ds_method'=>'GetItems',
 					'ds_params'=>array('for_id'=>NULL,'for_state'=>1,'for_text'=>NULL),
 				)));
@@ -139,7 +139,7 @@ use NETopes\Core\Controls\TextBox;
 		];
 	}//if(count($hfields))
 
-    $tab_ctrl = ModulesProvider::Exec('Components\DForms\Controls\Controls','GetControlPropertiesTab',array('id_control'=>$idControl,'data'=>$cparams,'target'=>'dft_fp_properties_tab'));
+    $tab_ctrl = ModulesProvider::Exec('Plugins\DForms\Controls\Controls','GetControlPropertiesTab',array('id_control'=>$idControl,'data'=>$cparams,'target'=>'dft_fp_properties_tab'));
     if(is_object($tab_ctrl)) {
         $ctrl_params['content'][] = ['separator'=>'subtitle','value'=>Translate::GetLabel('control_properties')];
         $ctrl_params['content'][] = [

@@ -15,7 +15,7 @@
 						'placeholder'=>Translate::GetLabel('please_select'),
 						'load_type'=>'database',
 						'data_source'=>array(
-							'ds_class'=>'Components\DForms\Templates',
+							'ds_class'=>'Plugins\DForms\Templates',
 							'ds_method'=>'GetRelationsTypes',
 							'ds_extra_params'=>array('sort'=>array('NAME'=>'ASC')),
 						),

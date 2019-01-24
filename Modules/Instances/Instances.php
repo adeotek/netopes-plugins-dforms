@@ -89,7 +89,7 @@ class Instances extends Module {
 		if(in_array($fclass,['SmartComboBox','GroupCheckBox']) && $id_values_list>0) {
 			$f_params['load_type'] ='database';
 			$f_params['data_source'] = array(
-				'ds_class'=>'Components\DForms\ValuesLists',
+				'ds_class'=>'Plugins\DForms\ValuesLists',
 				'ds_method'=>'GetValues',
 				'ds_params'=>array('list_id'=>$id_values_list,'for_state'=>1),
 			);
@@ -173,7 +173,7 @@ class Instances extends Module {
 		if(in_array($fclass,['SmartComboBox','GroupCheckBox']) && $id_values_list>0) {
 			$f_params['load_type'] ='database';
 			$f_params['data_source'] = array(
-				'ds_class'=>'Components\DForms\ValuesLists',
+				'ds_class'=>'Plugins\DForms\ValuesLists',
 				'ds_method'=>'GetValues',
 				'ds_params'=>array('list_id'=>$id_values_list,'for_state'=>1),
 			);
@@ -201,7 +201,7 @@ class Instances extends Module {
 		$id_template = get_array_value($mtemplate,'id',NULL,'is_integer');
 		if(!$id_template) { return NULL; }
 		if($id_sub_form) {
-			$template = DataProvider::GetArray('Components\DForms\Instances','GetTemplate',array(
+			$template = DataProvider::GetArray('Plugins\DForms\Instances','GetTemplate',array(
 				'for_id'=>$id_sub_form,
 				'for_code'=>NULL,
 				'instance_id'=>($id_instance ? $id_instance : NULL),
@@ -213,7 +213,7 @@ class Instances extends Module {
 			// NApp::_Dlog($template,'$template');
 			if(!$id_sub_form || !$id_item) { return NULL; }
 			$relations = NULL;
-			$fields = DataProvider::GetArray('Components\DForms\Instances','GetStructure',[
+			$fields = DataProvider::GetArray('Plugins\DForms\Instances','GetStructure',[
 				'template_id'=>$id_template,
 				'instance_id'=>($id_instance ? $id_instance : NULL),
 				'item_id'=>$id_item,
@@ -223,11 +223,11 @@ class Instances extends Module {
 		} else {
 			$template = $mtemplate;
 			if($id_instance) {
-				$relations = DataProvider::GetArray('Components\DForms\Instances','GetRelations',array('instance_id'=>$id_instance));
+				$relations = DataProvider::GetArray('Plugins\DForms\Instances','GetRelations',array('instance_id'=>$id_instance));
 			} else {
-				$relations = DataProvider::GetArray('Components\DForms\Templates','GetRelations',array('template_id'=>$id_template));
+				$relations = DataProvider::GetArray('Plugins\DForms\Templates','GetRelations',array('template_id'=>$id_template));
 			}//if($id_instance)
-			$fields = DataProvider::GetArray('Components\DForms\Instances','GetStructure',[
+			$fields = DataProvider::GetArray('Plugins\DForms\Instances','GetStructure',[
 				'template_id'=>$id_template,
 				'instance_id'=>($id_instance ? $id_instance : NULL),
 			]);
@@ -250,7 +250,7 @@ class Instances extends Module {
 		$idTemplate = $params->safeGet('id_template',$this->idTemplate,'is_not0_integer');
 		$templateCode = $params->safeGet('templateCode',$this->templateCode,'is_not0_integer');
 		if(!$idTemplate && !$templateCode) { throw new AppException('Invalid DynamicForm template identifier!'); }
-		$fields = DataProvider::Get('Components\DForms\Instances','GetFields',[
+		$fields = DataProvider::Get('Plugins\DForms\Instances','GetFields',[
 			'template_id'=>($idTemplate ? $idTemplate : NULL),
 			'for_template_code'=>$templateCode,
 			'for_listing'=>1,
@@ -296,7 +296,7 @@ class Instances extends Module {
 		$id_template = $params->safeGet('id_template',$this->id_template,'is_not0_integer');
 		$template_code = $params->safeGet('template_code',$this->template_code,'is_not0_integer');
 		if(!$id_template && !$template_code) { throw new AppException('Invalid DynamicForm template identifier!'); }
-		$template = DataProvider::GetArray('Components\DForms\Instances','GetTemplate',array(
+		$template = DataProvider::GetArray('Plugins\DForms\Instances','GetTemplate',array(
 			'for_id'=>(is_numeric($id_template) ? $id_template : NULL),
 			'for_code'=>(is_numeric($template_code) ? $template_code : NULL),
 			'instance_id'=>NULL,
@@ -335,7 +335,7 @@ class Instances extends Module {
 		}//if(!count($data))
 		$error = FALSE;
 
-		$fields = DataProvider::GetArray('Components\DForms\Instances','GetFields',array('template_id'=>$id_template));
+		$fields = DataProvider::GetArray('Plugins\DForms\Instances','GetFields',array('template_id'=>$id_template));
 		foreach($fields as $k=>$field) {
 			if($field['itype']==2 || $field['parent_itype']==2) {
 				$fvals = get_array_value($data,$field['id'],NULL,'is_array');
@@ -376,7 +376,7 @@ class Instances extends Module {
 			$fields[$k]['value'] = $fval;
 		}//END foreach
 
-		$relations = DataProvider::GetArray('Components\DForms\Templates','GetRelations',array('template_id'=>$id_template));
+		$relations = DataProvider::GetArray('Plugins\DForms\Templates','GetRelations',array('template_id'=>$id_template));
 		foreach($relations as $k=>$rel) {
 			$dtype = get_array_value($rel,'dtype','','is_string');
 			$relations[$k]['ivalue'] = 0;
@@ -417,11 +417,11 @@ class Instances extends Module {
 			return;
 		}//if($error)
 
-		$template = DataProvider::GetArray('Components\DForms\Instances','GetTemplate',array('for_id'=>$id_template));
+		$template = DataProvider::GetArray('Plugins\DForms\Instances','GetTemplate',array('for_id'=>$id_template));
 		$transaction = \NETopes\Core\AppSession::GetNewUID(get_array_value($template,'code','N/A','is_notempty_string'));
-		DataProvider::StartTransaction('Components\DForms\Instances',$transaction);
+		DataProvider::StartTransaction('Plugins\DForms\Instances',$transaction);
 		try {
-			$result = DataProvider::GetArray('Components\DForms\Instances','SetNewInstance',array(
+			$result = DataProvider::GetArray('Plugins\DForms\Instances','SetNewInstance',array(
 				'template_id'=>$id_template,
 				'user_id'=>NApp::_GetCurrentUserId(),
 			),['transaction'=>$transaction]);
@@ -431,7 +431,7 @@ class Instances extends Module {
 			foreach($fields as $f) {
 				if(($f['itype']==2 || $f['parent_itype']==2) && is_array($f['value'])) {
 					foreach($f['value'] as $index=>$fvalue) {
-						$result = DataProvider::GetArray('Components\DForms\Instances','SetNewInstanceValue',array(
+						$result = DataProvider::GetArray('Plugins\DForms\Instances','SetNewInstanceValue',array(
 							'instance_id'=>$id_instance,
 							'item_id'=>$f['id'],
 							'in_value'=>$fvalue,
@@ -441,7 +441,7 @@ class Instances extends Module {
 						if(get_array_value($result,0,0,'is_integer','inserted_id')<=0) { throw new AppException('Database error on instance value insert!'); }
 					}//END foreach
 				} else {
-					$result = DataProvider::GetArray('Components\DForms\Instances','SetNewInstanceValue',array(
+					$result = DataProvider::GetArray('Plugins\DForms\Instances','SetNewInstanceValue',array(
 						'instance_id'=>$id_instance,
 						'item_id'=>$f['id'],
 						'in_value'=>(isset($f['value']) ? $f['value'] : NULL),
@@ -453,7 +453,7 @@ class Instances extends Module {
 			}//END foreach
 
 			foreach($relations as $r) {
-				$result = DataProvider::GetArray('Components\DForms\Instances','SetNewInstanceRelation',array(
+				$result = DataProvider::GetArray('Plugins\DForms\Instances','SetNewInstanceRelation',array(
 					'instance_id'=>$id_instance,
 					'relation_id'=>$r['id'],
 					'in_ivalue'=>$r['ivalue'],
@@ -462,9 +462,9 @@ class Instances extends Module {
 				if(get_array_value($result,0,0,'is_integer','inserted_id')<=0) { throw new AppException('Database error on instance value insert!'); }
 			}//END foreach
 
-			DataProvider::CloseTransaction('Components\DForms\Instances',$transaction,FALSE);
+			DataProvider::CloseTransaction('Plugins\DForms\Instances',$transaction,FALSE);
 		} catch(AppException $e) {
-			DataProvider::CloseTransaction('Components\DForms\Instances',$transaction,TRUE);
+			DataProvider::CloseTransaction('Plugins\DForms\Instances',$transaction,TRUE);
 			NApp::_Elog($e->getMessage());
 			throw $e;
 		}//END try
@@ -484,7 +484,7 @@ class Instances extends Module {
 		// NApp::_Dlog($params,'ShowEditForm');
 		$id_instance = $params->safeGet('id',NULL,'is_not0_integer');
 		if(!$id_instance) { throw new AppException('Invalid DynamicForm instance identifier!'); }
-		$template = DataProvider::GetArray('Components\DForms\Instances','GetTemplate',array(
+		$template = DataProvider::GetArray('Plugins\DForms\Instances','GetTemplate',array(
 			'for_id'=>NULL,
 			'for_code'=>NULL,
 			'instance_id'=>$id_instance,
@@ -514,7 +514,7 @@ class Instances extends Module {
 		// NApp::_Dlog($params,'ShowAddEditForm');
 		$this->template_code = $params->safeGet('template_code',$this->template_code,'is_not0_integer');
 		$id_instance = $params->safeGet('id',0,'is_integer');
-		$template = DataProvider::GetArray('Components\DForms\Instances','GetTemplate',array(
+		$template = DataProvider::GetArray('Plugins\DForms\Instances','GetTemplate',array(
 			'for_id'=>NULL,
 			'for_code'=>$this->template_code,
 			'instance_id'=>$id_instance,
@@ -553,7 +553,7 @@ class Instances extends Module {
 			return;
 		}//if(!count($data))
 		$error = FALSE;
-		$fields = DataProvider::GetArray('Components\DForms\Instances','GetFields',array('template_id'=>$id_template,'instance_id'=>$id_instance));
+		$fields = DataProvider::GetArray('Plugins\DForms\Instances','GetFields',array('template_id'=>$id_template,'instance_id'=>$id_instance));
 		foreach($fields as $k=>$field) {
 			if($field['itype']==2 || $field['parent_itype']==2) {
 				$fvals = get_array_value($data,$field['id'],NULL,'is_array');
@@ -594,7 +594,7 @@ class Instances extends Module {
 			$fields[$k]['value'] = $fval;
 		}//END foreach
 
-		// $relations = DataProvider::GetArray('Components\DForms\Instances','GetRelations',array('template_id'=>$id_template,'instance_id'=>$id_instance));
+		// $relations = DataProvider::GetArray('Plugins\DForms\Instances','GetRelations',array('template_id'=>$id_template,'instance_id'=>$id_instance));
 		// foreach($relations as $k=>$rel) {
 		// 	$dtype = get_array_value($rel,'dtype','','is_string');
 		// 	$relations[$k]['ivalue'] = 0;
@@ -633,18 +633,18 @@ class Instances extends Module {
 			return;
 		}//if($error)
 
-		$template = DataProvider::GetArray('Components\DForms\Instances','GetTemplate',array('for_id'=>$id_template));
+		$template = DataProvider::GetArray('Plugins\DForms\Instances','GetTemplate',array('for_id'=>$id_template));
 		$transaction = \NETopes\Core\AppSession::GetNewUID(get_array_value($template,'code','N/A','is_notempty_string'));
-		DataProvider::StartTransaction('Components\DForms\Instances',$transaction);
+		DataProvider::StartTransaction('Plugins\DForms\Instances',$transaction);
 		try {
-			$result = DataProvider::GetArray('Components\DForms\Instances','UnsetInstanceValues',['instance_id'=>$id_instance],['transaction'=>$transaction]);
+			$result = DataProvider::GetArray('Plugins\DForms\Instances','UnsetInstanceValues',['instance_id'=>$id_instance],['transaction'=>$transaction]);
 			if($result===FALSE) { throw new AppException('Database error on instance update!'); }
 
 			foreach($fields as $f) {
 				if(in_array($f['class'],['','FormTitle','FormSubTitle','FormSeparator','Message','BasicForm'])) { continue; }
 				if(($f['itype']==2 || $f['parent_itype']==2) && is_array($f['value'])) {
 					foreach($f['value'] as $index=>$fvalue) {
-						$result = DataProvider::GetArray('Components\DForms\Instances','SetNewInstanceValue',array(
+						$result = DataProvider::GetArray('Plugins\DForms\Instances','SetNewInstanceValue',array(
 							'instance_id'=>$id_instance,
 							'item_id'=>$f['id'],
 							'in_value'=>$fvalue,
@@ -654,7 +654,7 @@ class Instances extends Module {
 						if(get_array_value($result,0,0,'is_integer','inserted_id')<=0) { throw new AppException('Database error on instance value insert!'); }
 					}//END foreach
 				} else {
-					$result = DataProvider::GetArray('Components\DForms\Instances','SetNewInstanceValue',array(
+					$result = DataProvider::GetArray('Plugins\DForms\Instances','SetNewInstanceValue',array(
 						'instance_id'=>$id_instance,
 						'item_id'=>$f['id'],
 						'in_value'=>(isset($f['value']) ? $f['value'] : NULL),
@@ -666,7 +666,7 @@ class Instances extends Module {
 			}//END foreach
 
 			// foreach($relations as $r) {
-			// 	$result = DataProvider::GetArray('Components\DForms\Instances','SetNewInstanceRelation',array(
+			// 	$result = DataProvider::GetArray('Plugins\DForms\Instances','SetNewInstanceRelation',array(
 			// 		'instance_id'=>$id_instance,
 			// 		'relation_id'=>$r['id'],
 			// 		'in_ivalue'=>$r['ivalue'],
@@ -675,13 +675,13 @@ class Instances extends Module {
 			// 	if(get_array_value($result,0,0,'is_integer','inserted_id')<=0) { throw new AppException('Database error on instance value insert!'); }
 			// }//END foreach
 
-			DataProvider::GetArray('Components\DForms\Instances','SetInstanceState',[
+			DataProvider::GetArray('Plugins\DForms\Instances','SetInstanceState',[
 				'for_id'=>$id_instance,
 				'user_id'=>NApp::_GetCurrentUserId(),
 			],['transaction'=>$transaction]);
-			DataProvider::CloseTransaction('Components\DForms\Instances',$transaction,FALSE);
+			DataProvider::CloseTransaction('Plugins\DForms\Instances',$transaction,FALSE);
 		} catch(AppException $e) {
-			DataProvider::CloseTransaction('Components\DForms\Instances',$transaction,TRUE);
+			DataProvider::CloseTransaction('Plugins\DForms\Instances',$transaction,TRUE);
 			NApp::_Elog($e->getMessage());
 			throw $e;
 		}//END try
@@ -715,7 +715,7 @@ class Instances extends Module {
 		$id_template = $params->safeGet('id_template',$this->id_template,'is_not0_integer');
 		$id = $params->safeGet('id',NULL,'is_not0_integer');
 		if(!$id_template || !$id) { throw new AppException('Invalid DynamicForm instance identifier!'); }
-		$result = DataProvider::GetArray('Components\DForms\Instances','UnsetInstance',array('for_id'=>$id));
+		$result = DataProvider::GetArray('Plugins\DForms\Instances','UnsetInstance',array('for_id'=>$id));
 		if($result===FALSE) { return; }
 		$cmodule = $params->safeGet('cmodule',get_called_class(),'is_notempty_string');
 		$cmethod = $params->safeGet('cmethod','Listing','is_notempty_string');
@@ -731,7 +731,7 @@ class Instances extends Module {
 	public function EditRecordState($params = NULL) {
 		$id = $params->safeGet('id',NULL,'is_not0_integer');
 		if(!$id) { throw new AppException('Invalid DynamicForm instance identifier!'); }
-		$result = DataProvider::GetArray('Components\DForms\Instances','SetInstanceState',array(
+		$result = DataProvider::GetArray('Plugins\DForms\Instances','SetInstanceState',array(
 			'for_id'=>$id,
 			'in_state'=>$params->safeGet('state',NULL,'is_integer'),
 			'user_id'=>NApp::_GetCurrentUserId(),
@@ -748,7 +748,7 @@ class Instances extends Module {
 		// NApp::_Dlog($params,'ShowViewForm');
 		$id_instance = $params->safeGet('id',NULL,'is_not0_integer');
 		if(!$id_instance) { throw new AppException('Invalid DynamicForm instance identifier!'); }
-		$instance = DataProvider::GetArray('Components\DForms\Instances','GetInstanceItem',array('for_id'=>$id_instance));
+		$instance = DataProvider::GetArray('Plugins\DForms\Instances','GetInstanceItem',array('for_id'=>$id_instance));
 		$id_template = get_array_value($template,'id',NULL,'is_integer');
 		$id_template = $params->safeGet('id_template',$this->id_template,'is_not0_integer');
 		if(!$id_template) { throw new AppException('Invalid DynamicForm template!'); }
@@ -773,7 +773,7 @@ class Instances extends Module {
 		$index = $params->safeGet('index',0,'is_integer');
 		$output = $params->safeGet('output',FALSE,'bool');
 		if($id_sub_form) {
-			$instance = DataProvider::GetArray('Components\DForms\Instances','GetTemplate',array(
+			$instance = DataProvider::GetArray('Plugins\DForms\Instances','GetTemplate',array(
 				'for_id'=>$id_sub_form,
 				'for_code'=>NULL,
 				'instance_id'=>$id_instance,
@@ -785,16 +785,16 @@ class Instances extends Module {
 			// NApp::_Dlog($template,'$template');
 			if(!$id_sub_form || !$id_item) { return NULL; }
 			$relations = NULL;
-			$fields = DataProvider::GetArray('Components\DForms\Instances','GetStructure',[
+			$fields = DataProvider::GetArray('Plugins\DForms\Instances','GetStructure',[
 				'instance_id'=>$id_instance,
 				'item_id'=>$id_item,
 				'for_index'=>(is_numeric($index) ? $index : NULL),
 			]);
 			// NApp::_Dlog($fields,'$fields');
 		} else {
-			$instance = DataProvider::GetArray('Components\DForms\Instances','GetInstanceItem',['for_id'=>$id_instance]);
-			$relations = DataProvider::GetArray('Components\DForms\Instances','GetRelations',['instance_id'=>$id_instance]);
-			$fields = DataProvider::GetArray('Components\DForms\Instances','GetStructure',['instance_id'=>$id_instance]);
+			$instance = DataProvider::GetArray('Plugins\DForms\Instances','GetInstanceItem',['for_id'=>$id_instance]);
+			$relations = DataProvider::GetArray('Plugins\DForms\Instances','GetRelations',['instance_id'=>$id_instance]);
+			$fields = DataProvider::GetArray('Plugins\DForms\Instances','GetStructure',['instance_id'=>$id_instance]);
 		}
 		$theme_type = get_array_value($instance,'theme_type','','is_string');
 		$controls_size = get_array_value($instance,'controls_size','','is_string');
@@ -816,7 +816,7 @@ class Instances extends Module {
 		if(!$id_instance) { throw new AppException('Invalid DynamicForm instance identifier!'); }
 		$cache = $params->safeGet('cache',TRUE,'bool');
 		$result_type = $params->safeGet('result_type',0,'is_integer');
-		$instance = DataProvider::GetArray('Components\DForms\Instances','GetInstanceItem',['for_id'=>$id_instance]);
+		$instance = DataProvider::GetArray('Plugins\DForms\Instances','GetInstanceItem',['for_id'=>$id_instance]);
 		$filename = get_array_value($instance,'uid','','is_string');
 		if(!strlen($filename)) {
 			$filename = date('Y-m-d_H-i-s').'.pdf';

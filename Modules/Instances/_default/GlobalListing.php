@@ -10,7 +10,7 @@ $ctrl_params = array(
     'with_pagination'=>TRUE,
     'sortby'=>array('column'=>'CREATE_DATE','direction'=>'ASC'),
     'qsearch'=>'for_text',
-    'data_source'=>'Components\DForms\Instances',
+    'data_source'=>'Plugins\DForms\Instances',
     'ds_method'=>'GetInstancesList',
     'ds_params'=>array('for_id'=>NULL,'template_id'=>$id_template,'for_template_code'=>$template_code,'for_state'=>NULL,'for_text'=>NULL),
     'auto_load_data'=>TRUE,
