@@ -103,7 +103,7 @@ use NETopes\Core\Controls\TextBox;
 				'value_field'=>'id',
 				'display_field'=>'name',
 				'selected_value'=>$item->getProperty('id_values_list',NULL,'is_string'),
-				'selectedtext'=>$item->getProperty('values_list','','is_string'),
+				'selected_text'=>$item->getProperty('values_list','','is_string'),
 				'allow_clear'=>TRUE,
 				'load_type'=>'database',
 				'data_source'=>array(
@@ -119,7 +119,7 @@ use NETopes\Core\Controls\TextBox;
 	$ctrl_params = [
 		'tag_id'=>'dft_fp_form',
 		'response_target'=>'dft_fp_form_errors',
-		'colsno'=>1,
+		'cols_no'=>1,
 		'content'=>[],
 	];
 	foreach($vfields as $f) {

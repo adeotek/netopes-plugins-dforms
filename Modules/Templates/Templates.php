@@ -483,12 +483,11 @@ class Templates extends Module {
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function ShowAddTableElementForm($params = NULL) {
-		// NApp::_Dlog($params,'ShowAddTableElementForm');
 		$idTemplate = $params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
 		$pIndex = $params->getOrFail('pindex','is_integer','Invalid page position!');
 		$type = $params->safeGet('type','','is_string');
 		$lastPos = $params->safeGet('last_pos',0,'is_numeric');
-		if(!strlen($type) || $lastPos<=0) { return; }
+		if(!strlen($type) || $lastPos<=0) { throw new AppException('Invalid table structure!'); }
 		$maxPos = $lastPos+1;
 		$target = $params->safeGet('target','','is_string');
 		$view = new AppView(get_defined_vars(),$this,'modal');

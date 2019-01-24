@@ -5,7 +5,7 @@ $positions[] = ['val'=>$maxPos,'name'=>Translate::GetLabel('end')];
 $ctrl_params = [
     'tag_id'=>'dft_add_page_form',
     'response_target'=>'dft_add_page_errors',
-    'colsno'=>1,
+    'cols_no'=>1,
     'content'=>[
         [
             [
@@ -16,7 +16,7 @@ $ctrl_params = [
     ],
     'actions'=>[
         [
-            'params'=>['tag_id'=>'dft_add_page_save','value'=>Translate::GetButton('add_page'),'icon'=>'fa fa-plus-circle','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','UpdatePagesList','id_template'|{$idTemplate}~'type'|0~'close'|1~'pindex'|dft_add_page_position:value,'{$target}')->dft_add_page_errors")],
+            'params'=>['value'=>Translate::GetButton('add_page'),'icon'=>'fa fa-plus-circle','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','UpdatePagesList','id_template'|{$idTemplate}~'type'|0~'close'|1~'pindex'|dft_add_page_position:value,'{$target}')->dft_add_page_errors")],
         ],
     ],
 ];

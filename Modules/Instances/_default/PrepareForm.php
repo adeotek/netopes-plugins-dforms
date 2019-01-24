@@ -130,7 +130,7 @@ if(is_array($fields) && count($fields)) {
         'tname'=>$tname,
         'tag_id'=>'df_'.$tname.'_form',
         'response_target'=>'df_'.$tname.'_errors',
-        'colsno'=>get_array_value($template,'colsno',1,'is_not0_numeric'),
+        'cols_no'=>get_array_value($template,'colsno',1,'is_not0_numeric'),
     ];
     if(strlen($theme_type)) { $ctrl_params['theme_type'] = $theme_type; }
     if(is_numeric($label_cols) && $label_cols>=1 && $label_cols<=12) { $ctrl_params['label_cols'] = $label_cols; }

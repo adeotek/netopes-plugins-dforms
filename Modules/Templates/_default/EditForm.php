@@ -14,7 +14,7 @@ $ctrl_params = array(
                 'control_params'=>array(
                     'tag_id'=>'df_template_edit_form',
                     'response_target'=>'df_template_edit_errors',
-                    'colsno'=>1,
+                    'cols_no'=>1,
                     'content'=>array(
                         array(
                             array(
@@ -126,7 +126,7 @@ $ctrl_params = array(
                 'control_params'=>array(
                     'tag_id'=>'df_template_edit_print_template_form',
                     'response_target'=>'df_template_edit_print_template_errors',
-                    'colsno'=>1,
+                    'cols_no'=>1,
                     'content'=>array(
                         array(
                             array(

@@ -2,7 +2,7 @@
 $ctrl_params = array(
     'tag_id'=>'df_template_rel_ae_form',
     'response_target'=>'df_template_rel_ae_errors',
-    'colsno'=>1,
+    'cols_no'=>1,
     'content'=>array(
         array(
             array(

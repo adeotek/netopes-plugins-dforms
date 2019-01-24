@@ -3,7 +3,7 @@ $pagesNo = $item->getProperty('pagesno',1,'is_integer');
 $ctrl_params = array(
     'tag_id'=>'df_template_design_edit_form',
     'response_target'=>'df_template_design_edit_errors',
-    'colsno'=>1,
+    'cols_no'=>1,
     'content'=>array(
         array(
             array(
@@ -15,6 +15,7 @@ $ctrl_params = array(
                     'display_field'=>'name',
                     'selected_value'=>$item->getProperty('render_type',1,'is_integer'),
                     'state_field'=>'state',
+                    'minimum_input_length'=>0,
                     'load_type'=>'database',
                     'data_source'=>array(
                         'ds_class'=>'_Custom\Offline',

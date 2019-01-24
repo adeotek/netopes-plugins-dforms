@@ -2,7 +2,7 @@
 $ctrl_params = array(
     'tag_id'=>'df_list_add_form',
     'response_target'=>'df_list_add_errors',
-    'colsno'=>1,
+    'cols_no'=>1,
     'content'=>array(
         array(
             array(
