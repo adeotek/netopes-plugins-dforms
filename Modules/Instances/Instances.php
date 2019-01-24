@@ -80,7 +80,7 @@ class Instances extends Module {
 		$tagid = ($id_instance ? $id_instance.'_' : '').get_array_value($field,'cell','','is_string').'_'.get_array_value($field,'name','','is_string');
 		$fvalues = explode('|::|',$fvalue);
 		$field = array_merge($field,array(
-			'tagid'=>$tagid.'-0',
+			'tag_id'=>$tagid.'-0',
 			'tagname'=>get_array_value($field,'id',NULL,'is_numeric').'[]',
 			'value'=>get_array_value($fvalues,0,NULL,'isset'),
 		));
@@ -102,7 +102,7 @@ class Instances extends Module {
 			$tmp_ctrl['no_label'] = TRUE;
 			$tmp_ctrl['labelwidth'] = NULL;
 			$tmp_ctrl['width'] = NULL;
-			$tmp_ctrl['tagid'] = $tagid.'-'.$i;
+			$tmp_ctrl['tag_id'] = $tagid.'-'.$i;
 			$tmp_ctrl['value'] = get_array_value($fvalues,$i,NULL,'isset');
 			if(strpos($theme_type,'bootstrap')!==FALSE) { $tmp_ctrl['class'] .= ' form-control'; }
 			$tmp_ctrl['extratagparam'] = (isset($tmp_ctrl['extratagparam']) && $tmp_ctrl['extratagparam'] ? $tmp_ctrl['extratagparam'].' ' : '').'data-tid="'.$tagid.'" data-ti="'.$i.'"';
@@ -158,7 +158,7 @@ class Instances extends Module {
 		$id_instance = get_array_value($field,'id_instance',NULL,'is_integer');
 		$tagid = ($id_instance ? $id_instance.'_' : '').get_array_value($field,'cell','','is_string').'_'.get_array_value($field,'name','','is_string');
 		$field = array_merge($field,array(
-			'tagid'=>$tagid,
+			'tag_id'=>$tagid,
 			'tagname'=>get_array_value($field,'id',NULL,'is_numeric'),
 			'value'=>$fvalue,
 		));

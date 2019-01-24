@@ -14,7 +14,7 @@ use NETopes\Core\Controls\DivButton;
                 </div>
                 <div class="col-md-5 form-horizontal">
 <?php
-    $txtName = new \NETopes\Core\Controls\TextBox(['tagid'=>'df_page_name_'.$pindex,'label'=>Translate::GetLabel('page_title'),'label_cols'=>4,'value'=>$templatePage->getProperty('title','','is_string')]);
+    $txtName = new \NETopes\Core\Controls\TextBox(['tag_id'=>'df_page_name_'.$pindex,'label'=>Translate::GetLabel('page_title'),'label_cols'=>4,'value'=>$templatePage->getProperty('title','','is_string')]);
     echo $txtName->Show();
 ?>
                 </div>
@@ -69,7 +69,7 @@ use NETopes\Core\Controls\DivButton;
 	for($i=1;$i<=$rowsno;$i++) {
 		$del_row_act = '';
 		if($rowsno>1) {
-			$btn_del_row = new DivButton(array('tagid'=>'dft_del_col','tooltip'=>Translate::GetButton('delete_row'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs mr10'),'icon'=>'fa fa-times-circle','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','UpdateContentTable','id_template'|{$idTemplate}~'pindex'|'{$pindex}'~'type'|'-1'~'rowsno'|'{$i}','{$target}')->errors"),'confirm_text'=>Translate::GetMessage('confirm_delete')));
+			$btn_del_row = new DivButton(array('tag_id'=>'dft_del_col','tooltip'=>Translate::GetButton('delete_row'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs mr10'),'icon'=>'fa fa-times-circle','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','UpdateContentTable','id_template'|{$idTemplate}~'pindex'|'{$pindex}'~'type'|'-1'~'rowsno'|'{$i}','{$target}')->errors"),'confirm_text'=>Translate::GetMessage('confirm_delete')));
 			$del_row_act = $btn_del_row->Show();
 		}//if($rowsno>1)
 ?>
@@ -80,9 +80,9 @@ use NETopes\Core\Controls\DivButton;
 		for($j=1;$j<=$colsno;$j++) {
 			$f = $fields->safeGet($i.'-'.$j,NULL,'is_object');
 			if($f) {
-				$btn_edit_item = new DivButton(array('tagid'=>'dfti_edit','tooltip'=>Translate::GetButton('edit'),'class'=>NApp::$theme->GetBtnSpecialLightClass('btn-xxs'),'icon'=>'fa fa-pencil-square-o','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','AddEditContentElement','id_template'|{$idTemplate}~'pindex'|'{$pindex}'~'id_item'|{$f->getProperty('id')}~'id_control'|{$f->getProperty('id_control')},'{$target}')->modal")));
+				$btn_edit_item = new DivButton(array('tag_id'=>'dfti_edit','tooltip'=>Translate::GetButton('edit'),'class'=>NApp::$theme->GetBtnSpecialLightClass('btn-xxs'),'icon'=>'fa fa-pencil-square-o','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','AddEditContentElement','id_template'|{$idTemplate}~'pindex'|'{$pindex}'~'id_item'|{$f->getProperty('id')}~'id_control'|{$f->getProperty('id_control')},'{$target}')->modal")));
 				$edit_item_act = $btn_edit_item->Show();
-				$btn_del_item = new DivButton(array('tagid'=>'dfti_del','tooltip'=>Translate::GetButton('delete'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs'),'icon'=>'fa fa-times','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','DeleteContentElementRecord','id_template'|{$idTemplate}~'pindex'|'{$pindex}'~'id'|{$f->getProperty('id')},'{$target}')->errors"),'confirm_text'=>Translate::GetMessage('confirm_delete')));
+				$btn_del_item = new DivButton(array('tag_id'=>'dfti_del','tooltip'=>Translate::GetButton('delete'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs'),'icon'=>'fa fa-times','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','DeleteContentElementRecord','id_template'|{$idTemplate}~'pindex'|'{$pindex}'~'id'|{$f->getProperty('id')},'{$target}')->errors"),'confirm_text'=>Translate::GetMessage('confirm_delete')));
 				$del_item_act = $btn_del_item->Show();
 ?>
                             <td class="ccolumn droppable" id="cell-<?=$pindex.'-'.$i.'-'.$j?>" data-cell="<?=$pindex.'-'.$i.'-'.$j?>" data-full="1">

@@ -4,7 +4,7 @@
 	use NETopes\Core\Controls\TableView;
 
 	$dgtarget = 'dg-'.$target;
-	$btn_add = new Button(array('tagid'=>'df_trelations_add','value'=>Translate::GetButton('add'),'class'=>'btn btn-primary btn-xs pull-left','icon'=>'fa fa-plus-circle','onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>'Plugins\DForms\Templates\Templates','method'=>'ShowRelationAddEditForm','target'=>'modal','params'=>['id_template'=>$id_template,'target'=>$target]])));
+	$btn_add = new Button(array('tag_id'=>'df_trelations_add','value'=>Translate::GetButton('add'),'class'=>'btn btn-primary btn-xs pull-left','icon'=>'fa fa-plus-circle','onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>'Plugins\DForms\Templates\Templates','method'=>'ShowRelationAddEditForm','target'=>'modal','params'=>['id_template'=>$id_template,'target'=>$target]])));
 	echo $btn_add->Show();
 ?>
 		</div>
@@ -33,12 +33,12 @@
 					array(
 						'type'=>'DivButton',
 						'command_string'=>"AjaxRequest('{$this->class}','DeleteRelationRecord','id'|{{id}}~'id_template'|{{id_template}},'{$target}')->errors",
-						'params'=>array('tagid'=>'df_list_delete_btn','tooltip'=>Translate::GetButton('delete'),'class'=>'btn btn-danger btn-xxs','icon'=>'fa fa-times','confirm_text'=>Translate::GetMessage('confirm_delete')),
+						'params'=>array('tag_id'=>'df_list_delete_btn','tooltip'=>Translate::GetButton('delete'),'class'=>'btn btn-danger btn-xxs','icon'=>'fa fa-times','confirm_text'=>Translate::GetMessage('confirm_delete')),
 					),
 					array(
 						'type'=>'DivButton',
 						'command_string'=>"AjaxRequest('{$this->class}','ShowRelationAddEditForm','id'|{{id}}~'id_template'|{{id_template}},'{$target}')->modal",
-						'params'=>array('tagid'=>'df_list_edit_btn','tooltip'=>Translate::GetButton('edit'),'class'=>'btn btn-primary btn-xxs','icon'=>'fa fa-pencil-square-o'),
+						'params'=>array('tag_id'=>'df_list_edit_btn','tooltip'=>Translate::GetButton('edit'),'class'=>'btn btn-primary btn-xxs','icon'=>'fa fa-pencil-square-o'),
 					),
 				),
 			),

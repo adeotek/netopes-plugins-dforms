@@ -114,7 +114,7 @@ if(is_array($fields) && count($fields)) {
                     $r_value = NULL;
             }//END switch
             if(is_null($r_value)) { continue; }
-            $rctrl = new HiddenInput(['tagid'=>'relation-'.$rel['key'],'postable'=>TRUE,'value'=>$r_value]);
+            $rctrl = new HiddenInput(['tag_id'=>'relation-'.$rel['key'],'postable'=>TRUE,'value'=>$r_value]);
             $f_params['value'] .= $rctrl->Show();
         }//END foreach
         if(strlen($f_params['value'])) {
@@ -128,7 +128,7 @@ if(is_array($fields) && count($fields)) {
 
     $ctrl_params = [
         'tname'=>$tname,
-        'tagid'=>'df_'.$tname.'_form',
+        'tag_id'=>'df_'.$tname.'_form',
         'response_target'=>'df_'.$tname.'_errors',
         'colsno'=>get_array_value($template,'colsno',1,'is_not0_numeric'),
     ];

@@ -73,7 +73,7 @@ class ValuesLists extends Module {
 	public function ShowEditForm($params = NULL) {
 		$id = $params->getOrFail('id','is_not0_integer','Invalid record identifier!');
 		$item = DataProvider::Get('Plugins\DForms\ValuesLists','GetItem',['for_id'=>$id]);
-		$title = Translate::GetLabel('values_list').' - '.Translate::GetButton('edit').' : ' . $item['name'] . ' [ '.$item['ltype']  .' ]';
+		$title = Translate::GetLabel('values_list').' - '.Translate::GetButton('edit').' : '.$item->getProperty('name').' [ '.$item->getProperty('ltype').' ]';
 		$view = new AppView(get_defined_vars(),$this,'main');
 		$view->AddTabControl($this->GetViewFile('EditForm'));
 		$view->SetTitle($title);

@@ -87,7 +87,7 @@ $ctrl_params = array(
             'data_type'=>'numeric',
             'type'=>'control',
             'control_type'=>'JqCheckBox',
-            'control_params'=>array('container'=>FALSE,'no_label'=>TRUE,'tagid'=>'df_template_update_state','jqparams'=>'{ type: 5 }','onchange'=>"AjaxRequest('{$this->class}','EditRecordState','id'|'{{id}}'~'state'|df_template_update_state_{{id}}:value)->errors"),
+            'control_params'=>array('container'=>FALSE,'no_label'=>TRUE,'tag_id'=>'df_template_update_state','jqparams'=>'{ type: 5 }','onchange'=>"AjaxRequest('{$this->class}','EditRecordState','id'|'{{id}}'~'state'|df_template_update_state_{{id}}:value)->errors"),
             'control_pafreq'=>array('onchange'),
             'label'=>Translate::GetLabel('active'),
             'sortable'=>TRUE,
