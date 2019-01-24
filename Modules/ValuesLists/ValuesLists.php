@@ -8,7 +8,7 @@
  * @version    1.0.1.0
  * @filesource
  */
-namespace NETopes\Plugins\Modules\DForms\ValuesLists;
+namespace NETopes\Plugins\DForms\Modules\ValuesLists;
 use NETopes\Core\App\AppView;
 use NETopes\Core\App\Module;
 use NETopes\Core\Controls\Button;

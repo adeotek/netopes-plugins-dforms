@@ -16,8 +16,8 @@
     },
     "autoload": {
         "psr-4": {
-            "NETopes\\Plugins\\DataSources\\DForms\\": "DataSources",
-            "NETopes\\Plugins\\Modules\\DForms\\": "Modules"
+            "NETopes\\Plugins\\DForms\\DataSources\\": "DataSources",
+            "NETopes\\Plugins\\DForms\\Modules\\": "Modules"
         }
     }
 }
