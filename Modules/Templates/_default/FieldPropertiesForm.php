@@ -48,7 +48,7 @@ use NETopes\Core\Controls\TextBox;
 				'allow_clear'=>FALSE,
 				'load_type'=>'database',
 				'data_source'=>array(
-					'ds_class'=>'_Custom\Offline',
+					'ds_class'=>'_Custom\DFormsOffline',
 					'ds_method'=>'GetDynamicFormsFieldsITypes',
 				),
 			));
@@ -84,7 +84,7 @@ use NETopes\Core\Controls\TextBox;
 				'allow_clear'=>FALSE,
 				'load_type'=>'database',
 				'data_source'=>array(
-					'ds_class'=>'_Custom\Offline',
+					'ds_class'=>'_Custom\DFormsOffline',
 					'ds_method'=>'GetDynamicFormsFieldsITypes',
 				),
 			));

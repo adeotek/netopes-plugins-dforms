@@ -20,7 +20,7 @@ $ctrl_params = array(
         array(
             array(
                 'control_type'=>'ComboBox',
-                'control_params'=>array('tag_id'=>'df_template_add_ftype','value'=>DataProvider::GetKeyValue('_Custom\Offline','GetDynamicFormsTemplatesFTypes'),'label'=>Translate::GetLabel('type'),'value_field'=>'id','display_field'=>'name','selected_value'=>NULL,'required'=>TRUE),
+                'control_params'=>array('tag_id'=>'df_template_add_ftype','value'=>DataProvider::GetKeyValue('_Custom\DFormsOffline','GetDynamicFormsTemplatesFTypes'),'label'=>Translate::GetLabel('type'),'value_field'=>'id','display_field'=>'name','selected_value'=>NULL,'required'=>TRUE),
             ),
         ),
         array(

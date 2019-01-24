@@ -1,7 +1,7 @@
 <?php
 use NETopes\Core\Controls\Button;
 use NETopes\Core\Controls\TableView;
-
+    use NETopes\Core\Data\DataProvider;
 $ctrl_params = array(
     'module'=>$this->class,
     'method'=>$this->GetCurrentMethod(),
@@ -18,6 +18,42 @@ $ctrl_params = array(
     'ds_params'=>array('for_id'=>NULL,'for_validated'=>NULL,'for_state'=>NULL,'for_text'=>NULL,'for_ftype'=>NULL,'exclude_id'=>NULL),
     'auto_load_data'=>TRUE,
     'columns'=>array(
+        'actions'=>array(
+            'type'=>'actions',
+            'visual_count'=>4,
+            'actions'=>array(
+                array(
+                    'type'=>'DivButton',
+                    'dright'=>'add',
+                    'command_string'=>"AjaxRequest('{$this->class}','CloneRecord','id'|{{id}})->errors",
+                    'params'=>array('tooltip'=>Translate::GetButton('clone'),'class'=>NApp::$theme->GetBtnSpecialLightClass('btn-xxs'),'icon'=>'fa fa-copy'),
+                ),
+                array(
+                    'type'=>'DivButton',
+                    'dright'=>'edit',
+                    'command_string'=>"AjaxRequest('{$this->class}','ShowEditForm','id'|{{id}})->main-content",
+                    'params'=>array('tooltip'=>Translate::GetButton('edit'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-xxs'),'icon'=>'fa fa-pencil-square-o','conditions'=>array(array('field'=>'validated','type'=>'==','value'=>0))),
+                ),
+                array(
+                    'type'=>'DivButton',
+                    'dright'=>'validate',
+                    'command_string'=>"AjaxRequest('{$this->class}','ValidateRecord','id'|{{id}}~'new_value'|'-1')->errors",
+                    'params'=>array('tooltip'=>Translate::GetButton('delete_unvalidated_version'),'class'=>NApp::$theme->GetBtnWarningClass('btn-xxs'),'icon'=>'fa fa-minus','conditions'=>array(array('field'=>'validated','type'=>'==','value'=>0),array('field'=>'version','type'=>'>','value'=>0))),
+                ),
+                array(
+                    'type'=>'DivButton',
+                    'dright'=>'edit',
+                    'command_string'=>"AjaxRequest('{$this->class}','CreateNewVersion','id'|{{id}})->errors",
+                    'params'=>array('tooltip'=>Translate::GetButton('new_version'),'class'=>NApp::$theme->GetBtnWarningClass('btn-xxs'),'icon'=>'fa fa-code-fork','conditions'=>array(array('field'=>'validated','type'=>'==','value'=>1))),
+                ),
+                array(
+                    'type'=>'DivButton',
+                    'dright'=>'view',
+                    'command_string'=>"AjaxRequest('{$this->class}','ShowViewForm','id'|{{id}})->main-content",
+                    'params'=>array('tooltip'=>Translate::GetButton('view'),'class'=>NApp::$theme->GetBtnInfoClass('btn-xxs'),'icon'=>'fa fa-eye','conditions'=>array(array('field'=>'version','type'=>'>','value'=>0))),
+                ),
+            ),
+        ),
         'code'=>array(
             'db_field'=>'code',
             'data_type'=>'numeric',
@@ -41,7 +77,7 @@ $ctrl_params = array(
             'db_field'=>'ftype',
             'data_type'=>'numeric',
             'type'=>'indexof',
-            'values_collection'=>$ftypes,
+            'values_collection'=>DataProvider::GetKeyValue('_Custom\DFormsOffline','GetDynamicFormsTemplatesFTypes'),
             'halign'=>'center',
             'label'=>Translate::GetLabel('type'),
             'sortable'=>TRUE,
@@ -50,7 +86,7 @@ $ctrl_params = array(
             'show_filter_cond_type'=>FALSE,
             'filter_params'=>array('value_field'=>'id','display_field'=>'name','selected_value'=>NULL),
             'filter_data_call'=>array(
-                'data_source'=>'_Custom\Offline',
+                'data_source'=>'_Custom\DFormsOffline',
                 'ds_method'=>'GetDynamicFormsTemplatesFTypes',
             ),
         ),
@@ -76,7 +112,7 @@ $ctrl_params = array(
             'show_filter_cond_type'=>FALSE,
             'filter_params'=>array('value_field'=>'id','display_field'=>'name','selected_value'=>NULL),
             'filter_data_call'=>array(
-                'data_source'=>'_Custom\Offline',
+                'data_source'=>'_Custom\DFormsOffline',
                 'ds_method'=>'GetGenericArrays',
                 'ds_params'=>array('type'=>'yes-no'),
             ),
@@ -96,7 +132,7 @@ $ctrl_params = array(
             'show_filter_cond_type'=>FALSE,
             'filter_params'=>array('value_field'=>'id','display_field'=>'name','selected_value'=>NULL),
             'filter_data_call'=>array(
-                'data_source'=>'_Custom\Offline',
+                'data_source'=>'_Custom\DFormsOffline',
                 'ds_method'=>'GetGenericArrays',
                 'ds_params'=>array('type'=>'active'),
             ),
@@ -134,37 +170,13 @@ $ctrl_params = array(
         ),
         'end_actions'=>array(
             'type'=>'actions',
-            'width'=>'104',
+            'visual_count'=>1,
             'actions'=>array(
                 array(
                     'type'=>'DivButton',
-                    'command_string'=>"AjaxRequest('{$this->class}','ShowViewForm','id'|{{id}})->main-content",
-                    'params'=>array('tooltip'=>Translate::GetButton('view'),'class'=>NApp::$theme->GetBtnInfoClass('btn-xxs'),'icon'=>'fa fa-eye','conditions'=>array(array('field'=>'version','type'=>'>','value'=>0))),
-                ),
-                array(
-                    'type'=>'DivButton',
-                    'command_string'=>"AjaxRequest('{$this->class}','CloneRecord','id'|{{id}})->errors",
-                    'params'=>array('tooltip'=>Translate::GetButton('clone'),'class'=>NApp::$theme->GetBtnSpecialLightClass('btn-xxs'),'icon'=>'fa fa-copy'),
-                ),
-                array(
-                    'type'=>'DivButton',
-                    'command_string'=>"AjaxRequest('{$this->class}','ShowEditForm','id'|{{id}})->main-content",
-                    'params'=>array('tooltip'=>Translate::GetButton('edit'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-xxs'),'icon'=>'fa fa-pencil-square-o','conditions'=>array(array('field'=>'validated','type'=>'==','value'=>0))),
-                ),
-                array(
-                    'type'=>'DivButton',
-                    'command_string'=>"AjaxRequest('{$this->class}','ValidateRecord','id'|{{id}}~'new_value'|'-1')->errors",
-                    'params'=>array('tooltip'=>Translate::GetButton('delete_unvalidated_version'),'class'=>NApp::$theme->GetBtnWarningClass('btn-xxs'),'icon'=>'fa fa-minus','conditions'=>array(array('field'=>'validated','type'=>'==','value'=>0),array('field'=>'version','type'=>'>','value'=>0))),
-                ),
-                array(
-                    'type'=>'DivButton',
-                    'command_string'=>"AjaxRequest('{$this->class}','CreateNewVersion','id'|{{id}})->errors",
-                    'params'=>array('tooltip'=>Translate::GetButton('new_version'),'class'=>NApp::$theme->GetBtnWarningClass('btn-xxs'),'icon'=>'fa fa-code-fork','conditions'=>array(array('field'=>'validated','type'=>'==','value'=>1))),
-                ),
-                array(
-                    'type'=>'DivButton',
+                    'dright'=>'delete',
                     'command_string'=>"AjaxRequest('{$this->class}','DeleteRecord','id'|{{id}})->errors",
-                    'params'=>array('tooltip'=>Translate::GetButton('delete'),'class'=>NApp::$theme->GetBtnInfoClass('btn-xxs pull-right'),'icon'=>'fa fa-times','confirm_text'=>Translate::GetMessage('confirm_delete')),
+                    'params'=>array('tooltip'=>Translate::GetButton('delete'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs'),'icon'=>'fa fa-times','confirm_text'=>Translate::GetMessage('confirm_delete')),
                 ),
             ),
         ),

@@ -43,7 +43,7 @@ $ctrl_params = array(
                     'selected_value'=>$item->getProperty('rtype',NULL,'is_numeric'),
                     'load_type'=>'database',
                     'data_source'=>array(
-                        'ds_class'=>'_Custom\Offline',
+                        'ds_class'=>'_Custom\DFormsOffline',
                         'ds_method'=>'GetDynamicFormsRelationsRTypes',
                     ),
                 ),
@@ -58,7 +58,7 @@ $ctrl_params = array(
                     'selected_value'=>$item->getProperty('utype',NULL,'is_numeric'),
                     'load_type'=>'database',
                     'data_source'=>array(
-                        'ds_class'=>'_Custom\Offline',
+                        'ds_class'=>'_Custom\DFormsOffline',
                         'ds_method'=>'GetDynamicFormsRelationsUTypes',
                     ),
                 ),

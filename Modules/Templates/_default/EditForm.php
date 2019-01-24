@@ -37,7 +37,7 @@ $ctrl_params = array(
                         array(
                             array(
                                 'control_type'=>'ComboBox',
-                                'control_params'=>array('tag_id'=>'df_template_edit_ftype','value'=>DataProvider::GetKeyValue('_Custom\Offline','GetDynamicFormsTemplatesFTypes'),'label'=>Translate::GetLabel('type'),'value_field'=>'id','display_field'=>'name','selected_value'=>$item->getProperty('ftype',0,'is_numeric'),'required'=>TRUE,'disabled'=>TRUE),
+                                'control_params'=>array('tag_id'=>'df_template_edit_ftype','value'=>DataProvider::GetKeyValue('_Custom\DFormsOffline','GetDynamicFormsTemplatesFTypes'),'label'=>Translate::GetLabel('type'),'value_field'=>'id','display_field'=>'name','selected_value'=>$item->getProperty('ftype',0,'is_numeric'),'required'=>TRUE,'disabled'=>TRUE),
                             ),
                         ),
                         // array(

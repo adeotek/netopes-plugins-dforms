@@ -18,7 +18,7 @@ $ctrl_params = array(
                     'minimum_input_length'=>0,
                     'load_type'=>'database',
                     'data_source'=>array(
-                        'ds_class'=>'_Custom\Offline',
+                        'ds_class'=>'_Custom\DFormsOffline',
                         'ds_method'=>'GetDynamicFormsDesignRenderTypes',
                         'ds_params'=>['for_type'=>$pagesNo>1 ? 2 : 1],
                     ),

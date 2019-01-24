@@ -255,7 +255,7 @@ class Instances extends Module {
 			'for_template_code'=>$templateCode,
 			'for_listing'=>1,
 		]);
-		$ftypes = DataProvider::GetKeyValue('_Custom\Offline','GetDynamicFormsTemplatesFTypes');
+		$ftypes = DataProvider::GetKeyValue('_Custom\DFormsOffline','GetDynamicFormsTemplatesFTypes');
 		$cmodule = $params->safeGet('cmodule',$this->class,'is_notempty_string');
 		$cmethod = $params->safeGet('cmethod',call_back_trace(0),'is_notempty_string');
 		$cTarget = $params->safeGet('ctarget','main-content','is_notempty_string');
@@ -277,7 +277,7 @@ class Instances extends Module {
 	public function GlobalListing($params = NULL) {
 		$idTemplate = $params->safeGet('for_id',$this->id_template,'is_not0_integer');
 		$template_code = $params->safeGet('for_code',$this->template_code,'is_not0_integer');
-		$ftypes = DataProvider::GetKeyValueArray('_Custom\Offline','GetDynamicFormsTemplatesFTypes');
+		$ftypes = DataProvider::GetKeyValueArray('_Custom\DFormsOffline','GetDynamicFormsTemplatesFTypes');
 		$listingTarget = 'listing-content';
 		$view = new AppView(get_defined_vars(),$this,'main');
         $view->SetTitle('');

@@ -38,7 +38,7 @@ $ctrl_params = array(
             // 'show_filter_cond_type'=>FALSE,
             // 'filter_params'=>array('value_field'=>'id','display_field'=>'name','selected_value'=>NULL),
             // 'filter_data_call'=>array(
-            // 	'data_source'=>'_Custom\Offline',
+            // 	'data_source'=>'_Custom\DFormsOffline',
             // 	'ds_method'=>'GetDynamicFormsTemplatesFTypes',
             // ),
         ),
@@ -81,7 +81,7 @@ $ctrl_params = array(
             'show_filter_cond_type'=>FALSE,
             'filter_params'=>array('value_field'=>'id','display_field'=>'name','selected_value'=>NULL),
             'filter_data_call'=>array(
-                'data_source'=>'_Custom\Offline',
+                'data_source'=>'_Custom\DFormsOffline',
                 'ds_method'=>'GetGenericArrays',
                 'ds_params'=>array('type'=>'yes-no'),
             ),

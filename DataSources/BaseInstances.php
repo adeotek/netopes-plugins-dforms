@@ -9,7 +9,7 @@
  * @version    1.0.1.0
  * @filesource
  */
-namespace NETopes\Plugins\DataSources\DForms;
+namespace NETopes\Plugins\DForms\DataSources;
 use NETopes\Core\Data\DataSource;
 /**
  * DynamicForms data source class
