@@ -313,7 +313,7 @@ class Instances extends Module {
 		$ftitle = $params->safeGet('form_title','&nbsp;','is_string');
 		require($this->GetViewFile('AddInstanceForm'));
 		if($is_modal) {
-			NApp::arequest()->ExecuteJs("ShowModalForm('90%',($('#page-title').html()+' - ".$params->safeGet('nav_item_name','','is_string')."'))");
+			NApp::Ajax()->ExecuteJs("ShowModalForm('90%',($('#page-title').html()+' - ".$params->safeGet('nav_item_name','','is_string')."'))");
 		}//if($is_modal)
 	}//END public function ShowAddForm
 	/**
@@ -329,7 +329,7 @@ class Instances extends Module {
 		$target = $params->safeGet('target','','is_string');
 		$data = $params->safeGet('data',[],'is_array');
 		if(!count($data)) {
-			NApp::arequest()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
+			NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
 			echo Translate::GetMessage('required_fields');
 			return;
 		}//if(!count($data))
@@ -412,7 +412,7 @@ class Instances extends Module {
 		}//END foreach
 
 		if($error) {
-			NApp::arequest()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
+			NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
 			echo Translate::GetMessage('required_fields');
 			return;
 		}//if($error)
@@ -472,7 +472,7 @@ class Instances extends Module {
 		$cmodule = $params->safeGet('cmodule',get_called_class(),'is_notempty_string');
 		$cmethod = $params->safeGet('cmethod','Listing','is_notempty_string');
 		$ctarget = $params->safeGet('ctarget','main-content','is_notempty_string');
-		NApp::arequest()->Execute("AjaxRequest('{$cmodule}','{$cmethod}','id_template'|{$id_template},'{$ctarget}')->{$ctarget}");
+		NApp::Ajax()->Execute("AjaxRequest('{$cmodule}','{$cmethod}','id_template'|{$id_template},'{$ctarget}')->{$ctarget}");
 	}//END public function SaveNewRecord
 	/**
 	 * description
@@ -501,7 +501,7 @@ class Instances extends Module {
 		$is_modal = $params->safeGet('is_modal',$this->is_modal,'is_integer');
 		require($this->GetViewFile('EditInstanceForm'));
 		if($is_modal) {
-			NApp::arequest()->ExecuteJs("ShowModalForm('90%',($('#page-title').html()+' - ".Translate::GetButton('edit')."'))");
+			NApp::Ajax()->ExecuteJs("ShowModalForm('90%',($('#page-title').html()+' - ".Translate::GetButton('edit')."'))");
 		}//if($is_modal)
 	}//END public function ShowEditForm
 	/**
@@ -531,7 +531,7 @@ class Instances extends Module {
 		$is_modal = $params->safeGet('is_modal',$this->is_modal,'is_integer');
 		require($this->GetViewFile('AddEditInstanceForm'));
 		if($is_modal) {
-			NApp::arequest()->ExecuteJs("ShowModalForm('90%',($('#page-title').html()+' - ".Translate::GetButton('edit')."'))");
+			NApp::Ajax()->ExecuteJs("ShowModalForm('90%',($('#page-title').html()+' - ".Translate::GetButton('edit')."'))");
 		}//if($is_modal)
 	}//END public function ShowAddEditForm
 	/**
@@ -548,7 +548,7 @@ class Instances extends Module {
 		$target = $params->safeGet('target','','is_string');
 		$data = $params->safeGet('data',[],'is_array');
 		if(!count($data)) {
-			NApp::arequest()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
+			NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
 			echo Translate::GetMessage('required_fields');
 			return;
 		}//if(!count($data))
@@ -628,7 +628,7 @@ class Instances extends Module {
 		// }//END foreach
 
 		if($error) {
-			NApp::arequest()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
+			NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
 			echo Translate::GetMessage('required_fields');
 			return;
 		}//if($error)
@@ -689,7 +689,7 @@ class Instances extends Module {
 		$cmodule = $params->safeGet('cmodule',get_called_class(),'is_notempty_string');
 		$cmethod = $params->safeGet('cmethod','Listing','is_notempty_string');
 		$ctarget = $params->safeGet('ctarget','main-content','is_notempty_string');
-		NApp::arequest()->Execute("AjaxRequest('{$cmodule}','{$cmethod}','id_template'|{$id_template},'{$ctarget}')->{$ctarget}");
+		NApp::Ajax()->Execute("AjaxRequest('{$cmodule}','{$cmethod}','id_template'|{$id_template},'{$ctarget}')->{$ctarget}");
 	}//END public function SaveRecord
 	/**
 	 * description
@@ -720,7 +720,7 @@ class Instances extends Module {
 		$cmodule = $params->safeGet('cmodule',get_called_class(),'is_notempty_string');
 		$cmethod = $params->safeGet('cmethod','Listing','is_notempty_string');
 		$ctarget = $params->safeGet('ctarget','main-content','is_notempty_string');
-		NApp::arequest()->Execute("AjaxRequest('{$cmodule}','{$cmethod}','id_template'|{$id_template},'{$ctarget}')->{$ctarget}");
+		NApp::Ajax()->Execute("AjaxRequest('{$cmodule}','{$cmethod}','id_template'|{$id_template},'{$ctarget}')->{$ctarget}");
 	}//END public function DeleteRecord
 	/**
 	 * description
@@ -755,7 +755,7 @@ class Instances extends Module {
 		$is_modal = $params->safeGet('is_modal',$this->is_modal,'is_integer');
 		require($this->GetViewFile('ViewInstanceForm'));
 		if($is_modal) {
-			NApp::arequest()->ExecuteJs("ShowModalForm('90%',($('#page-title').html()+' - ".Translate::GetButton('view')."'))");
+			NApp::Ajax()->ExecuteJs("ShowModalForm('90%',($('#page-title').html()+' - ".Translate::GetButton('view')."'))");
 		}//if($is_modal)
 	}//END public function ShowViewForm
 	/**

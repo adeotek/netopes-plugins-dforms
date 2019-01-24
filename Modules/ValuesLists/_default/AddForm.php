@@ -25,7 +25,7 @@ $ctrl_params = array(
     ),
     'actions'=>array(
         array(
-            'params'=>array('tagid'=>'df_list_add_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::arequest()->Prepare("AjaxRequest('{$this->class}','AddEditRecord',df_list_add_form:form,'df_list_add_form')->df_list_add_errors")),
+            'params'=>array('tagid'=>'df_list_add_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','AddEditRecord',df_list_add_form:form,'df_list_add_form')->df_list_add_errors")),
         ),
         array(
             'type'=>'CloseModal',

@@ -35,10 +35,10 @@ $ctrl_params = array(
                     ),
                     'actions'=>array(
                         array(
-                            'params'=>array('tagid'=>'df_list_edit_save','value'=>Translate::GetButton('save_and_close'),'icon'=>'fa fa-save','onclick'=>NApp::arequest()->Prepare("AjaxRequest('{$this->class}','AddEditRecord','id'|'{$id}'~'close'|0~df_list_edit_form:form,'df_list_edit_form')->df_list_edit_errors")),
+                            'params'=>array('tagid'=>'df_list_edit_save','value'=>Translate::GetButton('save_and_close'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','AddEditRecord','id'|'{$id}'~'close'|0~df_list_edit_form:form,'df_list_edit_form')->df_list_edit_errors")),
                         ),
                         array(
-                            'params'=>array('tagid'=>'df_list_edit_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::arequest()->Prepare("AjaxRequest('{$this->class}','AddEditRecord',,'df_list_edit_form')->df_list_edit_errors")),
+                            'params'=>array('tagid'=>'df_list_edit_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','AddEditRecord',,'df_list_edit_form')->df_list_edit_errors")),
                         ),
                     ),
                 ),

@@ -16,7 +16,7 @@ $ctrl_params = [
 	],
 	'actions'=>[
 		[
-			'params'=>['tagid'=>'dft_add_element_save','value'=>Translate::GetButton('add_'.$type),'icon'=>'fa fa-plus-circle','onclick'=>NApp::arequest()->Prepare("AjaxRequest('{$this->class}','UpdateContentTable','id_template'|{$idTemplate}~'pindex'|'{$pindex}'~'type'|0~'close'|1~'{$type}sno'|dft_add_element_position:value,'{$target}')->dft_add_element_errors")],
+			'params'=>['tagid'=>'dft_add_element_save','value'=>Translate::GetButton('add_'.$type),'icon'=>'fa fa-plus-circle','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','UpdateContentTable','id_template'|{$idTemplate}~'pindex'|'{$pindex}'~'type'|0~'close'|1~'{$type}sno'|dft_add_element_position:value,'{$target}')->dft_add_element_errors")],
 		],
 	],
 ];

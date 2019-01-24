@@ -152,7 +152,7 @@ use NETopes\Core\Controls\TextBox;
 
 	$ctrl_params['actions'] = [
 	    [
-	        'params'=>['value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::arequest()->Prepare("AjaxRequest('{$this->class}','AddEditContentElementRecord',
+	        'params'=>['value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','AddEditContentElementRecord',
                     'id_template'|{$idTemplate}
                     ~'pindex'|'{$pindex}'
                     ~'id_item'|'{$id}'

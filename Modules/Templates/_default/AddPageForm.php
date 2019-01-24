@@ -16,7 +16,7 @@ $ctrl_params = [
     ],
     'actions'=>[
         [
-            'params'=>['tagid'=>'dft_add_page_save','value'=>Translate::GetButton('add_page'),'icon'=>'fa fa-plus-circle','onclick'=>NApp::arequest()->Prepare("AjaxRequest('{$this->class}','UpdatePagesList','id_template'|{$idTemplate}~'type'|0~'close'|1~'pindex'|dft_add_page_position:value,'{$target}')->dft_add_page_errors")],
+            'params'=>['tagid'=>'dft_add_page_save','value'=>Translate::GetButton('add_page'),'icon'=>'fa fa-plus-circle','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','UpdatePagesList','id_template'|{$idTemplate}~'type'|0~'close'|1~'pindex'|dft_add_page_position:value,'{$target}')->dft_add_page_errors")],
         ],
     ],
 ];

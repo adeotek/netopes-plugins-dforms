@@ -101,13 +101,13 @@ class Templates extends Module {
         $view->AddTabControl($this->GetViewFile('EditForm'));
         $view->SetTitle(Translate::GetButton('edit').' '.Translate::GetLabel('template'));
         if(!$this->ValidateDRights()) {
-            $btnValidate = new Button(array('value'=>Translate::GetButton('validate'),'class'=>NApp::$theme->GetBtnSuccessClass('mr10'),'icon'=>'fa fa-check-square-o','onclick'=>NApp::arequest()->PrepareAjaxRequest(['module'=>$this->class,'method'=>'ValidateRecord','target'=>'errors','params'=>['id'=>$id]])));
+            $btnValidate = new Button(array('value'=>Translate::GetButton('validate'),'class'=>NApp::$theme->GetBtnSuccessClass('mr10'),'icon'=>'fa fa-check-square-o','onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->class,'method'=>'ValidateRecord','target'=>'errors','params'=>['id'=>$id]])));
 	        $view->AddAction($btnValidate->Show());
         }//if(!$this->ValidateDRights()) {
-	    $btnBack = new Button(['value'=>Translate::GetButton('back'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-chevron-left','onclick'=>NApp::arequest()->Prepare("AjaxRequest('{$this->class}','Listing')->main-content")]);
+	    $btnBack = new Button(['value'=>Translate::GetButton('back'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-chevron-left','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','Listing')->main-content")]);
 	    $view->AddAction($btnBack->Show());
         $view->Render();
-        NApp::arequest()->ExecuteJs("$('#df_template_edit_code').focus();");
+        NApp::Ajax()->ExecuteJs("$('#df_template_edit_code').focus();");
 	}//END public function ShowEditForm
 	/**
 	 * description
@@ -122,7 +122,7 @@ class Templates extends Module {
 		$name = trim($params->safeGet('name',NULL,'is_notempty_string'));
 		$target = $params->safeGet('target','','is_string');
 		if(!$ftype || !$code || !strlen($name)) {
-			NApp::arequest()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
+			NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
 			echo Translate::GetMessage('required_fields');
 			return;
 		}//if(!$ftype || !$code || !strlen($name))
@@ -273,7 +273,7 @@ class Templates extends Module {
 		$renderType = $params->safeGet('render_type',NULL,'is_integer');
 		$target = $params->safeGet('target','','is_string');
 		if(!$renderType) {
-		    NApp::arequest()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
+		    NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
 			echo Translate::GetMessage('required_fields');
 			return;
 		}//if(!$renderType)
@@ -326,8 +326,8 @@ class Templates extends Module {
 		require($this->GetViewFile('RelationAddEditForm'));
 		$basicform = new BasicForm($ctrl_params);
 		echo $basicform->Show();
-		NApp::arequest()->ExecuteJs("ShowModalForm(500,($('#page-title').html()+' - ".Translate::GetLabel('relation').' - '.Translate::Get($id ? 'button_edit' : 'button_add')."'))");
-		NApp::arequest()->ExecuteJs("\$('#df_template_rel_ae_type').focus();");
+		NApp::Ajax()->ExecuteJs("ShowModalForm(500,($('#page-title').html()+' - ".Translate::GetLabel('relation').' - '.Translate::Get($id ? 'button_edit' : 'button_add')."'))");
+		NApp::Ajax()->ExecuteJs("\$('#df_template_rel_ae_type').focus();");
 	}//END public function ShowRelationAddEditForm
 	/**
 	 * description
@@ -346,7 +346,7 @@ class Templates extends Module {
 		$key = $params->safeGet('key',NULL,'is_string');
 		$target = $params->safeGet('target','');
 		if(!strlen($name) || !strlen($key) || !is_numeric($rtype) || !is_numeric($utype) || (!$id && !$id_type)) {
-			NApp::arequest()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
+			NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
 			echo Translate::GetMessage('required_fields');
 			return;
 		}//if(!strlen($name) || !strlen($key) || !is_numeric($rtype) || !is_numeric($utype) || (!$id && !$type))
@@ -374,7 +374,7 @@ class Templates extends Module {
 		if($result!==FALSE) {
 			$this->CloseForm();
 			$ctarget = $params->safeGet('ctarget','','is_string');
-			NApp::arequest()->Execute("AjaxRequest('{$this->class}','ShowRelationsEditForm','id_template'|{$id_template},'{$ctarget}')->{$ctarget}");
+			NApp::Ajax()->Execute("AjaxRequest('{$this->class}','ShowRelationsEditForm','id_template'|{$id_template},'{$ctarget}')->{$ctarget}");
 		}//if($result!==FALSE)
 	}//END public function AddEditRelationRecord
 	/**
@@ -568,7 +568,7 @@ class Templates extends Module {
 		$view = new AppView(get_defined_vars(),$this,'modal');
 		$view->SetIsModalView(TRUE);
 		$view->SetModalWidth(560);
-		$view->SetModalCustomClose('"'.$custom_close = addcslashes(NApp::arequest()->Prepare("AjaxRequest('{$this->class}','CancelAddEditContentElement','id_template'|{$idTemplate}~'pindex'|'{$pindex}','{$target}')->dft_fp_errors"),'\\').'"');
+		$view->SetModalCustomClose('"'.$custom_close = addcslashes(NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','CancelAddEditContentElement','id_template'|{$idTemplate}~'pindex'|'{$pindex}','{$target}')->dft_fp_errors"),'\\').'"');
 		$view->SetTitle(Translate::GetLabel('field_properties'));
         $view->AddBasicForm($this->GetViewFile('FieldPropertiesForm'));
         $view->Render();
@@ -602,7 +602,7 @@ class Templates extends Module {
 		$label_required = $params->safeGet('label_required',FALSE,'is_bool');
 		$target = $params->safeGet('target','','is_string');
 		if(!strlen($name) || ($label_required && !strlen($label))) {
-			NApp::arequest()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
+			NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
 			echo Translate::GetMessage('required_fields');
 			return;
 		}//if(!strlen($name) || ($label_required && !strlen($label)))
@@ -640,7 +640,7 @@ class Templates extends Module {
 			if($class=='BasicForm') {
 				$id_sub_form = $params->safeGet('id_sub_form',0,'is_integer');
 				if(!$id_sub_form) {
-					NApp::arequest()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
+					NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
 					echo Translate::GetMessage('required_fields');
 					return;
 				}//if(!$id_sub_form)
@@ -703,7 +703,7 @@ class Templates extends Module {
 		]);
 		// if($result!==FALSE) {
 		// 	$target = $params->safeGetValue('target','');
-		// 	NApp::arequest()->Execute("AjaxRequest('{$this->class}','ShowContentTable','id_template'|{$id_template},'{$target}')->{$target}");
+		// 	NApp::Ajax()->Execute("AjaxRequest('{$this->class}','ShowContentTable','id_template'|{$id_template},'{$target}')->{$target}");
 		// }//if($result!==FALSE)
 	}//END public function MoveContentElement
 	/**

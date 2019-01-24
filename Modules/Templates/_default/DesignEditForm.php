@@ -51,7 +51,7 @@ $ctrl_params = array(
     ),
     'actions'=>array(
         array(
-            'params'=>array('tagid'=>'df_template_design_edit_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::arequest()->Prepare("AjaxRequest('{$this->class}','EditDesignRecord','id_template'|{$idTemplate}~df_template_design_edit_form:form,'df_template_design_edit_form')->df_template_design_edit_errors")),
+            'params'=>array('tagid'=>'df_template_design_edit_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','EditDesignRecord','id_template'|{$idTemplate}~df_template_design_edit_form:form,'df_template_design_edit_form')->df_template_design_edit_errors")),
         ),
     ),
 );

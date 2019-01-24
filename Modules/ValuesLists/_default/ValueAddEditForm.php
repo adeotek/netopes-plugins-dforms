@@ -31,7 +31,7 @@ $ctrl_params = array(
     ),
     'actions'=>array(
         array(
-            'params'=>array('value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::arequest()->Prepare("AjaxRequest('{$this->class}','AddEditValueRecord','id_list'|{$idList}~'id'|'{$id}'~'ctarget'|'{$target}'~df_lv_ae_form:form,'df_lv_ae_form')->df_lv_ae_errors")),
+            'params'=>array('value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','AddEditValueRecord','id_list'|{$idList}~'id'|'{$id}'~'ctarget'|'{$target}'~df_lv_ae_form:form,'df_lv_ae_form')->df_lv_ae_errors")),
         ),
         array(
             'type'=>'CloseModal',
