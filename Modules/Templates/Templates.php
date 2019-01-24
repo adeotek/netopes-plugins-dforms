@@ -96,7 +96,7 @@ class Templates extends Module {
 	public function ShowEditForm($params = NULL) {
 		$id = $params->getOrFail('id','is_not0_integer','Invalid record identifier!');
 		$item = DataProvider::Get('Plugins\DForms\Templates','GetItem',['for_id'=>$id]);
-		if(!is_object($item) || !count($item)) { throw new AppException('Invalid record!'); }
+		if(!is_object($item)) { throw new AppException('Invalid record!'); }
 		$view = new AppView(get_defined_vars(),$this,'main');
         $view->AddTabControl($this->GetViewFile('EditForm'));
         $view->SetTitle(Translate::GetButton('edit').' '.Translate::GetLabel('template'));
