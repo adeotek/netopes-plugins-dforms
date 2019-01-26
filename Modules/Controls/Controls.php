@@ -9,13 +9,12 @@
  * @version    1.0.1.0
  * @filesource
  */
-namespace NETopes\Plugins\Modules\DForms\Controls;
+namespace NETopes\Plugins\DForms\Modules\Controls;
 use NETopes\Core\App\Module;
 use NETopes\Core\Controls\TabControl;
 use NETopes\Core\Data\DataProvider;
 use NETopes\Core\AppException;
 use Translate;
-
 /**
  * description
  * @package  NETopes\Plugins\Modules\DForms
@@ -35,7 +34,7 @@ class Controls extends Module {
 		// NApp::Dlog($id_control,'$id_control');
 		// NApp::Dlog($id_parent,'$id_parent');
 		// NApp::Dlog($parent_group_name,'$parent_group_name');
-		$field_properties = DataProvider::GetArray('Components\DForms\Controls','GetProperties',array(
+		$field_properties = DataProvider::GetArray('Plugins\DForms\Controls','GetProperties',array(
 			'control_id'=>$id_control,
 			'for_state'=>-1,
 			'parent_id'=>$id_parent,
@@ -138,7 +137,7 @@ class Controls extends Module {
 						'width'=>'500',
 						'hidden_row'=>$hidden,
 						'control_type'=>$fp_ctype,
-						'control_params'=>array_merge([,'tag_id'=>$fp_key,'tag_name'=>$fp_key,'value'=>$fp_value,'label'=>$fp_label,'label_width'=>150,'width'=>$fp_cwidth,'cols'=>$fp_ccols,'required'=>$fp_required],$fp_sparams),
+						'control_params'=>array_merge(['tag_id'=>$fp_key,'tag_name'=>$fp_key,'value'=>$fp_value,'label'=>$fp_label,'label_width'=>150,'fixed_width'=>$fp_cwidth,'cols'=>$fp_ccols,'required'=>$fp_required],$fp_sparams),
 					),
 				);
 			} else {

@@ -19,7 +19,7 @@ if($renderType>1) {
                 </div>
                 <div class="col-md-3">
 <?php
-    $btnSaveTitle = new Button(['value'=>Translate::GetButton('save_title'),'class'=>NApp::$theme->GetBtnInfoClass('btn-sm ml20'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','SetPageTitle','id_template'|{$idTemplate}~'pindex'|'$pIndex'~'title'|'df_page_name_{$pIndex}:value)->errors")]);
+    $btnSaveTitle = new Button(['value'=>Translate::GetButton('save_title'),'class'=>NApp::$theme->GetBtnInfoClass('btn-sm ml20'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','SetPageTitle','id_template'|'{$idTemplate}'~'pindex'|'{$pIndex}'~'title'|df_page_name_{$pIndex}:value)->errors")]);
     echo $btnSaveTitle->Show();
 ?>
                 </div>
@@ -112,7 +112,7 @@ for($i=1;$i<=$rowsNo;$i++) {
             </div>
 <?php
 $this->AddJsScript("
-    $('.draggable.move').draggable({
+    $('#{$target} .draggable.move').draggable({
         revert: 'invalid',
         cursor: 'move',
         containment: '#df_template_fields',
@@ -120,7 +120,7 @@ $this->AddJsScript("
         snap: true
     });
     
-    $('.droppable').droppable({
+    $('#{$target} .droppable').droppable({
         accept: function(ui) { return($(this).attr('data-full')!='1'); },
         drop: function(event,ui) {
             var cell = $(this).attr('data-cell');

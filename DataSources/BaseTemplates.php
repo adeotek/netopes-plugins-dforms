@@ -157,7 +157,7 @@ abstract class BaseTemplates extends DataSource {
     /**
      * Sets template page title
      *
-     * @param array $params ['for_id'=>NULL,'in_title'=>NULL]
+     * @param array $params ['template_id'=>NULL,'for_pindex'=>NULL,'in_title'=>NULL]
      * @param array $extra_params
      * @return mixed
      */
@@ -326,10 +326,10 @@ abstract class BaseTemplates extends DataSource {
 	/**
      * SetField default parameters
      */
-    const SET_FIELD = ['for_id'=>NULL,'in_itype'=>NULL,'in_frow'=>NULL,'in_fcol'=>NULL,'in_name'=>NULL,'in_label'=>NULL,'in_required'=>NULL,'in_listing'=>NULL,'values_list_id'=>NULL,'in_class'=>NULL,'in_data_type'=>NULL,'in_params'=>NULL,'in_width'=>NULL,'in_colspan'=>NULL,'in_description'=>NULL];
+    const SET_FIELD = ['for_id'=>NULL,'in_pindex'=>NULL,'in_itype'=>NULL,'in_frow'=>NULL,'in_fcol'=>NULL,'in_name'=>NULL,'in_label'=>NULL,'in_required'=>NULL,'in_listing'=>NULL,'values_list_id'=>NULL,'in_class'=>NULL,'in_data_type'=>NULL,'in_params'=>NULL,'in_width'=>NULL,'in_colspan'=>NULL,'in_description'=>NULL];
     /**
      * Sets a template item
-     * @param array $params ['for_id'=>NULL,'in_itype'=>NULL,'in_frow'=>NULL,'in_fcol'=>NULL,'in_name'=>NULL,'in_label'=>NULL,'in_required'=>NULL,'in_listing'=>NULL,'values_list_id'=>NULL,'in_class'=>NULL,'in_data_type'=>NULL,'in_params'=>NULL,'in_width'=>NULL,'in_colspan'=>NULL,'in_description'=>NULL]
+     * @param array $params ['for_id'=>NULL,'in_pindex'=>NULL,'in_itype'=>NULL,'in_frow'=>NULL,'in_fcol'=>NULL,'in_name'=>NULL,'in_label'=>NULL,'in_required'=>NULL,'in_listing'=>NULL,'values_list_id'=>NULL,'in_class'=>NULL,'in_data_type'=>NULL,'in_params'=>NULL,'in_width'=>NULL,'in_colspan'=>NULL,'in_description'=>NULL]
      * @param array $extra_params
      * @return mixed
      */

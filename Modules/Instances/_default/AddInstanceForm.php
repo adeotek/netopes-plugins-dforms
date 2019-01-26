@@ -21,7 +21,7 @@
 				);
 			}//if($is_modal)
 		}//if(strlen($f_tagid) && strlen($f_rtarget))
-		// NApp::_Dlog($ctrl_params,'BasicForm');
+		// NApp::Dlog($ctrl_params,'BasicForm');
 		$basicform = new BasicForm($ctrl_params);
 	}//if(isset($ctrl_params) && is_array($ctrl_params))
 ?>

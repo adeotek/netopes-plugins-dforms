@@ -13,7 +13,7 @@ if(is_array($fields) && count($fields)) {
         if(!$row) { continue; }
         if(!isset($form_content[$row])) { $form_content[$row] = []; }
         $fclass = get_array_value($field,'class','','is_string');
-        // if($id_sub_form) { NApp::_Dlog($field,$fclass); }
+        // if($id_sub_form) { NApp::Dlog($field,$fclass); }
         $fparams = get_array_value($field,'params','','is_string');
         $f_params = strlen($fparams) ? @unserialize($fparams) : [];
         switch($fclass) {
@@ -57,10 +57,10 @@ if(is_array($fields) && count($fields)) {
                         $ctrl_params['sub_form_class'] = 'clsRepeatableField';
                         $ctrl_params['sub_form_extratagparam'] = 'data-tid="'.$tagid.'" data-ti="'.$i.'"';
                     }//if($f_itype==2)
-                    // NApp::_Dlog($ctrl_params,'$ctrl_params');
+                    // NApp::Dlog($ctrl_params,'$ctrl_params');
                     $basicform = new BasicForm($ctrl_params);
                     $f_params['value'] .= $basicform->Show();
-                    // NApp::_Dlog($f_params['value'],'fcontent');
+                    // NApp::Dlog($f_params['value'],'fcontent');
                     if($i>0) {
                         $ctrl_ract = new Button(['value'=>'&nbsp;'.Translate::GetButton('remove_field'),'icon'=>'fa fa-minus-circle','class'=>'clsRepeatableCtrlBtn remove-ctrl-btn','clear_base_class'=>TRUE,'onclick'=>"RemoveRepeatableControl(this,'{$tagid}-{$i}')"]);
                         $f_params['value'] .= $ctrl_ract->Show();

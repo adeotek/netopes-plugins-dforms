@@ -19,6 +19,7 @@ use NETopes\Core\Data\DataSet;
 use NETopes\Core\Data\VirtualEntity;
 use NETopes\Core\AppException;
 use NApp;
+use NETopes\Plugins\DForms\Modules\Controls\Controls;
 use Translate;
 /**
  * Class Templates
@@ -482,6 +483,23 @@ class Templates extends Module {
 	 * @return void
 	 * @throws \NETopes\Core\AppException
 	 */
+	public function SetPageTitle($params = NULL) {
+        $idTemplate = $params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
+        $pIndex = $params->getOrFail('pindex','is_integer','Invalid page index!');
+        $title = $params->safeGet('title','','is_string');
+        $result = DataProvider::Get('Plugins\DForms\Templates','SetTemplatePageTitle',[
+            'template_id'=>$idTemplate,
+            'for_pindex'=>$pIndex,
+            'in_title'=>$title,
+        ]);
+        if($result===FALSE) { throw new AppException('Unknown database error!'); }
+    }//END public function SetPageTitle
+	/**
+	 * description
+	 * @param \NETopes\Core\App\Params|array|null $params Parameters
+	 * @return void
+	 * @throws \NETopes\Core\AppException
+	 */
 	public function ShowAddTableElementForm($params = NULL) {
 		$idTemplate = $params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
 		$pIndex = $params->getOrFail('pindex','is_integer','Invalid page position!');
@@ -504,7 +522,7 @@ class Templates extends Module {
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function UpdateContentTable($params = NULL) {
-		// NApp::_Dlog($params,'UpdateContentTable');
+		// NApp::Dlog($params,'UpdateContentTable');
 		$idTemplate = $params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
 		$pIndex = $params->getOrFail('pindex','is_integer','Invalid page position!');
 		$type = $params->getOrFail('type','is_integer','Invalid action type!');
@@ -545,7 +563,6 @@ class Templates extends Module {
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function AddEditContentElement($params = NULL) {
-		// NApp::_Dlog($params,'AddEditContentElement');
 		$idTemplate = $params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
 		$pIndex = $params->getOrFail('pindex','is_integer','Invalid page position!');
 		$idControl = $params->getOrFail('id_control','is_not0_integer','Invalid control identifier!');
@@ -553,15 +570,15 @@ class Templates extends Module {
 		$id = $params->safeGet('id_item',NULL,'is_not0_integer');
 		if($id) {
 			$item = DataProvider::Get('Plugins\DForms\Templates','GetField',['for_id'=>$id]);
-			$frow = $item->getProperty('frow',0,'is_integer');
-			$fcol = $item->getProperty('fcol',0,'is_integer');
+			$fRow = $item->getProperty('frow',0,'is_integer');
+			$fCol = $item->getProperty('fcol',0,'is_integer');
 		} else {
 			$cell = $params->safeGet('cell','','is_string');
-			$cell_arr = explode('-',$cell);
-			if(!is_array($cell_arr) || count($cell_arr)!=3) { throw new AppException('Invalid template cell!'); }
-			$frow = $cell_arr[1];
-			$fcol = $cell_arr[2];
-			if(!$frow || !$fcol) { throw new AppException('Invalid cell data!'); }
+			$cellArray = explode('-',$cell);
+			if(!is_array($cellArray) || count($cellArray)!=3) { throw new AppException('Invalid template cell!'); }
+			$fRow = $cellArray[1];
+			$fCol = $cellArray[2];
+			if(!$fRow || !$fCol) { throw new AppException('Invalid cell data!'); }
 			$item = new VirtualEntity();
 		}//if(!$id)
 		$target = $params->safeGet('target','','is_string');
@@ -593,7 +610,6 @@ class Templates extends Module {
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function AddEditContentElementRecord($params = NULL) {
-		// NApp::_Dlog($params,'AddEditContentElementRecord');
 		$idTemplate = $params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
 		$pIndex = $params->getOrFail('pindex','is_integer','Invalid page position!');
 		$id = $params->safeGet('id_item',NULL,'is_not0_numeric');
@@ -610,7 +626,7 @@ class Templates extends Module {
 		$listing = $params->safeGet('listing',0,'is_integer');
 		$id_values_list = $params->safeGet('id_values_list',NULL,'is_numeric');
 		// process field properties
-		$fparams = ModulesProvider::Exec('Plugins\DForms\Controls\Controls','ProcessFieldProperties',[
+		$fparams = ModulesProvider::Exec(Controls::class,'ProcessFieldProperties',[
 			'id_control'=>$params->safeGet('id_control',NULL,'is_integer'),
 			'data'=>$params->safeGet('properties',NULL,'is_array'),
 		]);
@@ -633,9 +649,9 @@ class Templates extends Module {
 			if($result===FALSE) { throw new AppException('Unknown database error!'); }
 		} else {
 			$class = $params->safeGet('class','','is_string');
-			$fcol = $params->safeGet('fcol',0,'is_integer');
-			$frow = $params->safeGet('frow',0,'is_integer');
-			if(!$frow || !$fcol || !strlen($class)) { throw new AppException('Invalid field data!'); }
+			$fCol = $params->safeGet('fcol',0,'is_integer');
+			$fRow = $params->safeGet('frow',0,'is_integer');
+			if(!$fRow || !$fCol || !strlen($class)) { throw new AppException('Invalid field data!'); }
 			$data_type = $params->safeGet('data_type','','is_string');
 			if($class=='BasicForm') {
 				$id_sub_form = $params->safeGet('id_sub_form',0,'is_integer');
@@ -654,8 +670,8 @@ class Templates extends Module {
 				'sub_form_id'=>$id_sub_form,
 				'in_pindex'=>$pIndex,
 				'in_itype'=>$params->safeGet('itype',1,'is_not0_integer'),
-				'in_frow'=>$frow,
-				'in_fcol'=>$fcol,
+				'in_frow'=>$fRow,
+				'in_fcol'=>$fCol,
 				'in_name'=>$name,
 				'in_label'=>$label,
 				'in_required'=>$required,
@@ -679,21 +695,22 @@ class Templates extends Module {
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function MoveContentElement($params = NULL) {
-		// NApp::_Dlog($params,'MoveContentElement');
 		$idTemplate = $params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
-		$pIndex = $params->getOrFail('pindex','is_integer','Invalid page position!');
-		$id = $params->getOrFail('id','is_not0_integer','Invalid field identifier!');
+		$initialPageIndex = $params->getOrFail('pindex','is_integer','Invalid page position!');
+		$id = $params->getOrFail('id_item','is_not0_integer','Invalid field identifier!');
 		$cell = $params->safeGet('cell','','is_string');
-		$cell_arr = explode('-',$cell);
-		if(!is_array($cell_arr) || count($cell_arr)!=3) { throw new AppException('Invalid template cell!'); }
-		$frow = $cell_arr[1];
-		$fcol = $cell_arr[2];
-		if(!$frow || !$fcol) { throw new AppException('Invalid field data!'); }
+		$cellArray = explode('-',$cell);
+		if(!is_array($cellArray) || count($cellArray)!=3) { throw new AppException('Invalid template cell!'); }
+		$pIndex = $cellArray[0];
+		$fRow = $cellArray[1];
+		$fCol = $cellArray[2];
+		if(!$fRow || !$fCol) { throw new AppException('Invalid field data!'); }
 		$result = DataProvider::Get('Plugins\DForms\Templates','SetField',[
 			'for_id'=>$id,
+			'in_pindex'=>$pIndex,
 			'in_itype'=>NULL,
-			'in_frow'=>$frow,
-			'in_fcol'=>$fcol,
+			'in_frow'=>$fRow,
+			'in_fcol'=>$fCol,
 			'in_name'=>NULL,
 			'in_label'=>NULL,
 			'in_required'=>NULL,
@@ -701,10 +718,9 @@ class Templates extends Module {
 			'in_data_type'=>NULL,
 			'in_params'=>NULL,
 		]);
-		// if($result!==FALSE) {
+		if($result===FALSE) { throw new AppException('Unknown database error!'); }
 		// 	$target = $params->safeGetValue('target','');
 		// 	NApp::Ajax()->Execute("AjaxRequest('{$this->class}','ShowContentTable','id_template'|{$idTemplate},'{$target}')->{$target}");
-		// }//if($result!==FALSE)
 	}//END public function MoveContentElement
 	/**
 	 * description
@@ -713,7 +729,7 @@ class Templates extends Module {
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function DeleteContentElementRecord($params = NULL) {
-		// NApp::_Dlog($params,'DeleteContentElementRecord');
+		// NApp::Dlog($params,'DeleteContentElementRecord');
 		$idTemplate = $params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
 		$pIndex = $params->getOrFail('pindex','is_integer','Invalid page position!');
 		$id = $params->getOrFail('id','is_not0_integer','Invalid field identifier!');
@@ -729,7 +745,7 @@ class Templates extends Module {
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function CloneRecord($params = NULL) {
-		// NApp::_Dlog($params,'DeleteContentElementRecord');
+		// NApp::Dlog($params,'DeleteContentElementRecord');
 		$id = $params->getOrFail('id','is_not0_integer','Invalid field identifier!');
 		$result = DataProvider::Get('Plugins\DForms\Templates','CloneItem',['for_id'=>$id,'user_id'=>NApp::GetCurrentUserId()]);
 		if($result===FALSE) { throw new AppException('Unknown database error!'); }

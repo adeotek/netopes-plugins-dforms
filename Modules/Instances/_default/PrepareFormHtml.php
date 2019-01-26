@@ -74,7 +74,7 @@
 <?php
 				continue;
 			}//if(!strlen($fclass))
-			// if($id_sub_form) { NApp::_Dlog($field,$fclass); }
+			// if($id_sub_form) { NApp::Dlog($field,$fclass); }
 			$fparams = get_array_value($field,'params','','is_string');
 			$f_params = strlen($fparams) ? @unserialize($fparams) : [];
 			$css_class = get_array_value($f_params,'class','','is_string');
