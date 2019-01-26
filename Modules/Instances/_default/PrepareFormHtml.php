@@ -1,7 +1,7 @@
 <?php
 	$empty_val = get_array_value($this->html_styles,'empty_value','','is_string');
 	if(!$output) { ob_start(); }
-	if(!$id_sub_form) {
+	if(!$idSubForm) {
 ?>
 	<table <?php echo get_array_value($this->html_styles,'table_attr','','is_string'); ?>style="<?php echo get_array_value($this->html_styles,'table_style','','is_string'); ?>">
 <?php
@@ -45,7 +45,7 @@
 		<tr><td>&nbsp;</td></tr>
 	</table>
 <?php
-	}//if(!$id_sub_form)
+	}//if(!$idSubForm)
 	if(is_array($fields) && count($fields)) {
 ?>
 	<table <?php echo get_array_value($this->html_styles,'table_attr','','is_string'); ?>style="<?php echo get_array_value($this->html_styles,'table_style','','is_string'); ?>">
@@ -67,18 +67,18 @@
 <?php
 			}//if($row!=$crow)
 			$col = get_array_value($field,'fcol',1,'is_numeric');
-			$fclass = get_array_value($field,'class','','is_string');
-			if(!strlen($fclass)) {
+			$fClass = get_array_value($field,'class','','is_string');
+			if(!strlen($fClass)) {
 ?>
 			<td>&nbsp;</td>
 <?php
 				continue;
-			}//if(!strlen($fclass))
-			// if($id_sub_form) { NApp::Dlog($field,$fclass); }
+			}//if(!strlen($fClass))
+			// if($idSubForm) { NApp::Dlog($field,$fClass); }
 			$fparams = get_array_value($field,'params','','is_string');
-			$f_params = strlen($fparams) ? @unserialize($fparams) : [];
-			$css_class = get_array_value($f_params,'class','','is_string');
-			switch($fclass) {
+			$fParams = strlen($fparams) ? @unserialize($fparams) : [];
+			$css_class = get_array_value($fParams,'class','','is_string');
+			switch($fClass) {
 				case 'FormTitle':
 					if($css_class=='taleft') { $talign = 'left'; }
 					elseif($css_class=='taright') { $talign = 'right'; }
@@ -102,15 +102,15 @@
 					break;
 				case 'BasicForm':
 					$f_itype = get_array_value($field,'itype',1,'is_not0_numeric');
-					$id_sub_form = get_array_value($field,'id_sub_form',-1,'is_not0_numeric');
-					$id_item = get_array_value($field,'id',NULL,'is_not0_numeric');
+					$idSubForm = get_array_value($field,'id_sub_form',-1,'is_not0_numeric');
+					$idItem = get_array_value($field,'id',NULL,'is_not0_numeric');
 					$f_icount = $f_itype==2 ? get_array_value($field,'icount',0,'is_not0_numeric') : 1;
-					$fvalue = '';
+					$fValue = '';
 					for($i=0;$i<$f_icount;$i++) {
-						$fvalue .= $this->Exec('PrepareFormHtml',['id'=>$id_instance,'id_sub_form'=>$id_sub_form,'id_item'=>$id_item,'index'=>$i,'output'=>$output]);
+						$fValue .= $this->Exec('PrepareFormHtml',['id'=>$idInstance,'id_sub_form'=>$idSubForm,'id_item'=>$idItem,'index'=>$i,'output'=>$output]);
 					}//END for
 ?>
-			<td><?php echo $fvalue; ?></td>
+			<td><?php echo $fValue; ?></td>
 <?php
 					break;
 				case 'Message':
@@ -123,37 +123,37 @@
 				case 'SmartComboBox':
 				case 'GroupCheckBox':
 					$flabel = get_array_value($field,'label','','is_string');
-					$f_value = get_array_value($field,'ivalues',NULL,'is_string');
-					$id_values_list = get_array_value($field,'id_values_list',0,'is_numeric');
-					if($id_values_list>0) {
-						$vl_value = DataProvider::GetArray('Plugins\DForms\ValuesLists','GetValueItems',['for_id'=>$f_value,'list_id'=>$id_values_list]);
-						$fvalue = get_array_value($vl_value,[0,'name'],$empty_val,'is_notempty_string');
+					$fValue = get_array_value($field,'ivalues',NULL,'is_string');
+					$idValuesList = get_array_value($field,'id_values_list',0,'is_numeric');
+					if($idValuesList>0) {
+						$vl_value = DataProvider::GetArray('Plugins\DForms\ValuesLists','GetValueItems',['for_id'=>$fValue,'list_id'=>$idValuesList]);
+						$fValue = get_array_value($vl_value,[0,'name'],$empty_val,'is_notempty_string');
 					} else {
-						$fvalue = $empty_val;
-					}//if($id_values_list>0)
+						$fValue = $empty_val;
+					}//if($idValuesList>0)
 ?>
-			<td><label style="<?php echo get_array_value($this->html_styles,'label_style','','is_string'); ?>"><?php echo $flabel.get_array_value($this->html_styles,'label_value_sep','','is_string'); ?></label><span style="<?php echo get_array_value($this->html_styles,'value_style','','is_string'); ?>"><?php echo $fvalue; ?></span></td>
+			<td><label style="<?php echo get_array_value($this->html_styles,'label_style','','is_string'); ?>"><?php echo $flabel.get_array_value($this->html_styles,'label_value_sep','','is_string'); ?></label><span style="<?php echo get_array_value($this->html_styles,'value_style','','is_string'); ?>"><?php echo $fValue; ?></span></td>
 <?php
 					break;
 				default:
 					$flabel = get_array_value($field,'label','','is_string');
 					$f_itype = get_array_value($field,'itype',1,'is_not0_numeric');
 					if($f_itype==2) {
-						$f_value = get_array_value($field,'ivalues',NULL,'is_string');
-						$fvalues = explode('|::|',$f_value);
+						$fValue = get_array_value($field,'ivalues',NULL,'is_string');
+						$fValues = explode('|::|',$fValue);
 						$f_icount = get_array_value($field,'icount',0,'is_numeric');
-						$fvalue = '';
-						for($i=1;$i<$icount;$i++) {
-							$fi_val = get_array_value($fvalues,$i,$empty_val,'is_notempty_string');
-							$fvalue .= '<label style="'.get_array_value($this->html_styles,'label_style','','is_string').'">'.$flabel.':</label>&nbsp;<span style="'.get_array_value($this->html_styles,'value_style','','is_string').'">'.$fi_val.'</span>';
+						$fValue = '';
+						for($i=1;$i<$iCount;$i++) {
+							$fi_val = get_array_value($fValues,$i,$empty_val,'is_notempty_string');
+							$fValue .= '<label style="'.get_array_value($this->html_styles,'label_style','','is_string').'">'.$flabel.':</label>&nbsp;<span style="'.get_array_value($this->html_styles,'value_style','','is_string').'">'.$fi_val.'</span>';
 						}//END for
 ?>
-			<td><?php echo strlen($fvalue) ? $fvalue : '<label style="'.get_array_value($this->html_styles,'label_style','','is_string').'">'.$flabel.get_array_value($this->html_styles,'label_value_sep','','is_string').'</label><span style="'.get_array_value($this->html_styles,'value_style','','is_string').'">'.$empty_val.'</span>'; ?></td>
+			<td><?php echo strlen($fValue) ? $fValue : '<label style="'.get_array_value($this->html_styles,'label_style','','is_string').'">'.$flabel.get_array_value($this->html_styles,'label_value_sep','','is_string').'</label><span style="'.get_array_value($this->html_styles,'value_style','','is_string').'">'.$empty_val.'</span>'; ?></td>
 <?php
 					} else {
-						$fvalue = get_array_value($field,'ivalues',$empty_val,'is_notempty_string');
+						$fValue = get_array_value($field,'ivalues',$empty_val,'is_notempty_string');
 ?>
-			<td><label style="<?php echo get_array_value($this->html_styles,'label_style','','is_string'); ?>"><?php echo $flabel.get_array_value($this->html_styles,'label_value_sep','','is_string'); ?></label><span style="<?php echo get_array_value($this->html_styles,'value_style','','is_string'); ?>"><?php echo $fvalue; ?></span></td>
+			<td><label style="<?php echo get_array_value($this->html_styles,'label_style','','is_string'); ?>"><?php echo $flabel.get_array_value($this->html_styles,'label_value_sep','','is_string'); ?></label><span style="<?php echo get_array_value($this->html_styles,'value_style','','is_string'); ?>"><?php echo $fValue; ?></span></td>
 <?php
 					}//if($f_itype==2)
 					break;

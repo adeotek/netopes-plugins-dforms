@@ -6,7 +6,7 @@
 	if(strlen($vcontent)) {
 		if(strlen($uid)) { str_replace('[form_uid]',$uid,$vcontent); }
 		if(strlen($category)) { str_replace('[form_category]',$category,$vcontent); }
-		$fields = DataProvider::GetArray('Plugins\DForms\Instances','GetStructure',['instance_id'=>$id_instance]);
+		$fields = DataProvider::GetArray('Plugins\DForms\Instances','GetStructure',['instance_id'=>$idInstance]);
 		if(is_array($fields) && count($fields)) {
 			foreach($fields as $field) {
 				$fname = get_array_value($field,'name','','is_string');
@@ -15,7 +15,7 @@
 				$vcontent = str_replace('['.$fname.']',$fval,$vcontent);
 			}//END foreach
 		}//if(is_array($fields) && count($fields))
-		$relations = DataProvider::GetArray('Plugins\DForms\Instances','GetRelations',['instance_id'=>$id_instance]);
+		$relations = DataProvider::GetArray('Plugins\DForms\Instances','GetRelations',['instance_id'=>$idInstance]);
 		if(is_array($relations) && count($relations)) {
 			foreach($relations as $rel) {
 				$fname = get_array_value($rel,'name','','is_string');
@@ -25,7 +25,7 @@
 			}//END foreach
 		}//if(is_array($relations) && count($relations))
 	} else {
-		$vcontent = $this->Exec('PrepareFormHtml',['id'=>$id_instance]);
+		$vcontent = $this->Exec('PrepareFormHtml',['id'=>$idInstance]);
 	}//if(strlen($vcontent))
 
 ?>

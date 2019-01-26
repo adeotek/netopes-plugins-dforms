@@ -1,7 +1,7 @@
 <?php
 $ctrl_params = array(
-    'module'=>$cmodule,
-    'method'=>$cmethod,
+    'module'=>$cModule,
+    'method'=>$cMethod,
     'persistent_state'=>TRUE,
     'target'=>$listingTarget,
     'alternate_row_collor'=>TRUE,
@@ -42,7 +42,7 @@ $ctrl_params = array(
                 array(
                     'dright'=>'edit',
                     'type'=>'DivButton',
-                    'command_string'=>"AjaxRequest('{$this->class}','ShowEditForm','id'|{{id}}~'id_template'|'{{id_template}}'~'cmodule'|'{$cmodule}'~'cmethod'|'{$cmethod}'~'ctarget'|'{$cTarget}')->main-content",
+                    'command_string'=>"AjaxRequest('{$this->class}','ShowEditForm','id'|{{id}}~'id_template'|'{{id_template}}'~'cmodule'|'{$cModule}'~'cmethod'|'{$cMethod}'~'ctarget'|'{$cTarget}')->main-content",
                     'params'=>array('tag_id'=>'df_instance_edit_btn','tooltip'=>Translate::GetButton('edit'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-xxs'),'icon'=>'fa fa-pencil-square-o'),
                 ),
                 array(
@@ -131,7 +131,7 @@ if(is_array($this->show_in_listing)) {
                     'db_field'=>'ftype',
                     'data_type'=>'numeric',
                     'type'=>'indexof',
-                    'values_collection'=>$ftypes,
+                    'values_collection'=>$fTypes,
                     'halign'=>'center',
                     'label'=>Translate::GetLabel('type'),
                     'sortable'=>TRUE,
@@ -164,7 +164,7 @@ if(is_array($this->show_in_listing)) {
                     'data_type'=>'numeric',
                     'type'=>'control',
                     'control_type'=>'JqCheckBox',
-                    'control_params'=>array('container'=>FALSE,'no_label'=>TRUE,'tag_id'=>'df_instance_update_state','jqparams'=>'{ type: 5 }','onchange'=>"AjaxRequest('{$cmodule}','EditRecordState','id'|'{{id}}'~'state'|df_instance_update_state_{{id}}:value)->errors"),
+                    'control_params'=>array('container'=>FALSE,'no_label'=>TRUE,'tag_id'=>'df_instance_update_state','jqparams'=>'{ type: 5 }','onchange'=>"AjaxRequest('{$cModule}','EditRecordState','id'|'{{id}}'~'state'|df_instance_update_state_{{id}}:value)->errors"),
                     'control_pafreq'=>array('onchange'),
                     'label'=>Translate::GetLabel('active'),
                     'sortable'=>TRUE,
@@ -238,7 +238,7 @@ $ctrl_params['columns']['end_actions'] = array(
         array(
             'dright'=>'delete',
             'type'=>'DivButton',
-            'command_string'=>"AjaxRequest('{$this->class}','DeleteRecord','id'|{{id}}~'id_template'|'{{id_template}}'~'cmodule'|'{$cmodule}'~'cmethod'|'{$cmethod}'~'ctarget'|'{$cTarget}')->errors",
+            'command_string'=>"AjaxRequest('{$this->class}','DeleteRecord','id'|{{id}}~'id_template'|'{{id_template}}'~'cmodule'|'{$cModule}'~'cmethod'|'{$cMethod}'~'ctarget'|'{$cTarget}')->errors",
             'params'=>array('tooltip'=>Translate::GetButton('delete'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs'),'icon'=>'fa fa-times','confirm_text'=>Translate::GetMessage('confirm_delete'),'conditions'=>array(array('field'=>'ftype','type'=>'!=','value'=>2))),
         ),
     ),

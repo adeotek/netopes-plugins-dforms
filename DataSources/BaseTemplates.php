@@ -50,10 +50,10 @@ abstract class BaseTemplates extends DataSource {
 	/**
      * SetNewItem default parameters
      */
-	const SET_NEW_ITEM = ['in_code'=>NULL,'in_name'=>NULL,'in_ftype'=>NULL,'in_state'=>NULL,'in_colsno'=>NULL,'in_rowsno'=>NULL,'in_delete_mode'=>NULL,'in_iso_code'=>NULL,'in_print_template'=>NULL,'user_id'=>NULL];
+	const SET_NEW_ITEM = ['in_code'=>NULL,'in_name'=>NULL,'in_ftype'=>NULL,'in_state'=>NULL,'in_colsno'=>NULL,'in_rowsno'=>NULL,'in_delete_mode'=>NULL,'user_id'=>NULL];
     /**
      * Sets a new template
-     * @param array $params ['in_code'=>NULL,'in_name'=>NULL,'in_ftype'=>NULL,'in_state'=>NULL,'in_colsno'=>NULL,'in_rowsno'=>NULL,'in_delete_mode'=>NULL,'in_iso_code'=>NULL,'in_print_template'=>NULL,'user_id'=>NULL]
+     * @param array $params ['in_code'=>NULL,'in_name'=>NULL,'in_ftype'=>NULL,'in_state'=>NULL,'in_colsno'=>NULL,'in_rowsno'=>NULL,'in_delete_mode'=>NULL,'user_id'=>NULL]
      * @param array $extra_params
      * @return mixed
      */
@@ -61,10 +61,10 @@ abstract class BaseTemplates extends DataSource {
 	/**
      * SetItem default parameters
      */
-    const SET_ITEM = ['for_id'=>NULL,'in_name'=>NULL,'in_ftype'=>NULL,'in_state'=>NULL,'in_delete_mode'=>NULL,'in_iso_code'=>NULL,'in_print_template'=>NULL,'user_id'=>NULL];
+    const SET_ITEM = ['for_id'=>NULL,'in_name'=>NULL,'in_ftype'=>NULL,'in_state'=>NULL,'in_delete_mode'=>NULL,'user_id'=>NULL];
     /**
      * Sets a template
-     * @param array $params
+     * @param array $params ['for_id'=>NULL,'in_name'=>NULL,'in_ftype'=>NULL,'in_state'=>NULL,'in_delete_mode'=>NULL,'user_id'=>NULL]
      * @param array $extra_params
      * @return mixed
      */

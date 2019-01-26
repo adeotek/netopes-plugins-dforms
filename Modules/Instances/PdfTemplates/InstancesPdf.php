@@ -9,7 +9,7 @@
  * @version    1.0.1.0
  * @filesource
  */
-namespace NETopes\Plugins\Modules\DForms\Instances\PdfTemplates;
+namespace NETopes\Plugins\DForms\Modules\Instances\PdfTemplates;
 use NETopes\Core\Reporting\PdfDocument;
 use Translate;
 /**
@@ -32,4 +32,3 @@ class InstancesPdf extends PdfDocument {
 		parent::_Init();
 	}//END protected function _Init
 }//END class InstancesPdf extends PdfDocument
-?>

@@ -624,7 +624,7 @@ class Templates extends Module {
 		}//if(!strlen($name) || ($label_required && !strlen($label)))
 		$required = $params->safeGet('required',0,'is_integer');
 		$listing = $params->safeGet('listing',0,'is_integer');
-		$id_values_list = $params->safeGet('id_values_list',NULL,'is_numeric');
+		$idValuesList = $params->safeGet('id_values_list',NULL,'is_numeric');
 		// process field properties
 		$fparams = ModulesProvider::Exec(Controls::class,'ProcessFieldProperties',[
 			'id_control'=>$params->safeGet('id_control',NULL,'is_integer'),
@@ -640,7 +640,7 @@ class Templates extends Module {
 				'in_label'=>$label,
 				'in_required'=>$required,
 				'in_listing'=>$listing,
-				'values_list_id'=>$id_values_list,
+				'values_list_id'=>$idValuesList,
 				'in_class'=>NULL,
 				'in_data_type'=>NULL,
 				'in_params'=>$fparams,
@@ -654,20 +654,20 @@ class Templates extends Module {
 			if(!$fRow || !$fCol || !strlen($class)) { throw new AppException('Invalid field data!'); }
 			$data_type = $params->safeGet('data_type','','is_string');
 			if($class=='BasicForm') {
-				$id_sub_form = $params->safeGet('id_sub_form',0,'is_integer');
-				if(!$id_sub_form) {
+				$idSubForm = $params->safeGet('id_sub_form',0,'is_integer');
+				if(!$idSubForm) {
 					NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
 					echo Translate::GetMessage('required_fields');
 					return;
-				}//if(!$id_sub_form)
+				}//if(!$idSubForm)
 				$name = NULL;
 				$label = NULL;
 			} else {
-				$id_sub_form = NULL;
-			}//if($class=='BasicForm' && !$id_sub_form)
+				$idSubForm = NULL;
+			}//if($class=='BasicForm' && !$idSubForm)
 			$result = DataProvider::Get('Plugins\DForms\Templates','SetNewField',[
 				'template_id'=>$idTemplate,
-				'sub_form_id'=>$id_sub_form,
+				'sub_form_id'=>$idSubForm,
 				'in_pindex'=>$pIndex,
 				'in_itype'=>$params->safeGet('itype',1,'is_not0_integer'),
 				'in_frow'=>$fRow,
@@ -676,7 +676,7 @@ class Templates extends Module {
 				'in_label'=>$label,
 				'in_required'=>$required,
 				'in_listing'=>$listing,
-				'values_list_id'=>$id_values_list,
+				'values_list_id'=>$idValuesList,
 				'in_class'=>$class,
 				'in_data_type'=>$data_type,
 				'in_params'=>$fparams,
