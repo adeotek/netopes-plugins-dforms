@@ -4,6 +4,7 @@ $ctrl_params = array(
     'tag_id'=>'df_template_add_form',
     'response_target'=>'df_template_add_errors',
     'cols_no'=>1,
+    'label_cols'=>4,
     'content'=>array(
         array(
             array(
@@ -42,12 +43,6 @@ $ctrl_params = array(
                 'control_params'=>array('tag_id'=>'df_template_add_dmode','value'=>0,'label'=>Translate::GetLabel('hard_delete'),'class'=>'pull-left'),
             ),
         ),
-        array(
-            array(
-                'control_type'=>'TextBox',
-                'control_params'=>array('tag_id'=>'df_template_add_iso_code','value'=>'','label'=>Translate::GetLabel('iso_code'),'onenter_button'=>'df_template_add_save'),
-            ),
-        ),
     ),
     'actions'=>array(
         array(
@@ -59,7 +54,6 @@ $ctrl_params = array(
                 ~'state'|df_template_add_state:value
                 ~'cols_no'|df_template_add_colsno:value
                 ~'dmode'|df_template_add_dmode:value
-                ~'iso_code'|df_template_add_iso_code:value
             ,'df_template_add_form')->df_template_add_errors")),
         ),
         array(

@@ -40,6 +40,7 @@ $ctrl_params = array(
                                 'control_params'=>array('tag_id'=>'df_template_edit_ftype','value'=>DataProvider::GetKeyValue('_Custom\DFormsOffline','GetDynamicFormsTemplatesFTypes'),'label'=>Translate::GetLabel('type'),'value_field'=>'id','display_field'=>'name','selected_value'=>$item->getProperty('ftype',0,'is_numeric'),'required'=>TRUE,'disabled'=>TRUE),
                             ),
                         ),
+                        array('separator'=>'line'),
                         // array(
                         // 	array(
                         //
@@ -47,17 +48,10 @@ $ctrl_params = array(
                         // 		'control_params'=>array('tag_id'=>'df_template_edit_state','value'=>$item->getProperty('state',0,'is_numeric'),'label'=>Translate::GetLabel('active'),'class'=>'pull-left'),
                         // 	),
                         // ),
-                        array('separator'=>'line'),
                         array(
                             array(
                                 'control_type'=>'CheckBox',
                                 'control_params'=>array('tag_id'=>'df_template_edit_dmode','value'=>$item->getProperty('t_delete_mode',0,'is_numeric'),'label'=>Translate::GetLabel('hard_delete'),'class'=>'pull-left'),
-                            ),
-                        ),
-                        array(
-                            array(
-                                'control_type'=>'TextBox',
-                                'control_params'=>array('tag_id'=>'df_template_edit_iso_code','value'=>$item->getProperty('t_iso_code','','is_string'),'label'=>Translate::GetLabel('iso_code'),'onenter_button'=>'df_template_edit_save'),
                             ),
                         ),
                     ),
@@ -70,7 +64,6 @@ $ctrl_params = array(
                                 ~'name'|df_template_edit_name:value
                                 ~'ftype'|df_template_edit_ftype:value
                                 ~'dmode'|df_template_edit_dmode:value
-                                ~'iso_code'|df_template_edit_iso_code:value
                             ,'df_template_edit_form')->df_template_edit_errors")),
                         ),
                         //~'state'|df_template_edit_state:value
@@ -82,7 +75,6 @@ $ctrl_params = array(
                                 ~'name'|df_template_edit_name:value
                                 ~'ftype'|df_template_edit_ftype:value
                                 ~'dmode'|df_template_edit_dmode:value
-                                ~'iso_code'|df_template_edit_iso_code:value
                             ,'df_template_edit_form')->df_template_edit_errors")),
                         ),
                     ),

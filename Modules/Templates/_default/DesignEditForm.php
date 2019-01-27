@@ -49,6 +49,13 @@ $ctrl_params = array(
                 'control_params'=>array('tag_id'=>'df_template_design_edit_separator_width','tag_name'=>'separator_width','value'=>$item->getProperty('separator_width','','is_string'),'label'=>Translate::GetLabel('separator_width'),'onenter_button'=>'df_template_design_edit_save'),
             ),
         ),
+        array('separator'=>'line'),
+        array(
+            array(
+                'control_type'=>'TextBox',
+                'control_params'=>array('tag_id'=>'df_template_design_edit_iso_code','tag_name'=>'iso_code','value'=>$item->getProperty('iso_code','','is_string'),'label'=>Translate::GetLabel('iso_code'),'onenter_button'=>'df_template_design_edit_save'),
+            ),
+        ),
     ),
     'actions'=>array(
         array(

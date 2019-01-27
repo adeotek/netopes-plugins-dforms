@@ -131,8 +131,6 @@ class Templates extends Module {
 		$colsNo = $params->safeGet('colsno',NULL,'is_numeric');
 		$rowsNo = $params->safeGet('rowsno',NULL,'is_numeric');
 		$dmode = $params->safeGet('dmode',NULL,'is_numeric');
-		$iso_code = $params->safeGet('separator_width','','is_string');
-		$print_template = $params->safeGet('print_template','','is_string');
 		if($id) {
 			$result = DataProvider::Get('Plugins\DForms\Templates','SetItem',[
 				'for_id'=>$id,
@@ -140,8 +138,6 @@ class Templates extends Module {
 				'in_ftype'=>$ftype,
 				'in_state'=>$state,
 				'in_delete_mode'=>$dmode,
-				'in_iso_code'=>$iso_code,
-				'in_print_template'=>$print_template,
 				'user_id'=>NApp::GetCurrentUserId(),
 			]);
 			if($result===FALSE) { throw new AppException('Unknown database error!'); }
@@ -159,8 +155,6 @@ class Templates extends Module {
 				'in_colsno'=>$colsNo,
 				'in_rowsno'=>$rowsNo,
 				'in_delete_mode'=>$dmode,
-				'in_iso_code'=>$iso_code,
-				'in_print_template'=>$print_template,
 				'user_id'=>NApp::GetCurrentUserId(),
 			]);
 			if(!is_object($result) || !count($result)) { throw new AppException('Unknown database error!'); }
@@ -177,11 +171,10 @@ class Templates extends Module {
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function SetPrintTemplate($params = NULL) {
-		$id = $params->getOrFail('id','is_not0_integer','Invalid record identifier!');
-		$result = DataProvider::Get('Plugins\DForms\Templates','SetItem',[
-            'for_id'=>$id,
+		$idTemplate = $params->getOrFail('id','is_not0_integer','Invalid record identifier!');
+		$result = DataProvider::Get('Plugins\DForms\Templates','SetPropertiesItem',[
+            'template_id'=>$idTemplate,
             'in_print_template'=>$params->safeGet('print_template','','is_string'),
-            'user_id'=>NApp::GetCurrentUserId(),
         ]);
         if($result===FALSE) { throw new AppException('Unknown database error!'); }
         if($params->safeGet('close',1,'is_numeric')!=1) {
@@ -284,6 +277,7 @@ class Templates extends Module {
             'in_controls_size'=>$params->safeGet('controls_size','','is_string'),
             'in_label_cols'=>$params->safeGet('label_cols',NULL,'is_not0_integer'),
             'in_separator_width'=>$params->safeGet('separator_width','','is_string'),
+            'in_iso_code'=>$params->safeGet('iso_code','','is_string'),
         ]);
 		if($result===FALSE) { throw new AppException('Unknown database error!'); }
 		$cTarget = $params->safeGet('ctarget','','is_string');
