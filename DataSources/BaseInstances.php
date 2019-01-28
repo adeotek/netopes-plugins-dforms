@@ -65,10 +65,10 @@ abstract class BaseInstances extends DataSource {
     /**
      * GetStructure default parameters
      */
-	public const GET_STRUCTURE = ['template_id'=>NULL,'for_template_code'=>NULL,'instance_id'=>NULL,'item_id'=>NULL,'for_index'=>NULL];
+	public const GET_STRUCTURE = ['template_id'=>NULL,'for_template_code'=>NULL,'instance_id'=>NULL,'for_pindex'=>NULL,'item_id'=>NULL,'for_index'=>NULL];
 	/**
 	 * Gets DynamicForm structure with fields
-     * @param array $params ['template_id'=>NULL,'for_template_code'=>NULL,'instance_id'=>NULL,'item_id'=>NULL,'for_index'=>NULL]
+     * @param array $params ['template_id'=>NULL,'for_template_code'=>NULL,'instance_id'=>NULL,'for_pindex'=>NULL,'item_id'=>NULL,'for_index'=>NULL]
      * @param array $extra_params
      * @return mixed
 	 */

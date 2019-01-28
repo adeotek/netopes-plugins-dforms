@@ -245,6 +245,7 @@ class Instances extends Module {
 				'template_id'=>$idTemplate,
 				'instance_id'=>($idInstance ? $idInstance : NULL),
 			]);
+			NApp::Dlog($relations,'$relations');
 			NApp::Dlog($fields,'$fields');
 		}//if($idSubForm)
 		$themeType = get_array_value($template,'theme_type','','is_string');
