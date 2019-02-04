@@ -63,6 +63,17 @@ abstract class BaseInstances extends DataSource {
 	 */
 	abstract public function GetFields($params = [],$extra_params = []);
     /**
+     * GetPages default parameters
+     */
+	public const GET_PAGES = ['for_id'=>NULL,'instance_id'=>NULL,'template_id'=>NULL,'for_template_code'=>NULL,'for_pindex'=>NULL];
+	/**
+	 * Gets DynamicForm instance pages
+     * @param array $params ['for_id'=>NULL,'instance_id'=>NULL,'template_id'=>NULL,'for_template_code'=>NULL,'for_pindex'=>NULL]
+     * @param array $extra_params
+     * @return mixed
+	 */
+	abstract public function GetPages($params = [],$extra_params = []);
+    /**
      * GetStructure default parameters
      */
 	public const GET_STRUCTURE = ['template_id'=>NULL,'for_template_code'=>NULL,'instance_id'=>NULL,'for_pindex'=>NULL,'item_id'=>NULL,'for_index'=>NULL];

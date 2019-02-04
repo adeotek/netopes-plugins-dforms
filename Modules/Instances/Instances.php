@@ -12,10 +12,15 @@ namespace NETopes\Plugins\DForms\Modules\Instances;
 use NETopes\Core\App\AppView;
 use NETopes\Core\App\Module;
 use NETopes\Core\App\ModulesProvider;
+use NETopes\Core\App\Params;
 use NETopes\Core\App\Validator;
+use NETopes\Core\Controls\BasicForm;
 use NETopes\Core\Controls\Control;
 use NETopes\Core\Controls\ControlsHelpers;
+use NETopes\Core\Controls\TabControl;
 use NETopes\Core\Data\DataProvider;
+use NETopes\Core\Data\DataSet;
+use NETopes\Core\Data\VirtualEntity;
 use NETopes\Plugins\DForms\Instances\PdfTemplates\InstancesPdf;
 use NETopes\Core\AppException;
 use NApp;
@@ -64,36 +69,32 @@ class Instances extends Module {
 	];
 	/**
 	 * Module class initializer
-	 *
 	 * @return void
-	 * @access protected
 	 */
 	protected function _Init() {
+	    $this->viewsExtension = '.php';
 		$this->templateCode = NULL;
 	}//END protected function _Init
     /**
      * description
-     *
-     * @param \NETopes\Core\Data\VirtualEntity|array $field
+     * @param \NETopes\Core\Data\VirtualEntity $field
      * @param array                                  $fParams
-     * @param string|null     $themeType
      * @param mixed $fValue
+     * @param string|null                      $themeType
      * @param int  $iCount
      * @return array
      * @throws \NETopes\Core\AppException
      * @access protected
      */
-	protected function PrepareRepeatableField(&$field,array &$fParams,?string $themeType,$fValue = NULL,int $iCount = 0): array {
+	protected function PrepareRepeatableField(VirtualEntity $field,array $fParams,$fValue = NULL,?string $themeType = NULL,int $iCount = 0): array {
 		// NApp::Dlog($iCount,'$iCount');
 		// NApp::Dlog($fValue,'$fValues');
 		$idInstance = $field->getProperty('id_instance',NULL,'is_integer');
 		$tagId = ($idInstance ? $idInstance.'_' : '').$field->getProperty('cell','','is_string').'_'.$field->getProperty('name','','is_string');
-		$fValues = explode('|::|',$fValue);
-		$field = array_merge($field,[
-			'tag_id'=>$tagId.'-0',
-			'tag_name'=>$field->getProperty('id',NULL,'is_numeric').'[]',
-			'value'=>get_array_value($fValues,0,NULL,'isset'),
-		]);
+		$fValuesArray = explode('|::|',$fValue);
+		$field->set('tag_id',$tagId.'-'.$iCount);
+		$field->set('tag_name',$field->getProperty('id',NULL,'is_numeric').'[]');
+		$field->set('value',get_array_value($fValuesArray,0,NULL,'isset'));
 		$fClass = $field->getProperty('class','','is_string');
 		$idValuesList = $field->getProperty('id_values_list',0,'is_numeric');
 		if(in_array($fClass,['SmartComboBox','GroupCheckBox']) && $idValuesList>0) {
@@ -153,27 +154,24 @@ class Instances extends Module {
 	}//protected function PrepareRepeatableField
     /**
      * description
-     *
-     * @param \NETopes\Core\Data\VirtualEntity|array $field
+     * @param \NETopes\Core\Data\VirtualEntity $field
      * @param array                                  $fParams
-     * @param string|null     $themeType
      * @param mixed $fValue
+     * @param string|null                      $themeType
      * @param bool $repeatable
      * @param int  $iCount
      * @return array
-     * @access protected
      * @throws \NETopes\Core\AppException
+     * @access protected
      */
-	protected function PrepareField(&$field,array &$fParams,?string $themeType,$fValue = NULL,bool $repeatable = FALSE,int $iCount = 0): array {
-		// NApp::Dlog(['$field'=>$field,'$fParams'=>$fParams,'$themeType'=>$themeType,'$fValue'=>$fValue,'$f_rid'=>$f_rid,'$repeat_action'=>$repeat_action],'PrepareField');
-		if($repeatable) { return $this->PrepareRepeatableField($field,$fParams,$themeType,$fValue,$iCount); }
+	protected function PrepareField(VirtualEntity $field,array $fParams,$fValue = NULL,?string $themeType = NULL,bool $repeatable = FALSE,int $iCount = 0): array {
+		// NApp::Dlog(['$field'=>$field,'$fParams'=>$fParams,'$fValue'=>$fValue,''$themeType'=>$themeType,'$iCount'=>$iCount],'PrepareField');
+		if($repeatable) { return $this->PrepareRepeatableField($field,$fParams,$fValue,$themeType,$iCount); }
 		$idInstance = $field->getProperty('id_instance',NULL,'is_integer');
 		$tagId = ($idInstance ? $idInstance.'_' : '').$field->getProperty('cell','','is_string').'_'.$field->getProperty('name','','is_string');
-		$field = array_merge($field,[
-			'tag_id'=>$tagId,
-			'tag_name'=>$field->getProperty('id',NULL,'is_numeric'),
-			'value'=>$fValue,
-		]);
+		$field->set('tag_id',$tagId);
+		$field->set('tag_name',$field->getProperty('id',NULL,'is_numeric'));
+		$field->set('value',$fValue);
 		// if(strlen($themeType)) { $fParams['theme_type'] = $themeType; }
 		$fClass = $field->getProperty('class','','is_string');
 		if($fClass=='Message') {
@@ -191,17 +189,58 @@ class Instances extends Module {
 			];
 		}//if(in_array($fClass,['SmartComboBox','GroupCheckBox']) && $idValuesList>0)
 		$fParams = ControlsHelpers::ReplaceDynamicParams($fParams,$field,TRUE);
+		// NApp::Dlog($fParams,'$fParams');
 		return [
-			'width'=>$field->getProperty('width','','is_string'),
+			// 'width'=>$field->getProperty('width','','is_string'),
 			'control_type'=>$fClass,
 			'control_params'=>$fParams,
 		];
 	}//END protected function PrepareField
     /**
+     * Prepare add/edit form/sub-form page
+     * @param \NETopes\Core\App\Params|null    $params Parameters object
+     * @param \NETopes\Core\Data\VirtualEntity $template
+     * @param \NETopes\Core\Data\DataSet       $relations
+     * @param \NETopes\Core\Data\VirtualEntity $page
+     * @param bool                             $multiPage
+     * @param string                           $tName
+     * @param int|null                         $idInstance
+     * @param int|null                         $idSubForm
+     * @param int|null                         $idItem
+     * @param int|null                         $index
+     * @return array Returns BasicForm configuration array
+     * @throws \NETopes\Core\AppException
+     * @access protected
+     */
+	protected function PrepareFormPage(?Params $params,VirtualEntity $template,DataSet $relations,VirtualEntity $page,string $tName,bool $multiPage = FALSE,?int $idInstance = NULL,?int $idSubForm = NULL,?int $idItem = NULL,?int $index = NULL): ?array {
+		// NApp::Dlog(['$template'=>$template,'$relations'=>$relations,'$page'=>$page,'$tName'=>$tName,'$multiPage'=>$multiPage,'$idInstance'=>$idInstance,'$idSubForm'=>$idSubForm,'$idItem'=>$idItem,'$index'=>$index],'PrepareFormPage');
+        if($idSubForm) {
+			$fields = DataProvider::Get('Plugins\DForms\Instances','GetStructure',[
+				'template_id'=>$template->getProperty('id'),
+				'instance_id'=>($idInstance ? $idInstance : NULL),
+				'for_pindex'=>$page->getProperty('pindex',-1,'is_integer'),
+				'item_id'=>$idItem,
+				'for_index'=>(is_numeric($index) ? $index : NULL),
+			]);
+		} else {
+			$fields = DataProvider::Get('Plugins\DForms\Instances','GetStructure',[
+				'template_id'=>$template->getProperty('id'),
+				'instance_id'=>($idInstance ? $idInstance : NULL),
+				'for_pindex'=>$page->getProperty('pindex',-1,'is_integer'),
+			]);
+		}//if($idSubForm)
+        // NApp::Dlog($fields,'$fields');
+		$themeType = $template->getProperty('theme_type','','is_string');
+		$controlsSize = $template->getProperty('controls_size','','is_string');
+		$separatorWidth = $template->getProperty('separator_width','','is_string');
+		$labelCols = $template->getProperty('label_cols','','is_string');
+		require($this->GetViewFile('PrepareFormPage'));
+		return (isset($page_params) ? $page_params : NULL);
+	}//END protected function PrepareForm
+    /**
      * Prepare add/edit form/sub-form
-     *
-     * @param object $mtemplate
-     * @param \NETopes\Core\App\Params $params An array of parameters
+     * @param \NETopes\Core\App\Params|null $params Parameters object
+     * @param VirtualEntity|null $mTemplate
      * @param int|null   $idInstance
      * @param int|null   $idSubForm
      * @param int|null   $idItem
@@ -210,9 +249,9 @@ class Instances extends Module {
      * @throws \NETopes\Core\AppException
      * @access protected
      */
-	protected function PrepareForm($mtemplate,$params = NULL,?int $idInstance = NULL,?int $idSubForm = NULL,?int $idItem = NULL,?int $index = NULL): ?array {
-		NApp::Dlog(['$mtemplate'=>$mtemplate,'$idInstance'=>$idInstance,'$idSubForm'=>$idSubForm,'$idItem'=>$idItem,'$index'=>$index],'PrepareForm');
-		$idTemplate = $mtemplate->getProperty('id',NULL,'is_integer');
+	protected function PrepareForm(?Params $params,?VirtualEntity $mTemplate,?int $idInstance = NULL,?int $idSubForm = NULL,?int $idItem = NULL,?int $index = NULL): ?array {
+		// NApp::Dlog(['$mTemplate'=>$mTemplate,'$idInstance'=>$idInstance,'$idSubForm'=>$idSubForm,'$idItem'=>$idItem,'$index'=>$index],'PrepareForm');
+		$idTemplate = $mTemplate->getProperty('id',NULL,'is_integer');
 		if(!$idTemplate) { return NULL; }
 		if($idSubForm) {
 			$template = DataProvider::Get('Plugins\DForms\Instances','GetTemplate',[
@@ -221,39 +260,55 @@ class Instances extends Module {
 				'instance_id'=>($idInstance ? $idInstance : NULL),
 				'for_state'=>1,
 			]);
-			$idSubForm = get_array_value($template,'id',NULL,'is_integer');
+			$idSubForm = $template->getProperty('id',NULL,'is_integer');
 			// NApp::Dlog($idItem,'$idItem');
 			// NApp::Dlog($idSubForm,'$idSubForm');
 			// NApp::Dlog($template,'$template');
 			if(!$idSubForm || !$idItem) { return NULL; }
 			$relations = NULL;
-			$fields = DataProvider::Get('Plugins\DForms\Instances','GetStructure',[
-				'template_id'=>$idTemplate,
+			$pages = DataProvider::Get('Plugins\DForms\Instances','GetPages',[
+			    'for_id'=>NULL,
 				'instance_id'=>($idInstance ? $idInstance : NULL),
-				'item_id'=>$idItem,
-				'for_index'=>(is_numeric($index) ? $index : NULL),
+			    'template_id'=>$idTemplate,
+			    'for_template_code'=>NULL,
+			    'for_pindex'=>NULL,
 			]);
-			// NApp::Dlog($fields,'$fields');
 		} else {
-			$template = $mtemplate;
+			$template = $mTemplate;
 			if($idInstance) {
 				$relations = DataProvider::Get('Plugins\DForms\Instances','GetRelations',['instance_id'=>$idInstance]);
 			} else {
 				$relations = DataProvider::Get('Plugins\DForms\Templates','GetRelations',['template_id'=>$idTemplate]);
 			}//if($idInstance)
-			$fields = DataProvider::Get('Plugins\DForms\Instances','GetStructure',[
-				'template_id'=>$idTemplate,
+			$pages = DataProvider::Get('Plugins\DForms\Instances','GetPages',[
+			    'for_id'=>NULL,
 				'instance_id'=>($idInstance ? $idInstance : NULL),
+			    'template_id'=>$idTemplate,
+			    'for_template_code'=>NULL,
+			    'for_pindex'=>NULL,
 			]);
-			NApp::Dlog($relations,'$relations');
-			NApp::Dlog($fields,'$fields');
+			// NApp::Dlog($relations,'$relations');
 		}//if($idSubForm)
-		$themeType = get_array_value($template,'theme_type','','is_string');
-		$controlsSize = get_array_value($template,'controls_size','','is_string');
-		$separatorWidth = get_array_value($template,'separator_width','','is_string');
-		$labelCols = get_array_value($template,'label_cols','','is_string');
-		require($this->GetViewFile('PrepareForm'));
-		return (isset($ctrl_params) ? $ctrl_params : NULL);
+		// NApp::Dlog($pages,'$pages');
+		if(!is_iterable($pages) || !count($pages)) { return NULL; }
+		$iPrefix = ($idInstance ? $idInstance.'_' : '');
+        $tName = $iPrefix.$idTemplate.'_'.$idSubForm;
+		$renderType = get_array_value($template,'render_type',1,'is_integer');
+        if(in_array($renderType,[21,22])) {
+            $ctrl_params = [
+                'control_class'=>'TabControl',
+                'tname'=>$tName,
+                'tag_id'=>'df_'.$tName.'_form',
+                'mode'=>($renderType==22 ? 'accordion' : 'tabs'),
+                'tabs'=>[]
+            ];
+            foreach($pages as $page) {
+                $ctrl_params['tabs'][] = $this->PrepareFormPage($params,$template,$relations,$page,$tName,TRUE,$idInstance,$idSubForm,$idItem,$index);
+            }//END foreach
+        } else {
+            $ctrl_params = $this->PrepareFormPage($params,$template,$relations,$pages->first(),$tName,FALSE,$idInstance,$idSubForm,$idItem,$index);
+        }//if(in_array($renderType,[21,22]))
+        return $ctrl_params;
 	}//END protected function PrepareForm
 	/**
 	 * description
@@ -326,7 +381,7 @@ class Instances extends Module {
 		$idTemplate = $template->getProperty('id',NULL,'is_integer');
 		$templateCode = $template->getProperty('code',NULL,'is_integer');
 		if(!$idTemplate) { throw new AppException('Invalid DynamicForm template!'); }
-		$ctrl_params = $this->PrepareForm($template,$params,$idInstance);
+		$ctrl_params = $this->PrepareForm($params,$template,$idInstance);
 		if(!$ctrl_params) { throw new AppException('Invalid DynamicForm configuration!'); }
         $cModule = $params->safeGet('cmodule',$this->class,'is_notempty_string');
 		$cMethod = $params->safeGet('cmethod','Listing','is_notempty_string');
@@ -339,10 +394,11 @@ class Instances extends Module {
 		    $view->SetModalWidth('80%');
 		    $view->SetTitle($template->getProperty('name','','is_string'));
 		} else {
-		    $containerType = $params->safeGet('container_type',($cTarget=='main-content' ? ' main' : NULL),'?is_string');
+		    $containerType = $params->safeGet('container_type',($cTarget=='main-content' ? 'main' : NULL),'?is_string');
 		    $view = new AppView(get_defined_vars(),$this,$containerType);
 		}//if($is_modal)
-        $view->AddBasicForm($this->GetViewFile('AddEditInstanceForm'));
+        $addContentMethod = 'Add'.get_array_value($ctrl_params,'control_class','','is_string');
+        $view->$addContentMethod($this->GetViewFile('AddEditInstanceForm'));
         $view->Render();
 	}//END public function ShowAddEditForm
 	/**
@@ -369,7 +425,7 @@ class Instances extends Module {
 		$cModule = $params->safeGet('cmodule',get_called_class(),'is_notempty_string');
 		$cMethod = $params->safeGet('cmethod',call_back_trace(0),'is_notempty_string');
 		$cTarget = $params->safeGet('ctarget','main-content','is_notempty_string');
-		$ctrl_params = $this->PrepareForm($template,$this->GetParams(),NULL);
+		$ctrl_params = $this->PrepareForm($params,$template);
 		if(!$ctrl_params) { throw new AppException('Invalid DynamicForm configuration!'); }
 		$is_modal = $params->safeGet('is_modal',$this->isModal,'is_integer');
 		$ftitle = $params->safeGet('form_title','&nbsp;','is_string');
@@ -562,7 +618,7 @@ class Instances extends Module {
 		$cModule = $params->safeGet('cmodule',get_called_class(),'is_notempty_string');
 		$cMethod = $params->safeGet('cmethod','Listing','is_notempty_string');
 		$cTarget = $params->safeGet('ctarget','main-content','is_notempty_string');
-		$ctrl_params = $this->PrepareForm($template,$this->GetParams(),$idInstance);
+		$ctrl_params = $this->PrepareForm($params,$template,$idInstance);
 		if(!$ctrl_params) { throw new AppException('Invalid DynamicForm configuration!'); }
 		$is_modal = $params->safeGet('is_modal',$this->isModal,'is_integer');
 		require($this->GetViewFile('EditInstanceForm'));

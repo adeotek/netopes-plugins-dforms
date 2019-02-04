@@ -101,12 +101,12 @@
 <?php
 					break;
 				case 'BasicForm':
-					$f_itype = get_array_value($field,'itype',1,'is_not0_numeric');
+					$fIType = get_array_value($field,'itype',1,'is_not0_numeric');
 					$idSubForm = get_array_value($field,'id_sub_form',-1,'is_not0_numeric');
 					$idItem = get_array_value($field,'id',NULL,'is_not0_numeric');
-					$f_icount = $f_itype==2 ? get_array_value($field,'icount',0,'is_not0_numeric') : 1;
+					$fICount = $fIType==2 ? get_array_value($field,'icount',0,'is_not0_numeric') : 1;
 					$fValue = '';
-					for($i=0;$i<$f_icount;$i++) {
+					for($i=0;$i<$fICount;$i++) {
 						$fValue .= $this->Exec('PrepareFormHtml',['id'=>$idInstance,'id_sub_form'=>$idSubForm,'id_item'=>$idItem,'index'=>$i,'output'=>$output]);
 					}//END for
 ?>
@@ -137,11 +137,11 @@
 					break;
 				default:
 					$flabel = get_array_value($field,'label','','is_string');
-					$f_itype = get_array_value($field,'itype',1,'is_not0_numeric');
-					if($f_itype==2) {
+					$fIType = get_array_value($field,'itype',1,'is_not0_numeric');
+					if($fIType==2) {
 						$fValue = get_array_value($field,'ivalues',NULL,'is_string');
 						$fValues = explode('|::|',$fValue);
-						$f_icount = get_array_value($field,'icount',0,'is_numeric');
+						$fICount = get_array_value($field,'icount',0,'is_numeric');
 						$fValue = '';
 						for($i=1;$i<$iCount;$i++) {
 							$fi_val = get_array_value($fValues,$i,$empty_val,'is_notempty_string');
@@ -155,7 +155,7 @@
 ?>
 			<td><label style="<?php echo get_array_value($this->html_styles,'label_style','','is_string'); ?>"><?php echo $flabel.get_array_value($this->html_styles,'label_value_sep','','is_string'); ?></label><span style="<?php echo get_array_value($this->html_styles,'value_style','','is_string'); ?>"><?php echo $fValue; ?></span></td>
 <?php
-					}//if($f_itype==2)
+					}//if($fIType==2)
 					break;
 			}//END switch
 		}//END foreach

@@ -61,7 +61,6 @@ class Templates extends Module {
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function Listing($params = NULL) {
-	    // $this->Exec('ShowContentEditForm',['id_template'=>1));
 		$listingTarget = 'dforms_listing';
 		$view = new AppView(get_defined_vars(),$this,'main');
         $view->SetTitle('dynamic_forms_templates');
@@ -576,12 +575,42 @@ class Templates extends Module {
 			$item = new VirtualEntity();
 		}//if(!$id)
 		$target = $params->safeGet('target','','is_string');
+		$cClass = $fieldType->getProperty('class','','is_string');
+        $cDataType = $fieldType->getProperty('data_type','','is_string');
+
 		$view = new AppView(get_defined_vars(),$this,'modal');
-		$view->SetIsModalView(TRUE);
-		$view->SetModalWidth(560);
-		$view->SetModalCustomClose('"'.$custom_close = addcslashes(NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','CancelAddEditContentElement','id_template'|{$idTemplate}~'pindex'|'{$pIndex}','{$target}')->dft_fp_errors"),'\\').'"');
 		$view->SetTitle(Translate::GetLabel('field_properties'));
-        $view->AddBasicForm($this->GetViewFile('FieldPropertiesForm'));
+		$view->SetIsModalView(TRUE);
+		$view->SetModalWidth(550);
+		$customClose = NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','CancelAddEditContentElement','id_template'|{$idTemplate}~'pindex'|'{$pIndex}','{$target}')->dft_fp_errors");
+		$view->SetModalCustomClose('"'.addcslashes($customClose,'\\').'"');
+        $view->AddBasicForm($this->GetViewFile('FieldPropertiesForm'),[
+            'container_type'=>'default',
+        ]);
+        $tabCtrl = ModulesProvider::Exec(Controls::class,'GetControlPropertiesTab',['id_control'=>$idControl,'data'=>$item->getProperty('params','','is_string'),'target'=>'dft_fp_properties_tab']);
+        if(is_object($tabCtrl)) {
+            $view->AddObjectContent($tabCtrl,'Show',[
+                'container_type'=>'default',
+                'title'=>Translate::GetTitle('control_properties'),
+            ]);
+        }//if(is_object($tabCtrl))
+        $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="dft_fp_form_errors"></div></div>');
+		$btnSave = new Button(['value'=>Translate::GetButton('save'),'class'=>NApp::$theme->GetBtnPrimaryClass(),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','AddEditContentElementRecord',
+                'id_template'|{$idTemplate}
+                ~'pindex'|'{$pIndex}'
+                ~'id_item'|'{$id}'
+                ~'class'|'{$cClass}'
+                ~'data_type'|'{$cDataType}'
+                ~'frow'|'{$fRow}'
+                ~'fcol'|'{$fCol}'
+                ~'id_control'|'{$idControl}'
+                ~'ctarget'|'{$target}'
+                ~dft_fp_form:form
+                ~'properties'|dft_fp_properties_tab:form
+            ,'dft_fp_form')->dft_fp_form_errors")]);
+        $view->AddAction($btnSave->Show());
+        $btnCancel = new Button(['value'=>Translate::GetButton('cancel'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-ban','onclick'=>$customClose]);
+        $view->AddAction($btnCancel->Show());
         $view->Render();
 	}//END public function AddEditContentElement
 	/**
@@ -620,7 +649,7 @@ class Templates extends Module {
 		$listing = $params->safeGet('listing',0,'is_integer');
 		$idValuesList = $params->safeGet('id_values_list',NULL,'is_numeric');
 		// process field properties
-		$fparams = ModulesProvider::Exec(Controls::class,'ProcessFieldProperties',[
+		$fParams = ModulesProvider::Exec(Controls::class,'ProcessFieldProperties',[
 			'id_control'=>$params->safeGet('id_control',NULL,'is_integer'),
 			'data'=>$params->safeGet('properties',NULL,'is_array'),
 		]);
@@ -637,7 +666,7 @@ class Templates extends Module {
 				'values_list_id'=>$idValuesList,
 				'in_class'=>NULL,
 				'in_data_type'=>NULL,
-				'in_params'=>$fparams,
+				'in_params'=>$fParams,
 				'in_description'=>$params->safeGet('description',NULL,'is_string'),
 			]);
 			if($result===FALSE) { throw new AppException('Unknown database error!'); }
@@ -673,7 +702,7 @@ class Templates extends Module {
 				'values_list_id'=>$idValuesList,
 				'in_class'=>$class,
 				'in_data_type'=>$data_type,
-				'in_params'=>$fparams,
+				'in_params'=>$fParams,
 				'in_description'=>$params->safeGet('description',NULL,'is_string'),
 			]);
 			if(!is_object($result) || !is_object($result->first()) || $result->first()->getProperty('inserted_id',0,'is_integer')<=0) { throw new AppException('Unknown database error!'); }

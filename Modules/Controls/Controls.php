@@ -22,150 +22,151 @@ use Translate;
 class Controls extends Module {
 	/**
 	 * description
-	 * @param      $data
-	 * @param      $id_control
-	 * @param int  $id_parent
-	 * @param null $parent_group_name
+     * @param array       $data
+     * @param int         $idControl
+     * @param int         $idParent
+     * @param string|null $parentGroupName
 	 * @return array
 	 * @throws \NETopes\Core\AppException
 	 */
-	protected function GetTabControlStructure($data,$id_control,$id_parent = 0,$parent_group_name = NULL) {
-		// NApp::Dlog($data,'$data');
-		// NApp::Dlog($id_control,'$id_control');
-		// NApp::Dlog($id_parent,'$id_parent');
-		// NApp::Dlog($parent_group_name,'$parent_group_name');
-		$field_properties = DataProvider::GetArray('Plugins\DForms\Controls','GetProperties',array(
-			'control_id'=>$id_control,
+	protected function GetTabControlStructure(array $data,int $idControl,int $idParent = 0,?string $parentGroupName = NULL) {
+		// \NApp::Dlog($data,'GetTabControlStructure:$data');
+		// \NApp::Dlog(['$idControl'=>$idControl,'$idParent'=>$idParent,'$parentGroupName'=>$parentGroupName],'GetTabControlStructure');
+		$fieldProperties = DataProvider::Get('Plugins\DForms\Controls','GetProperties',[
+			'control_id'=>$idControl,
 			'for_state'=>-1,
-			'parent_id'=>$id_parent,
-		));
-		// NApp::Dlog($field_properties,'$field_properties');
+			'parent_id'=>$idParent,
+		]);
+		// \NApp::Dlog($fieldProperties,'$fieldProperties');
 		$result = [];
-		if(!is_array($field_properties)) { return $result; }
-		foreach($field_properties as $fpi) {
+		if(!is_iterable($fieldProperties) || !count($fieldProperties)) { return $result; }
+		foreach($fieldProperties as $fpi) {
+		    /** @var \NETopes\Core\Data\VirtualEntity $fpi */
 			$skip = FALSE;
 			$hidden = FALSE;
-			if(isset($parent_group_name)) {
-				$group_name = $parent_group_name;
-				$fp_label = '==> ';
+			if(isset($parentGroupName)) {
+				$groupName = $parentGroupName;
+				$fpLabel = '==> ';
 			} else {
-				$group_name = get_array_value($fpi,'group_name','','is_string');
-				$fp_label = '';
-			}//if(isset($parent_group_name))
-			$fp_key = get_array_value($fpi,'key','','is_string');
-			$fp_ptype = get_array_value($fpi,'ptype','','is_string');
-			$fp_label .= get_array_value($fpi,'name',$fp_key,'is_notempty_string');
-			$fp_required = get_array_value($fpi,'required',FALSE,'bool');
-			$fp_cwidth = 350;
-			$fp_ccols = 0;
-			$fp_sparams = [];
-			switch($fp_ptype) {
+				$groupName = $fpi->getProperty('group_name','','is_string');
+				$fpLabel = '';
+			}//if(isset($parentGroupName))
+			$fpKey = $fpi->getProperty('key','','is_string');
+			$fpPType = $fpi->getProperty('ptype','','is_string');
+			$fpLabel .= $fpi->getProperty('name',$fpKey,'is_notempty_string');
+			$fpRequired = $fpi->getProperty('required',FALSE,'bool');
+			$fpFixedWidth = NULL;
+			$fpLCols = 4;
+			$fpCCols = NULL;
+			$fpValue = NULL;
+			$fpCType = NULL;
+			$fpSParams = [];
+			switch($fpPType) {
 				case 'text':
-					$fp_ctype = 'TextBox';
-					$fp_value = get_array_value($data,$fp_key,get_array_value($fpi,'default_value','','is_string'),'is_string');
+					$fpCType = 'TextBox';
+					$fpValue = get_array_value($data,$fpKey,$fpi->getProperty('default_value','','is_string'),'is_string');
 					break;
-				case 'smalltext':
-					$fp_ctype = 'TextBox';
-					$fp_value = get_array_value($data,$fp_key,get_array_value($fpi,'default_value','','is_string'),'is_string');
-					$fp_cwidth = 100;
+				case 'small_text':
+					$fpCType = 'TextBox';
+					$fpValue = get_array_value($data,$fpKey,$fpi->getProperty('default_value','','is_string'),'is_string');
+					$fpFixedWidth = 100;
 					break;
 				case 'bool':
-					$fp_ctype = 'CheckBox';
-					$fp_value = get_array_value($data,$fp_key,get_array_value($fpi,'default_value',0,'is_numeric'),'is_numeric');
-					$fp_sparams['class'] = 'pull-left';
+					$fpCType = 'CheckBox';
+					$fpValue = get_array_value($data,$fpKey,$fpi->getProperty('default_value',0,'is_numeric'),'is_numeric');
+					$fpSParams['class'] = 'pull-left';
 					break;
 				case 'integer':
-					$fp_ctype = 'NumericTextBox';
+					$fpCType = 'NumericTextBox';
 					$fp_nval = 0;
-					if(get_array_value($fpi,'allow_null',0,'is_numeric')>0) {
-						$fp_sparams['allownull'] = TRUE;
+					if($fpi->getProperty('allow_null',0,'is_numeric')>0) {
+						$fpSParams['allow_null'] = TRUE;
 						$fp_nval = '';
-					}//if(get_array_value($fpi,'allow_null',0,'is_numeric')>0)
-					$fp_value = get_array_value($data,$fp_key,get_array_value($fpi,'default_value',$fp_nval,'is_numeric'),'is_numeric');
-					$fp_sparams['number_format'] = '0|||';
-					$fp_sparams['align'] = 'center';
-					$fp_cwidth = 100;
-					$fp_ccols = 4;
+					}//if($fpi->getProperty('allow_null',0,'is_numeric')>0)
+					$fpValue = get_array_value($data,$fpKey,$fpi->getProperty('default_value',$fp_nval,'is_numeric'),'is_numeric');
+					$fpSParams['number_format'] = '0|||';
+					$fpSParams['align'] = 'center';
+					$fpFixedWidth = 100;
+					$fpCCols = 4;
 					break;
 				case 'flist':
-					$fp_ctype = 'SmartComboBox';
-					$fp_value = [];
-					foreach(explode(';',get_array_value($fpi,'values','','is_string')) as $fpflv) {
-						$fp_value[] = array('id'=>$fpflv,'name'=>$fpflv);
+					$fpCType = 'SmartComboBox';
+					$fpValue = [];
+					foreach(explode(';',$fpi->getProperty('values','','is_string')) as $fpflv) {
+						$fpValue[] = ['id'=>$fpflv,'name'=>$fpflv];
 					}//END foreach
-					$fp_sparams['load_type'] = 'value';
-					if($fp_required) {
-						$fp_sparams['allow_clear'] = FALSE;
+					$fpSParams['load_type'] = 'value';
+					if($fpRequired) {
+						$fpSParams['allow_clear'] = FALSE;
 					} else {
-						$fp_sparams['allow_clear'] = TRUE;
-						$fp_sparams['placeholder'] = '['.Translate::GetLabel('default').']';
-					}//if($fp_required)
-					$fp_sparams['minimum_results_for_search'] = 0;
-					$fp_sparams['selected_value'] = get_array_value($data,$fp_key,get_array_value($fpi,'default_value','','is_string'),'is_string');
-					$fp_sparams['selected_text'] = $fp_sparams['selected_value'];
+						$fpSParams['allow_clear'] = TRUE;
+						$fpSParams['placeholder'] = '['.Translate::GetLabel('default').']';
+					}//if($fpRequired)
+					$fpSParams['minimum_results_for_search'] = 0;
+					$fpSParams['selected_value'] = get_array_value($data,$fpKey,$fpi->getProperty('default_value','','is_string'),'is_string');
+					$fpSParams['selected_text'] = $fpSParams['selected_value'];
 					break;
 				case 'kvlist':
-					$fp_ctype = 'KVList';
-					$fp_value = get_array_value($data,$fp_key,[],'is_array');
+					$fpCType = 'KVList';
+					$fpValue = get_array_value($data,$fpKey,[],'is_array');
 					break;
 				case 'children':
 					$skip = TRUE;
-					$idp = get_array_value($fpi,'id',NULL,'is_not0_numeric');
+					$idp = $fpi->getProperty('id',NULL,'is_not0_numeric');
 					if(!$idp) { break; }
-					$cdata = get_array_value($data,$fp_key,[],'is_array');
-					$cresult = $this->GetTabControlStructure($cdata,$id_control,$idp,$group_name);
-					$result[$group_name]['content']['control_params']['content'][] = array('separator'=>'subtitle','value'=>$fp_label);
-					$result[$group_name]['content']['control_params']['content'] = array_merge($result[$group_name]['content']['control_params']['content'],$cresult);
+					$cData = get_array_value($data,$fpKey,[],'is_array');
+					$cResult = $this->GetTabControlStructure($cData,$idControl,$idp,$groupName);
+					$result[$groupName]['content']['control_params']['content'][] = ['separator'=>'subtitle','value'=>$fpLabel];
+					$result[$groupName]['content']['control_params']['content'] = array_merge($result[$groupName]['content']['control_params']['content'],$cResult);
 					break;
 				case 'auto':
-					$fp_ctype = 'HiddenInput';
-					$fp_value = '{{'.$fp_key.'}}';
-					$fp_label = NULL;
+					$fpCType = 'HiddenInput';
+					$fpValue = '{{'.$fpKey.'}}';
+					$fpLabel = NULL;
 					$hidden = TRUE;
 					break;
 				default:
-					$fp_ctype = 'HiddenInput';
-					$fp_value = get_array_value($fpi,'default_value','','is_string');
-					$fp_label = NULL;
+					$fpCType = 'HiddenInput';
+					$fpValue = $fpi->getProperty('default_value','','is_string');
+					$fpLabel = NULL;
 					$hidden = TRUE;
 					break;
 			}//END switch
 			if($skip) { continue; }
-			if($id_parent>0) {
-				$result[] = array(
-					array(
+			if($idParent>0) {
+				$result[] = [
+					[
 						'width'=>'500',
 						'hidden_row'=>$hidden,
-						'control_type'=>$fp_ctype,
-						'control_params'=>array_merge(['tag_id'=>$fp_key,'tag_name'=>$fp_key,'value'=>$fp_value,'label'=>$fp_label,'label_width'=>150,'fixed_width'=>$fp_cwidth,'cols'=>$fp_ccols,'required'=>$fp_required],$fp_sparams),
-					),
-				);
+						'control_type'=>$fpCType,
+						'control_params'=>array_merge(['tag_id'=>'dft_fpe_'.$fpKey,'tag_name'=>$fpKey,'value'=>$fpValue,'label'=>$fpLabel,'label_width'=>150,'fixed_width'=>$fpFixedWidth,'cols'=>$fpCCols,'required'=>$fpRequired],$fpSParams),
+					],
+				];
 			} else {
-				if(!array_key_exists($group_name,$result)) {
-					$result[$group_name] = array(
+				if(!array_key_exists($groupName,$result)) {
+					$result[$groupName] = [
 						'type'=>'fixed',
-						'uid'=>$group_name,
-						'name'=>$group_name,
+						'uid'=>$groupName,
+						'name'=>$groupName,
 						'content_type'=>'control',
-						'content'=>array(
+						'content'=>[
 							'control_type'=>'BasicForm',
-							'control_params'=>array(
-								'tag_id'=>'ctrlp_'.$group_name.'_form',
+							'control_params'=>[
+								'tag_id'=>'ctrlp_'.$groupName.'_form',
 								'cols_no'=>1,
 								'content'=>[],
-							),
-						),
-					);
-				}//if(!array_key_exists($group_name,$fp_tabs))
-				$result[$group_name]['content']['control_params']['content'][] = array(
-					array(
-						'width'=>'500',
+							],
+						],
+					];
+				}//if(!array_key_exists($groupName,$fp_tabs))
+				$result[$groupName]['content']['control_params']['content'][] = [
+					[
 						'hidden_row'=>$hidden,
-						'control_type'=>$fp_ctype,
-						'control_params'=>array_merge(['tag_id'=>$fp_key,'tag_name'=>$fp_key,'value'=>$fp_value,'label'=>$fp_label,'label_width'=>150,'width'=>$fp_cwidth,'cols'=>$fp_ccols,'required'=>get_array_value($fpi,'required',FALSE,'bool')],$fp_sparams),
-					),
-				);
-			}//if($id_parent>0)
+						'control_type'=>$fpCType,
+						'control_params'=>array_merge(['tag_id'=>'dft_fpe_'.$fpKey,'tag_name'=>$fpKey,'value'=>$fpValue,'label'=>$fpLabel,'label_cols'=>$fpLCols,'fixed_width'=>$fpFixedWidth,'cols'=>$fpCCols,'required'=>$fpi->getProperty('required',FALSE,'bool')],$fpSParams),
+					],
+				];
+			}//if($idParent>0)
 		}//END foreach
 		return $result;
 	}//END protected function GetTabControlStructure
@@ -174,23 +175,28 @@ class Controls extends Module {
 	 * @param \NETopes\Core\App\Params|array|null $params Parameters
 	 * @return \NETopes\Core\Controls\TabControl
 	 * @throws \NETopes\Core\AppException
+     * @throws \Exception
 	 */
-	public function GetControlPropertiesTab($params = NULL) {
-		$id_control = $params->safeGet('id_control',NULL,'is_not0_numeric');
-		if(!$id_control) { throw new AppException('Invalid control identifier!'); }
+	public function GetControlPropertiesTab($params = NULL): TabControl {
+		$idControl = $params->getOrFail('id_control','is_not0_integer','Invalid control identifier!');
 		$data = $params->safeGet('data',NULL,'is_array');
 		if(!is_array($data)) {
 			$data = $params->safeGet('data','','is_string');
 			if(strlen($data)) {
-				$data = @unserialize($data);
+			    try {
+			        $data = unserialize($data);
+			    } catch(\Error | \Exception $e) {
+			        \NApp::Elog($e);
+			        $data = [];
+			    }//END try
 			} else {
 				$data = [];
 			}//if(strlen($data))
 		}//if(is_string($data))
 		$target = $params->safeGet('target','ctrl_properties_tab','is_notempty_string');
-		$ctrl_tabs = $this->GetTabControlStructure($data,$id_control);
-		$ctrl_tab = new TabControl(array('tag_id'=>$target,'tabs'=>$ctrl_tabs));
-		return $ctrl_tab;
+		$ctrlTabs = $this->GetTabControlStructure($data,$idControl);
+		$ctrlTabs = new TabControl(['tag_id'=>$target,'tabs'=>$ctrlTabs]);
+		return $ctrlTabs;
 	}//END public function GetControlPropertiesTab
 	/**
 	 * description
@@ -199,36 +205,37 @@ class Controls extends Module {
 	 * @throws \NETopes\Core\AppException
 	 */
 	public function ProcessFieldProperties($params = NULL) {
-		// NApp::Dlog($params,'ProcessFieldProperties');
-		$id_control = $params->safeGet('id_control',NULL,'is_not0_numeric');
-		if(!$id_control) { throw new AppException('Invalid control identifier!'); }
+		// \NApp::Dlog($params,'ProcessFieldProperties');
+		$idControl = $params->safeGet('id_control',NULL,'is_not0_numeric');
+		if(!$idControl) { throw new AppException('Invalid control identifier!'); }
 		$data = $params->safeGet('data',[],'is_array');
-		$cparams = DataProvider::GetArray('Plugins\DForms\Controls','GetProperties',['control_id'=>$id_control,'for_state'=>-1,'parent_id'=>0]);
+		$cParams = DataProvider::Get('Plugins\DForms\Controls','GetProperties',['control_id'=>$idControl,'for_state'=>-1,'parent_id'=>0]);
 		$result = [];
-		if(is_array($cparams) && count($cparams)) {
-			foreach($cparams as $cp) {
-				switch($cp['key']) {
+		if(is_iterable($cParams) && count($cParams)) {
+			foreach($cParams as $cp) {
+			    /** @var \NETopes\Core\Data\VirtualEntity $cp */
+				switch($cp->getProperty('key')) {
 					case 'data_source':
-						$ds_module = get_array_value($data,'ds_class','','is_string');
-						$ds_method = get_array_value($data,'ds_method','','is_string');
-						$ds_params = get_array_value($data,'ds_params',[],'is_array');
-						$ds_eparams = get_array_value($data,'ds_extra_params',[],'is_array');
+						$dsModule = get_array_value($data,'ds_class','','is_string');
+						$dsMethod = get_array_value($data,'ds_method','','is_string');
+						$dsParams = get_array_value($data,'ds_params',[],'is_array');
+						$dsExtraParams = get_array_value($data,'ds_extra_params',[],'is_array');
 						switch(get_array_value($data,'load_type','N/A','is_string')) {
 							case 'database':
 							case 'N/A':
-								$result['data_source'] = array(
-									'ds_class'=>$ds_module,
-									'ds_method'=>$ds_method,
-									'ds_params'=>$ds_params,
-									'ds_extra_params'=>$ds_eparams,
-								);
+								$result['data_source'] = [
+									'ds_class'=>$dsModule,
+									'ds_method'=>$dsMethod,
+									'ds_params'=>$dsParams,
+									'ds_extra_params'=>$dsExtraParams,
+								];
 								break;
 							case 'ajax':
-								$result['data_source'] = array(
-									'ds_class'=>$ds_module,
-									'ds_method'=>$ds_method,
-									'ds_params'=>$ds_params,
-								);
+								$result['data_source'] = [
+									'ds_class'=>$dsModule,
+									'ds_method'=>$dsMethod,
+									'ds_params'=>$dsParams,
+								];
 								break;
 							default:
 								$result['load_type'] = 'value';
@@ -239,20 +246,20 @@ class Controls extends Module {
 					default:
 						switch(get_array_value($cp,'allow_null',0,'is_integer')) {
 							case 2:
-								$cp_val = get_array_value($data,$cp['key'],'','is_string');
-								if(strlen($cp_val)) { $result[$cp['key']] = $cp_val; }
+								$cp_val = get_array_value($data,$cp->getProperty('key'),'','is_string');
+								if(strlen($cp_val)) { $result[$cp->getProperty('key')] = $cp_val; }
 								break;
 							case 1:
-								$result[$cp['key']] = get_array_value($data,$cp['key'],NULL,'isset');
+								$result[$cp->getProperty('key')] = get_array_value($data,$cp->getProperty('key'),NULL,'isset');
 								break;
 							default:
-								$result[$cp['key']] = get_array_value($data,$cp['key'],NULL,'isset');
+								$result[$cp->getProperty('key')] = get_array_value($data,$cp->getProperty('key'),NULL,'isset');
 								break;
 						}//END switch
 						break;
 				}//END switch
 			}//END foreach
-		}//if(is_array($cparams) && count($cparams))
+		}//if(is_iterable($cParams) && count($cParams))
 		return serialize($result);
 	}//END public function ProcessFieldProperties
 }//END class Controls extends Module
