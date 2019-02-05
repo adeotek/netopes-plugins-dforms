@@ -165,7 +165,7 @@ class Instances extends Module {
      * @access protected
      */
 	protected function PrepareField(VirtualEntity $field,array $fParams,$fValue = NULL,?string $themeType = NULL,bool $repeatable = FALSE,int $iCount = 0): array {
-		// NApp::Dlog(['$field'=>$field,'$fParams'=>$fParams,'$fValue'=>$fValue,''$themeType'=>$themeType,'$iCount'=>$iCount],'PrepareField');
+		// NApp::Dlog(['$field'=>$field,'$fParams'=>$fParams,'$fValue'=>$fValue,'$themeType'=>$themeType,'$iCount'=>$iCount],'PrepareField');
 		if($repeatable) { return $this->PrepareRepeatableField($field,$fParams,$fValue,$themeType,$iCount); }
 		$idInstance = $field->getProperty('id_instance',NULL,'is_integer');
 		$tagId = ($idInstance ? $idInstance.'_' : '').$field->getProperty('cell','','is_string').'_'.$field->getProperty('name','','is_string');
@@ -188,10 +188,8 @@ class Instances extends Module {
 				'ds_params'=>['list_id'=>$idValuesList,'for_state'=>1],
 			];
 		}//if(in_array($fClass,['SmartComboBox','GroupCheckBox']) && $idValuesList>0)
-		$fParams = ControlsHelpers::ReplaceDynamicParams($fParams,$field,TRUE);
-		// NApp::Dlog($fParams,'$fParams');
+		$fParams = ControlsHelpers::ReplaceDynamicParams($fParams,$field,TRUE,'_dfp_');
 		return [
-			// 'width'=>$field->getProperty('width','','is_string'),
 			'control_type'=>$fClass,
 			'control_params'=>$fParams,
 		];
@@ -233,7 +231,7 @@ class Instances extends Module {
 		$themeType = $template->getProperty('theme_type','','is_string');
 		$controlsSize = $template->getProperty('controls_size','','is_string');
 		$separatorWidth = $template->getProperty('separator_width','','is_string');
-		$labelCols = $template->getProperty('label_cols','','is_string');
+		$labelCols = $template->getProperty('label_cols',NULL,'is_not0_integer');
 		require($this->GetViewFile('PrepareFormPage'));
 		return (isset($page_params) ? $page_params : NULL);
 	}//END protected function PrepareForm

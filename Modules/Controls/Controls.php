@@ -28,6 +28,7 @@ class Controls extends Module {
      * @param string|null $parentGroupName
 	 * @return array
 	 * @throws \NETopes\Core\AppException
+     * @throws \NETopes\Core\AppException
 	 */
 	protected function GetTabControlStructure(array $data,int $idControl,int $idParent = 0,?string $parentGroupName = NULL) {
 		// \NApp::Dlog($data,'GetTabControlStructure:$data');
@@ -121,7 +122,7 @@ class Controls extends Module {
 					break;
 				case 'auto':
 					$fpCType = 'HiddenInput';
-					$fpValue = '{{'.$fpKey.'}}';
+					$fpValue = '{_dfp_{'.$fpKey.'}}';
 					$fpLabel = NULL;
 					$hidden = TRUE;
 					break;
@@ -136,7 +137,6 @@ class Controls extends Module {
 			if($idParent>0) {
 				$result[] = [
 					[
-						'width'=>'500',
 						'hidden_row'=>$hidden,
 						'control_type'=>$fpCType,
 						'control_params'=>array_merge(['tag_id'=>'dft_fpe_'.$fpKey,'tag_name'=>$fpKey,'value'=>$fpValue,'label'=>$fpLabel,'label_width'=>150,'fixed_width'=>$fpFixedWidth,'cols'=>$fpCCols,'required'=>$fpRequired],$fpSParams),
@@ -214,7 +214,9 @@ class Controls extends Module {
 		if(is_iterable($cParams) && count($cParams)) {
 			foreach($cParams as $cp) {
 			    /** @var \NETopes\Core\Data\VirtualEntity $cp */
-				switch($cp->getProperty('key')) {
+			    $propKey = $cp->getProperty('key',NULL,'is_notempty_string');
+			    if(is_null($propKey)) { continue; }
+				switch($propKey) {
 					case 'data_source':
 						$dsModule = get_array_value($data,'ds_class','','is_string');
 						$dsMethod = get_array_value($data,'ds_method','','is_string');
@@ -244,16 +246,16 @@ class Controls extends Module {
 						}//END switch
 						break;
 					default:
-						switch(get_array_value($cp,'allow_null',0,'is_integer')) {
+						switch($cp->getProperty('allow_null',0,'is_integer')) {
 							case 2:
-								$cp_val = get_array_value($data,$cp->getProperty('key'),'','is_string');
-								if(strlen($cp_val)) { $result[$cp->getProperty('key')] = $cp_val; }
+								$cpVal = get_array_value($data,$propKey,'','is_string');
+								if(strlen($cpVal)) { $result[$propKey] = $cpVal; }
 								break;
 							case 1:
-								$result[$cp->getProperty('key')] = get_array_value($data,$cp->getProperty('key'),NULL,'isset');
+								$result[$propKey] = get_array_value($data,$propKey,NULL,'isset');
 								break;
 							default:
-								$result[$cp->getProperty('key')] = get_array_value($data,$cp->getProperty('key'),NULL,'isset');
+								$result[$propKey] = get_array_value($data,$propKey,NULL,'isset');
 								break;
 						}//END switch
 						break;
