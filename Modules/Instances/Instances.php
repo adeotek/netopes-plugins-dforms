@@ -15,6 +15,7 @@ use NETopes\Core\App\ModulesProvider;
 use NETopes\Core\App\Params;
 use NETopes\Core\App\Validator;
 use NETopes\Core\Controls\BasicForm;
+use NETopes\Core\Controls\Button;
 use NETopes\Core\Controls\Control;
 use NETopes\Core\Controls\ControlsHelpers;
 use NETopes\Core\Controls\TabControl;
@@ -73,15 +74,15 @@ class Instances extends Module {
 	 */
 	protected function _Init() {
 	    $this->viewsExtension = '.php';
-		$this->templateCode = NULL;
+	    $this->templateCode = NULL;
 	}//END protected function _Init
     /**
      * description
      * @param \NETopes\Core\Data\VirtualEntity $field
-     * @param array                                  $fParams
-     * @param mixed $fValue
+     * @param array                            $fParams
+     * @param mixed                            $fValue
      * @param string|null                      $themeType
-     * @param int  $iCount
+     * @param int                              $iCount
      * @return array
      * @throws \NETopes\Core\AppException
      * @access protected
@@ -155,11 +156,11 @@ class Instances extends Module {
     /**
      * description
      * @param \NETopes\Core\Data\VirtualEntity $field
-     * @param array                                  $fParams
-     * @param mixed $fValue
+     * @param array                            $fParams
+     * @param mixed                            $fValue
      * @param string|null                      $themeType
-     * @param bool $repeatable
-     * @param int  $iCount
+     * @param bool                             $repeatable
+     * @param int                              $iCount
      * @return array
      * @throws \NETopes\Core\AppException
      * @access protected
@@ -266,7 +267,7 @@ class Instances extends Module {
 			$relations = NULL;
 			$pages = DataProvider::Get('Plugins\DForms\Instances','GetPages',[
 			    'for_id'=>NULL,
-				'instance_id'=>($idInstance ? $idInstance : NULL),
+			    'instance_id'=>($idInstance ? $idInstance : NULL),
 			    'template_id'=>$idTemplate,
 			    'for_template_code'=>NULL,
 			    'for_pindex'=>NULL,
@@ -280,7 +281,7 @@ class Instances extends Module {
 			}//if($idInstance)
 			$pages = DataProvider::Get('Plugins\DForms\Instances','GetPages',[
 			    'for_id'=>NULL,
-				'instance_id'=>($idInstance ? $idInstance : NULL),
+			    'instance_id'=>($idInstance ? $idInstance : NULL),
 			    'template_id'=>$idTemplate,
 			    'for_template_code'=>NULL,
 			    'for_pindex'=>NULL,
@@ -381,11 +382,14 @@ class Instances extends Module {
 		if(!$idTemplate) { throw new AppException('Invalid DynamicForm template!'); }
 		$ctrl_params = $this->PrepareForm($params,$template,$idInstance);
 		if(!$ctrl_params) { throw new AppException('Invalid DynamicForm configuration!'); }
+		$controlClass = get_array_value($ctrl_params,'control_class','','is_string');
         $cModule = $params->safeGet('cmodule',$this->class,'is_notempty_string');
 		$cMethod = $params->safeGet('cmethod','Listing','is_notempty_string');
 		$cTarget = $params->safeGet('ctarget','main-content','is_notempty_string');
-		$is_modal = $params->safeGet('is_modal',$this->isModal,'is_integer');
-		if($is_modal) {
+		$isModal = $params->safeGet('is_modal',$this->isModal,'is_integer');
+		$tName = get_array_value($ctrl_params,'tname',microtime(),'is_string');
+		$fTagId = get_array_value($ctrl_params,'tag_id','','is_string');
+		if($isModal) {
 		    $containerType = 'modal';
 		    $view = new AppView(get_defined_vars(),$this,$containerType);
 		    $view->SetIsModalView(TRUE);
@@ -394,8 +398,20 @@ class Instances extends Module {
 		} else {
 		    $containerType = $params->safeGet('container_type',($cTarget=='main-content' ? 'main' : NULL),'?is_string');
 		    $view = new AppView(get_defined_vars(),$this,$containerType);
-		}//if($is_modal)
-        $addContentMethod = 'Add'.get_array_value($ctrl_params,'control_class','','is_string');
+		}//if($isModal)
+        if($controlClass!='BasicForm' && strlen($fTagId)) {
+            $fResponseTarget = get_array_value($ctrl_params,'response_target','df_'.$tName.'_errors','is_notempty_string');
+            $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="'.$fResponseTarget.'">&nbsp;</div></div>');
+            $btnSave = new Button(['tag_id'=>'df_'.$tName.'_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','class'=>NApp::$theme->GetBtnPrimaryClass(),'onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','SaveRecord','id_template'|{$idTemplate}~'id'|{$idInstance}~'data'|df_{$tName}_form:form~'is_modal'|'{$isModal}'~'cmodule'|'{$cModule}'~'cmethod'|'{$cMethod}'~'ctarget'|'{$cTarget}','{$fTagId}')->{$fResponseTarget}")]);
+            $view->AddAction($btnSave->Show());
+            if($isModal) {
+                $btnBack = new Button(['tag_id'=>'df_'.$tName.'_cancel','value'=>Translate::GetButton('cancel'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-ban','onclick'=>"CloseModalForm()",]);
+            } else {
+                $btnBack = new Button(['tag_id'=>'df_'.$tName.'_back','value'=>Translate::GetButton('back'),'icon'=>'fa fa-chevron-left','class'=>NApp::$theme->GetBtnDefaultClass(),'onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$cModule}','{$cMethod}','id_template'|{$idTemplate}~'id'|{$idInstance},'{$cTarget}')->{$cTarget}")]);
+            }//if($isModal)
+            $view->AddAction($btnBack->Show());
+        }//if($controlClass!='BasicForm' && strlen($fTagId))
+        $addContentMethod = 'Add'.$controlClass;
         $view->$addContentMethod($this->GetViewFile('AddEditInstanceForm'));
         $view->Render();
 	}//END public function ShowAddEditForm
@@ -425,12 +441,12 @@ class Instances extends Module {
 		$cTarget = $params->safeGet('ctarget','main-content','is_notempty_string');
 		$ctrl_params = $this->PrepareForm($params,$template);
 		if(!$ctrl_params) { throw new AppException('Invalid DynamicForm configuration!'); }
-		$is_modal = $params->safeGet('is_modal',$this->isModal,'is_integer');
+		$isModal = $params->safeGet('is_modal',$this->isModal,'is_integer');
 		$ftitle = $params->safeGet('form_title','&nbsp;','is_string');
 		require($this->GetViewFile('AddInstanceForm'));
-		if($is_modal) {
+		if($isModal) {
 			NApp::Ajax()->ExecuteJs("ShowModalForm('90%',($('#page-title').html()+' - ".$params->safeGet('nav_item_name','','is_string')."'))");
-		}//if($is_modal)
+		}//if($isModal)
 	}//END public function ShowAddForm
 	/**
 	 * description
@@ -618,11 +634,11 @@ class Instances extends Module {
 		$cTarget = $params->safeGet('ctarget','main-content','is_notempty_string');
 		$ctrl_params = $this->PrepareForm($params,$template,$idInstance);
 		if(!$ctrl_params) { throw new AppException('Invalid DynamicForm configuration!'); }
-		$is_modal = $params->safeGet('is_modal',$this->isModal,'is_integer');
+		$isModal = $params->safeGet('is_modal',$this->isModal,'is_integer');
 		require($this->GetViewFile('EditInstanceForm'));
-		if($is_modal) {
+		if($isModal) {
 			NApp::Ajax()->ExecuteJs("ShowModalForm('90%',($('#page-title').html()+' - ".Translate::GetButton('edit')."'))");
-		}//if($is_modal)
+		}//if($isModal)
 	}//END public function ShowEditForm
 	/**
 	 * description
@@ -849,11 +865,11 @@ class Instances extends Module {
 		$instance = DataProvider::Get('Plugins\DForms\Instances','GetInstanceItem',['for_id'=>$idInstance]);
 		$idTemplate = $instance->getProperty('id_template',$this->idTemplate,'is_integer');
 		if(!$idTemplate) { throw new AppException('Invalid DynamicForm template!'); }
-		$is_modal = $params->safeGet('is_modal',$this->isModal,'is_integer');
+		$isModal = $params->safeGet('is_modal',$this->isModal,'is_integer');
 		require($this->GetViewFile('ViewInstanceForm'));
-		if($is_modal) {
+		if($isModal) {
 			NApp::Ajax()->ExecuteJs("ShowModalForm('90%',($('#page-title').html()+' - ".Translate::GetButton('view')."'))");
-		}//if($is_modal)
+		}//if($isModal)
 	}//END public function ShowViewForm
 	/**
 	 * description
