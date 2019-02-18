@@ -1,6 +1,5 @@
 <?php
 use NETopes\Core\Data\DataProvider;
-$version = $item->getProperty('version',0,'is_numeric');
 $ctrl_params = array(
     'tag_id'=>'df_template_edit_tabs',
     'tabs'=>array(

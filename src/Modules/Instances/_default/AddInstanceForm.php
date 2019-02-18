@@ -1,5 +1,5 @@
 <?php
-	$basicform = NULL;
+	$basicForm = NULL;
 	if(isset($ctrl_params) && is_array($ctrl_params)) {
 		$tName = get_array_value($ctrl_params,'tname',microtime(),'is_string');
 		$fTagId = get_array_value($ctrl_params,'tag_id','','is_string');
@@ -22,7 +22,7 @@
 			}//if($is_modal)
 		}//if(strlen($fTagId) && strlen($fResponseTarget))
 		// NApp::Dlog($ctrl_params,'BasicForm');
-		$basicform = new BasicForm($ctrl_params);
+		$basicForm = new BasicForm($ctrl_params);
 	}//if(isset($ctrl_params) && is_array($ctrl_params))
 ?>
 <div class="row">
@@ -35,7 +35,7 @@
 <!--				</div>-->
 <!--			</div>-->
 			<div class="container-fluid mt10">
-				<?php echo (is_object($basicform) ? $basicform->Show() : 'UNKNOWN ERROR!'); ?>
+				<?php echo (is_object($basicForm) ? $basicForm->Show() : 'UNKNOWN ERROR!'); ?>
 			</div>
 		</div>
 	</div>

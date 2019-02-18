@@ -1,6 +1,11 @@
 <?php
 use NETopes\Core\Controls\Button;
 use NETopes\Core\Controls\DivButton;
+/**
+ * @var \NETopes\Core\Data\VirtualEntity $templatePage
+ * @var int $idTemplate
+ * @var string $cTarget
+ */
 $colsNo = $templatePage->getProperty('colsno',1,'is_not0_integer');
 $rowsNo = $templatePage->getProperty('rowsno',1,'is_not0_integer');
 $renderType = $templatePage->getProperty('render_type',1,'is_integer');
@@ -25,7 +30,7 @@ if($renderType>1) {
                 </div>
                 <div class="col-md-2">
 <?php
-    $btnDeletePage = new Button(['value'=>Translate::GetButton('add_page'),'class'=>NApp::$theme->GetBtnDangerClass('btn-sm pull-right'),'icon'=>'fa fa-times-circle','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','UpdatePagesList','id_template'|'{$idTemplate}'~'type'|'-1'~'pindex'|'{$pIndex}','{$cTarget}')->errors")]);
+    $btnDeletePage = new Button(['value'=>Translate::GetButton('delete_page'),'class'=>NApp::$theme->GetBtnDangerClass('btn-sm pull-right'),'icon'=>'fa fa-times-circle','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','UpdatePagesList','id_template'|'{$idTemplate}'~'type'|'-1'~'pindex'|'{$pIndex}','{$cTarget}')->errors")]);
 	echo $btnDeletePage->Show();
 ?>
                 </div>
@@ -79,7 +84,7 @@ for($i=1;$i<=$rowsNo;$i++) {
     for($j=1;$j<=$colsNo;$j++) {
         $f = $fields->safeGet($i.'-'.$j,NULL,'is_object');
         if($f) {
-            $btn_edit_item = new DivButton(array('tag_id'=>'dfti_edit','tooltip'=>Translate::GetButton('edit'),'class'=>NApp::$theme->GetBtnSpecialLightClass('btn-xxs'),'icon'=>'fa fa-pencil-square-o','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','AddEditContentElement','id_template'|{$idTemplate}~'pindex'|'{$pIndex}'~'id_item'|{$f->getProperty('id')}~'id_control'|{$f->getProperty('id_control')},'{$target}')->modal")));
+            $btn_edit_item = new DivButton(array('tag_id'=>'dfti_edit','tooltip'=>Translate::GetButton('edit'),'class'=>NApp::$theme->GetBtnSpecialLightClass('btn-xxs'),'icon'=>'fa fa-pencil-square-o','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','AddEditContentElement','id_template'|{$idTemplate}~'pindex'|'{$pIndex}'~'cols_no'|'{$colsNo}'~'id_item'|{$f->getProperty('id')}~'id_control'|{$f->getProperty('id_control')},'{$target}')->modal")));
             $edit_item_act = $btn_edit_item->Show();
             $btn_del_item = new DivButton(array('tag_id'=>'dfti_del','tooltip'=>Translate::GetButton('delete'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs'),'icon'=>'fa fa-times','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','DeleteContentElementRecord','id_template'|{$idTemplate}~'pindex'|'{$pIndex}'~'id'|{$f->getProperty('id')},'{$target}')->errors"),'confirm_text'=>Translate::GetMessage('confirm_delete')));
             $del_item_act = $btn_del_item->Show();
@@ -144,7 +149,7 @@ $this->AddJsScript("
                     });
                     $(ths).attr('data-full','1');
                 };
-                ".NApp::Ajax()->PrepareWithCallback("AjaxRequest('{$this->class}','AddEditContentElement','id_template'|{$idTemplate}~'pindex'|'{$pIndex}'~'id_control'|cellid~'cell'|cell,'{$target}')->modal-<cellid-<cell",'acb')."
+                ".NApp::Ajax()->PrepareWithCallback("AjaxRequest('{$this->class}','AddEditContentElement','id_template'|{$idTemplate}~'pindex'|'{$pIndex}'~'cols_no'|'{$colsNo}'~'id_control'|cellid~'cell'|cell,'{$target}')->modal-<cellid-<cell",'acb')."
             } else {
                 console.log('is move!');
                 var acb = function() {

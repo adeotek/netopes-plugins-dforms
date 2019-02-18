@@ -19,12 +19,17 @@ use NETopes\Core\AppException;
 /** @var string|null $controlsSize */
 
 $pIndex = $page->getProperty('pindex');
+$colsNo = $page->getProperty('colsno');
 $iPrefix = ($idInstance ? $idInstance.'_' : '');
+$columnsToSkip = 0;
 $formContent = [];
 foreach($fields as $field) {
     $row = $field->getProperty('frow',0,'is_numeric');
     if(!$row) { continue; }
-    if(!isset($formContent[$row])) { $formContent[$row] = []; }
+    if(!isset($formContent[$row])) {
+        $formContent[$row] = [];
+        $columnsToSkip = 0;
+    }//if(!isset($formContent[$row]))
     $fClass = $field->getProperty('class','','is_string');
     // if($idSubForm) { NApp::Dlog($field,$fClass); }
     $fParamsStr = $field->getProperty('params','','is_string');
@@ -36,6 +41,7 @@ foreach($fields as $field) {
                 'value'=>$field->getProperty('label','','is_string'),
                 'class'=>get_array_value($fParams,'class','','is_string'),
             );
+            $columnsToSkip = $colsNo - 1;
             break;
         case 'FormSubTitle':
             $formContent[$row] = array(
@@ -43,11 +49,15 @@ foreach($fields as $field) {
                 'value'=>$field->getProperty('label','','is_string'),
                 'class'=>get_array_value($fParams,'class','','is_string'),
             );
+            $columnsToSkip = $colsNo - 1;
             break;
         case 'FormSeparator':
             $formContent[$row] = array('separator'=>'separator');
+            $columnsToSkip = $colsNo - 1;
             break;
         case 'BasicForm':
+            $colSpan = $field->getProperty('colspan',0,'is_integer');
+            if($colSpan>1) { $columnsToSkip = $colSpan-1; }
             $fParams = ['value'=>''];
             $tagId = $iPrefix.$field->getProperty('cell','','is_string').'_'.$field->getProperty('name','','is_string').($index ? '_'.$index : '');
             $fIType = $field->getProperty('itype',1,'is_not0_numeric');
@@ -68,11 +78,11 @@ foreach($fields as $field) {
                     $ctrl_params['tags_ids_sufix'] = '-'.$i;
                     $ctrl_params['tags_names_sufix'] = '[]';
                     $ctrl_params['sub_form_class'] = 'clsRepeatableField';
-                    $ctrl_params['sub_form_extratagparam'] = 'data-tid="'.$tagId.'" data-ti="'.$i.'"';
+                    $ctrl_params['sub_form_extra_tag_params'] = 'data-tid="'.$tagId.'" data-ti="'.$i.'"';
                 }//if($fIType==2)
                 // NApp::Dlog($ctrl_params,'$ctrl_params');
-                $basicform = new BasicForm($ctrl_params);
-                $fParams['value'] .= $basicform->Show();
+                $basicForm = new BasicForm($ctrl_params);
+                $fParams['value'] .= $basicForm->Show();
                 // NApp::Dlog($fParams['value'],'fcontent');
                 if($i>0) {
                     $ctrl_ract = new Button(['value'=>'&nbsp;'.Translate::GetButton('remove_field'),'icon'=>'fa fa-minus-circle','class'=>'clsRepeatableCtrlBtn remove-ctrl-btn','clear_base_class'=>TRUE,'onclick'=>"RemoveRepeatableControl(this,'{$tagId}-{$i}')"]);
@@ -91,9 +101,14 @@ foreach($fields as $field) {
             break;
         default:
             if(!is_array($fParams) || !count($fParams)) {
-                if(strlen(get_array_value($formContent,[$row,'separator'],'','is_string'))) { continue; }
+                if($columnsToSkip>0) {
+                    $columnsToSkip--;
+                    continue;
+                }//if($columnsToSkip>0)
                 $formContent[$row][] = [];
             } else {
+                $colSpan = $field->getProperty('colspan',0,'is_integer');
+                if($colSpan>1) { $columnsToSkip = $colSpan-1; }
                 $fIType = $field->getProperty('itype',1,'is_not0_numeric');
                 if($fIType==2) {
                     if($idInstance) {
@@ -144,7 +159,7 @@ if($multiPage) {
             'control_params'=>[
                 'tag_id'=>'df_'.$tName.'_'.$pIndex.'_form',
                 'response_target'=>'df_'.$tName.'_'.$pIndex.'_errors',
-                'cols_no'=>$template->getProperty('colsno',1,'is_not0_integer'),
+                'cols_no'=>$colsNo,
             ],
         ],
     ];
@@ -158,7 +173,7 @@ if($multiPage) {
         'tname'=>$tName,
         'tag_id'=>'df_'.$tName.'_form',
         'response_target'=>'df_'.$tName.'_errors',
-        'cols_no'=>$template->getProperty('colsno',1,'is_not0_integer'),
+        'cols_no'=>$colsNo,
     ];
     if(strlen($themeType)) { $page_params['theme_type'] = $themeType; }
     if(is_numeric($labelCols) && $labelCols>=1 && $labelCols<=12) { $page_params['label_cols'] = $labelCols; }

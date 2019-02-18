@@ -318,7 +318,7 @@ abstract class BaseTemplates extends DataSource {
     const SET_NEW_FIELD = ['template_id'=>NULL,'sub_form_id'=>NULL,'in_pindex'=>NULL,'in_itype'=>NULL,'in_frow'=>NULL,'in_fcol'=>NULL,'in_name'=>NULL,'in_label'=>NULL,'in_required'=>NULL,'in_listing'=>NULL,'values_list_id'=>NULL,'in_class'=>NULL,'in_data_type'=>NULL,'in_params'=>NULL,'in_width'=>NULL,'in_colspan'=>NULL,'in_description'=>NULL];
     /**
      * Sets a new template item
-     * @param array $params
+     * @param array $params ['template_id'=>NULL,'sub_form_id'=>NULL,'in_pindex'=>NULL,'in_itype'=>NULL,'in_frow'=>NULL,'in_fcol'=>NULL,'in_name'=>NULL,'in_label'=>NULL,'in_required'=>NULL,'in_listing'=>NULL,'values_list_id'=>NULL,'in_class'=>NULL,'in_data_type'=>NULL,'in_params'=>NULL,'in_width'=>NULL,'in_colspan'=>NULL,'in_description'=>NULL]
      * @param array $extra_params
      * @return mixed
      */

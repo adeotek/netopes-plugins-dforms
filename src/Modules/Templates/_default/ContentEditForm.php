@@ -1,3 +1,11 @@
+<?php
+/**
+ * @var \NETopes\Core\Data\DataSet $fieldsTypes
+ * @var \NETopes\Core\Data\VirtualEntity $templateProps
+ * @var \NETopes\Core\Data\DataSet $templatePages
+ * @var int $idTemplate
+ */
+?>
 <div class="dft-container clearfix" id="dft-container">
 	<div class="side-column">
 		<span class="dft-items-list-title"><?=Translate::GetLabel('fields_types')?></span>
@@ -5,6 +13,7 @@
 			<ul class="dft-items-list">
 <?php
 	if(is_iterable($fieldsTypes) && count($fieldsTypes)) {
+	    /** @var \NETopes\Core\Data\VirtualEntity $ft */
 		foreach($fieldsTypes as $ft) {
 ?>
 				<li>
@@ -33,6 +42,7 @@
 	    <div class="dft-pages" id="df_template_pages">
 <?php
 	if(is_iterable($templatePages) && count($templatePages)) {
+	    /** @var \NETopes\Core\Data\VirtualEntity $page */
 		foreach($templatePages as $page) {
 		    $pageIndex = $page->getProperty('pindex',0,'is_integer');
 		    $pageTargetId = 'df_template_fields_p'.$pageIndex;

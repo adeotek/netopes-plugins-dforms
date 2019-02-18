@@ -16,7 +16,7 @@
     },
     "autoload": {
         "psr-4": {
-            "NETopes\\Plugins\\DForms\\": ""
+            "NETopes\\Plugins\\DForms\\": "src"
         }
     }
 }

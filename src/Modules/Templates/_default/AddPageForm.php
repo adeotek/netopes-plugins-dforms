@@ -1,4 +1,8 @@
 <?php
+/**
+ * @var int $idTemplate
+ * @var int $maxPos
+ */
 $positions = [];
 for($i=0;$i<$maxPos;$i++) { $positions[] = ['val'=>$i,'name'=>Translate::GetLabel('page').' '.($i+1)]; }
 $positions[] = ['val'=>$maxPos,'name'=>Translate::GetLabel('end')];

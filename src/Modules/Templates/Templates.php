@@ -97,9 +97,10 @@ class Templates extends Module {
 		$id = $params->getOrFail('id','is_not0_integer','Invalid record identifier!');
 		$item = DataProvider::Get('Plugins\DForms\Templates','GetItem',['for_id'=>$id]);
 		if(!is_object($item)) { throw new AppException('Invalid record!'); }
+		$version = $item->getProperty('version',0,'is_numeric');
 		$view = new AppView(get_defined_vars(),$this,'main');
         $view->AddTabControl($this->GetViewFile('EditForm'));
-        $view->SetTitle(Translate::GetButton('edit').' '.Translate::GetLabel('template'));
+        $view->SetTitle(Translate::GetButton('edit_template').': '.$item->getProperty('name').' ['.$item->getProperty('code').'] - Ver. '.$version.' ('.($version+1).')');
         if(!$this->ValidateDRights()) {
             $btnValidate = new Button(['value'=>Translate::GetButton('validate'),'class'=>NApp::$theme->GetBtnSuccessClass('mr10'),'icon'=>'fa fa-check-square-o','onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->class,'method'=>'ValidateRecord','target'=>'errors','params'=>['id'=>$id]])]);
 	        $view->AddAction($btnValidate->Show());
@@ -560,6 +561,7 @@ class Templates extends Module {
 		$pIndex = $params->getOrFail('pindex','is_integer','Invalid page position!');
 		$idControl = $params->getOrFail('id_control','is_not0_integer','Invalid control identifier!');
 		$fieldType = DataProvider::Get('Plugins\DForms\Controls','GetItem',['for_id'=>$idControl]);
+		$colsNo = $params->safeGet('cols_no',1,'is_not0_integer');
 		$id = $params->safeGet('id_item',NULL,'is_not0_integer');
 		if($id) {
 			$item = DataProvider::Get('Plugins\DForms\Templates','GetField',['for_id'=>$id]);
@@ -647,6 +649,8 @@ class Templates extends Module {
 		}//if(!strlen($name) || ($label_required && !strlen($label)))
 		$required = $params->safeGet('required',0,'is_integer');
 		$listing = $params->safeGet('listing',0,'is_integer');
+		$colSpan = $params->safeGet('colspan',0,'is_integer');
+		$colSpan = $colSpan>1 ? $colSpan : NULL;
 		$idValuesList = $params->safeGet('id_values_list',NULL,'is_numeric');
 		// process field properties
 		$fParams = ModulesProvider::Exec(Controls::class,'ProcessFieldProperties',[
@@ -667,6 +671,7 @@ class Templates extends Module {
 				'in_class'=>NULL,
 				'in_data_type'=>NULL,
 				'in_params'=>$fParams,
+				'in_colspan'=>$colSpan,
 				'in_description'=>$params->safeGet('description',NULL,'is_string'),
 			]);
 			if($result===FALSE) { throw new AppException('Unknown database error!'); }
@@ -703,6 +708,7 @@ class Templates extends Module {
 				'in_class'=>$class,
 				'in_data_type'=>$data_type,
 				'in_params'=>$fParams,
+				'in_colspan'=>$colSpan,
 				'in_description'=>$params->safeGet('description',NULL,'is_string'),
 			]);
 			if(!is_object($result) || !is_object($result->first()) || $result->first()->getProperty('inserted_id',0,'is_integer')<=0) { throw new AppException('Unknown database error!'); }

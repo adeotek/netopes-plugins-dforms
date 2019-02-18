@@ -88,10 +88,9 @@ class Instances extends Module {
      * @access protected
      */
 	protected function PrepareRepeatableField(VirtualEntity $field,array $fParams,$fValue = NULL,?string $themeType = NULL,int $iCount = 0): array {
-		// NApp::Dlog($iCount,'$iCount');
-		// NApp::Dlog($fValue,'$fValues');
+	    // NApp::Dlog(['$field'=>$field,'$fParams'=>$fParams,'$fValue'=>$fValue,'$themeType'=>$themeType,'$iCount'=>$iCount],'PrepareField');
 		$idInstance = $field->getProperty('id_instance',NULL,'is_integer');
-		$tagId = ($idInstance ? $idInstance.'_' : '').$field->getProperty('cell','','is_string').'_'.$field->getProperty('name','','is_string');
+		$tagId = ($idInstance ? $idInstance.'_' : '').$field->getProperty('uid','','is_string').'_'.$field->getProperty('name','','is_string');
 		$fValuesArray = explode('|::|',$fValue);
 		$field->set('tag_id',$tagId.'-'.$iCount);
 		$field->set('tag_name',$field->getProperty('id',NULL,'is_numeric').'[]');
@@ -106,23 +105,23 @@ class Instances extends Module {
 				'ds_params'=>['list_id'=>$idValuesList,'for_state'=>1],
 			];
 		}//if(in_array($fClass,['SmartComboBox','GroupCheckBox']) && $idValuesList>0)
-		$fParams = ControlsHelpers::ReplaceDynamicParams($fParams,$field,TRUE);
-		$i_custom_actions = [];
+		$fParams = ControlsHelpers::ReplaceDynamicParams($fParams,$field,TRUE,'_dfp_');
+		$iCustomActions = [];
 		for($i=1;$i<$iCount;$i++) {
-			$tmp_ctrl = $fParams;
-			$tmp_ctrl['container'] = 'none';
-			$tmp_ctrl['no_label'] = TRUE;
-			$tmp_ctrl['label_width'] = NULL;
-			$tmp_ctrl['width'] = NULL;
-			$tmp_ctrl['tag_id'] = $tagId.'-'.$i;
-			$tmp_ctrl['value'] = get_array_value($fValues,$i,NULL,'isset');
-			if(strpos($themeType,'bootstrap')!==FALSE) { $tmp_ctrl['class'] .= ' form-control'; }
-			$tmp_ctrl['extra_tag_params'] = (isset($tmp_ctrl['extra_tag_params']) && $tmp_ctrl['extra_tag_params'] ? $tmp_ctrl['extra_tag_params'].' ' : '').'data-tid="'.$tagId.'" data-ti="'.$i.'"';
-			$i_custom_actions[] = [
+			$tmpCtrl = $fParams;
+			$tmpCtrl['container'] = 'none';
+			$tmpCtrl['no_label'] = TRUE;
+			$tmpCtrl['label_width'] = NULL;
+			$tmpCtrl['width'] = NULL;
+			$tmpCtrl['tag_id'] = $tagId.'-'.$i;
+			$tmpCtrl['value'] = get_array_value($fValues,$i,NULL,'isset');
+			if(strpos($themeType,'bootstrap')!==FALSE) { $tmpCtrl['class'] .= ' form-control'; }
+			$tmpCtrl['extra_tag_params'] = (isset($tmpCtrl['extra_tag_params']) && $tmpCtrl['extra_tag_params'] ? $tmpCtrl['extra_tag_params'].' ' : '').'data-tid="'.$tagId.'" data-ti="'.$i.'"';
+			$iCustomActions[] = [
 				'type'=>$fClass,
-				'params'=>$tmp_ctrl,
+				'params'=>$tmpCtrl,
 			];
-			$i_custom_actions[] = [
+			$iCustomActions[] = [
 				'type'=>'Button',
 				'params'=>[
 					'value'=>'&nbsp;'.Translate::GetButton('remove_field'),
@@ -133,7 +132,7 @@ class Instances extends Module {
 				],
 			];
 		}//END for
-		$i_custom_actions[] = [
+		$iCustomActions[] = [
 			'type'=>'Button',
 			'params'=>[
 				'value'=>Translate::GetButton('add_field'),
@@ -145,10 +144,17 @@ class Instances extends Module {
 			],
 		];
 		$fParams['extra_tag_params'] = (isset($fParams['extra_tag_params']) && $fParams['extra_tag_params'] ? $fParams['extra_tag_params'].' ' : '').'data-tid="'.$tagId.'" data-ti="0"';
-		$fParams['custom_actions'] = $i_custom_actions;
+		$fParams['custom_actions'] = $iCustomActions;
 		// NApp::Dlog($fParams['custom_actions'],'custom_actions');
+		$colSpan = $field->getProperty('colspan',0,'is_integer');
+		if($colSpan>1) {
+		    return [
+		        'colspan'=>$colSpan,
+                'control_type'=>$fClass,
+                'control_params'=>$fParams,
+            ];
+		}//if($colSpan>1)
 		return [
-			'width'=>$field->getProperty('width','','is_string'),
 			'control_type'=>$fClass,
 			'control_params'=>$fParams,
 		];
@@ -169,7 +175,7 @@ class Instances extends Module {
 		// NApp::Dlog(['$field'=>$field,'$fParams'=>$fParams,'$fValue'=>$fValue,'$themeType'=>$themeType,'$iCount'=>$iCount],'PrepareField');
 		if($repeatable) { return $this->PrepareRepeatableField($field,$fParams,$fValue,$themeType,$iCount); }
 		$idInstance = $field->getProperty('id_instance',NULL,'is_integer');
-		$tagId = ($idInstance ? $idInstance.'_' : '').$field->getProperty('cell','','is_string').'_'.$field->getProperty('name','','is_string');
+		$tagId = ($idInstance ? $idInstance.'_' : '').$field->getProperty('uid','','is_string').'_'.$field->getProperty('name','','is_string');
 		$field->set('tag_id',$tagId);
 		$field->set('tag_name',$field->getProperty('id',NULL,'is_numeric'));
 		$field->set('value',$fValue);
@@ -190,6 +196,14 @@ class Instances extends Module {
 			];
 		}//if(in_array($fClass,['SmartComboBox','GroupCheckBox']) && $idValuesList>0)
 		$fParams = ControlsHelpers::ReplaceDynamicParams($fParams,$field,TRUE,'_dfp_');
+		$colSpan = $field->getProperty('colspan',0,'is_integer');
+		if($colSpan>1) {
+		    return [
+		        'colspan'=>$colSpan,
+                'control_type'=>$fClass,
+                'control_params'=>$fParams,
+            ];
+		}//if($colSpan>1)
 		return [
 			'control_type'=>$fClass,
 			'control_params'=>$fParams,
@@ -235,7 +249,7 @@ class Instances extends Module {
 		$labelCols = $template->getProperty('label_cols',NULL,'is_not0_integer');
 		require($this->GetViewFile('PrepareFormPage'));
 		return (isset($page_params) ? $page_params : NULL);
-	}//END protected function PrepareForm
+	}//END protected function PrepareFormPage
     /**
      * Prepare add/edit form/sub-form
      * @param \NETopes\Core\App\Params|null $params Parameters object
