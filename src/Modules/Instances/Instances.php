@@ -92,7 +92,7 @@ class Instances extends Module {
 		$idInstance = $field->getProperty('id_instance',NULL,'is_integer');
 		$tagId = ($idInstance ? $idInstance.'_' : '').$field->getProperty('uid','','is_string').'_'.$field->getProperty('name','','is_string');
 		$fValuesArray = explode('|::|',$fValue);
-		$field->set('tag_id',$tagId.'-'.$iCount);
+		$field->set('tag_id',$tagId.'-0');
 		$field->set('tag_name',$field->getProperty('id',NULL,'is_numeric').'[]');
 		$field->set('value',get_array_value($fValuesArray,0,NULL,'isset'));
 		$fClass = $field->getProperty('class','','is_string');
@@ -106,6 +106,18 @@ class Instances extends Module {
 			];
 		}//if(in_array($fClass,['SmartComboBox','GroupCheckBox']) && $idValuesList>0)
 		$fParams = ControlsHelpers::ReplaceDynamicParams($fParams,$field,TRUE,'_dfp_');
+		$fParams['container_class'] = 'ctrl-repeatable';
+		$removeAction = [
+		    [
+                'type'=>'Button',
+                'params'=>[
+                    // 'tooltip'=>Translate::GetButton('remove_field'),
+                    'icon'=>'fa fa-minus-circle',
+                    'class'=>NApp::$theme->GetBtnDangerClass('pull-right clsRemoveRepeatableCtrlBtn'),
+                    'onclick'=>"RemoveRepeatableControl(this)",
+                ],
+            ]
+        ];
 		$iCustomActions = [];
 		for($i=1;$i<$iCount;$i++) {
 			$tmpCtrl = $fParams;
@@ -117,35 +129,27 @@ class Instances extends Module {
 			$tmpCtrl['value'] = get_array_value($fValues,$i,NULL,'isset');
 			if(strpos($themeType,'bootstrap')!==FALSE) { $tmpCtrl['class'] .= ' form-control'; }
 			$tmpCtrl['extra_tag_params'] = (isset($tmpCtrl['extra_tag_params']) && $tmpCtrl['extra_tag_params'] ? $tmpCtrl['extra_tag_params'].' ' : '').'data-tid="'.$tagId.'" data-ti="'.$i.'"';
+			$tmpCtrl['actions'] = $removeAction;
 			$iCustomActions[] = [
 				'type'=>$fClass,
 				'params'=>$tmpCtrl,
-			];
-			$iCustomActions[] = [
-				'type'=>'Button',
-				'params'=>[
-					'value'=>'&nbsp;'.Translate::GetButton('remove_field'),
-					'icon'=>'fa fa-minus-circle',
-					'class'=>'clsRepeatableCtrlBtn remove-ctrl-btn',
-					'clear_base_class'=>TRUE,
-					'onclick'=>"RemoveRepeatableControl(this,'{$tagId}-{$i}')",
-				],
 			];
 		}//END for
 		$iCustomActions[] = [
 			'type'=>'Button',
 			'params'=>[
 				'value'=>Translate::GetButton('add_field'),
-				'icon'=>'fa fa-plus-circle',
-				'class'=>'clsRepeatCtrlBtn btn btn-default',
-				// 'clear_base_class'=>($themeType=='bootstrap3'),
-				'onclick'=>"RepeatControl(this,'{$tagId}')",
+				'icon'=>'fa fa-plus',
+				'class'=>'add-ctrl-btn clsAddRepeatableCtrlBtn',
+				'onclick'=>"AddRepeatableControl(this,'{$tagId}')",
 				'extra_tag_params'=>'data-ract="&nbsp;'.Translate::GetButton('remove_field').'"',
 			],
 		];
 		$fParams['extra_tag_params'] = (isset($fParams['extra_tag_params']) && $fParams['extra_tag_params'] ? $fParams['extra_tag_params'].' ' : '').'data-tid="'.$tagId.'" data-ti="0"';
+		$fParams['actions'] = $removeAction;
 		$fParams['custom_actions'] = $iCustomActions;
-		// NApp::Dlog($fParams['custom_actions'],'custom_actions');
+		// NApp::Dlog($fClass,'$fClass');
+		// NApp::Dlog($fParams,'$fParams');
 		$colSpan = $field->getProperty('colspan',0,'is_integer');
 		if($colSpan>1) {
 		    return [

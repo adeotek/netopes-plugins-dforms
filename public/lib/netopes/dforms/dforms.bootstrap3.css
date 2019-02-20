@@ -59,7 +59,7 @@
     border-top: none;
     padding-top: 0;
 }
-/*** END Pages ***/
+/* END Pages */
 .dft-container .side-column .dft-items-list-title {
 	display: block;
 	font-size: 13px;
@@ -162,4 +162,23 @@
 }
 /* END Dynamic forms templates */
 /*** Dynamic forms ***/
+/*** Repeatable controls actions ***/
+.ctrl-repeatable .input-group { margin-bottom: 8px; }
+.input-group-btn > .btn.clsRemoveRepeatableFieldBtn { padding: 3px 12px !important; }
+.add-ctrl-btn {
+	display: inline-block;
+	border: 0;
+	padding: 0;
+	margin-bottom: 10px;
+	font-weight: bold;
+	text-decoration: underline;
+	color: #1690f3;
+	background: transparent;
+}
+.add-ctrl-btn i.fa { margin-right: 8px; }
+.add-ctrl-btn:hover {
+	color: #38a0f4;
+	text-decoration: none;
+}
+/* END Repeatable controls actions */
 /* END Dynamic forms */
