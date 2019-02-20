@@ -47,7 +47,7 @@ $ctrl_params = [
     'cols_no'=>1,
     'label_cols'=>4,
     'content'=>[
-        (in_array($cClass,['Message','FormTitle','FormSubTitle','FormSeparator']) ? [] : [
+        (!in_array($cClass,['Message','FormTitle','FormSubTitle','FormSeparator']) ? [
             [
                 'control_type'=>'SmartComboBox',
                 'control_params'=>['label'=>Translate::GetLabel('field_type'),'tag_id'=>'dft_fp_itype','tag_name'=>'itype',
@@ -62,8 +62,8 @@ $ctrl_params = [
                     ],
                 ],
             ],
-        ]),
-        (!in_array($cClass,['BasicForm']) ? [] : [
+        ] : []),
+        (in_array($cClass,['BasicForm']) ? [
             [
                 'control_type'=>'SmartComboBox',
                 'control_params'=>['label'=>Translate::GetLabel('form'),'tag_id'=>'dft_fp_id_sub_form','tag_name'=>'id_sub_form','required'=>TRUE,'disabled'=>(is_numeric($id) && $id>0),
@@ -80,38 +80,38 @@ $ctrl_params = [
                     ],
                 ],
             ],
-        ]),
-        (in_array($cClass,['Message','FormTitle','FormSubTitle','FormSeparator','BasicForm']) ? [] : [
+        ] : []),
+        (!in_array($cClass,['Message','FormTitle','FormSubTitle','FormSeparator','BasicForm']) ? [
             [
                 'control_type'=>'TextBox',
                 'control_params'=>['label'=>Translate::GetLabel('field_name'),'required'=>TRUE,'tag_id'=>'dft_fp_name','tag_name'=>'name','value'=>$item->getProperty('name','','is_string'),'placeholder'=>'Field name (no spaces)'],
             ],
-        ]),
-        (in_array($cClass,['Message','FormTitle','FormSubTitle','FormSeparator','BasicForm']) ? [] : [
+        ] : []),
+        (!in_array($cClass,['Message','FormTitle','FormSubTitle','FormSeparator','BasicForm']) ? [
             [
                 'control_type'=>'TextBox',
                 'control_params'=>['label'=>Translate::GetLabel('field_label'),'required'=>TRUE,'tag_id'=>'dft_fp_label','tag_name'=>'label','value'=>$item->getProperty('label','','is_string'),'placeholder'=>'Field displayed label'],
             ],
-        ]),
-        (in_array($cClass,['Message','FormTitle','FormSubTitle','FormSeparator','BasicForm']) ? [] : [
+        ] : []),
+        (!in_array($cClass,['Message','FormTitle','FormSubTitle','FormSeparator','BasicForm']) ? [
             [
                 'control_type'=>'CheckBox',
                 'control_params'=>['label'=>Translate::GetLabel('required_field'),'tag_id'=>'dft_fp_required','tag_name'=>'required','value'=>$item->getProperty('required',0,'is_integer'),'class'=>'pull-left'],
             ],
-        ]),
-        (in_array($cClass,['Message','FormTitle','FormSubTitle','FormSeparator','BasicForm']) ? [] : [
+        ] : []),
+        (!in_array($cClass,['Message','FormTitle','FormSubTitle','FormSeparator','BasicForm']) ? [
             [
                 'control_type'=>'CheckBox',
                 'control_params'=>['label'=>Translate::GetLabel('show_in_listing'),'tag_id'=>'dft_fp_listing','tag_name'=>'listing','value'=>$item->getProperty('listing',0,'is_integer'),'class'=>'pull-left'],
             ],
-        ]),
-        (in_array($cClass,['Message','FormTitle','FormSubTitle','FormSeparator','BasicForm']) || $colsNo<=1 ? [] : [
+        ] : []),
+        (!in_array($cClass,['Message','FormTitle','FormSubTitle','FormSeparator','BasicForm']) && $colsNo>1 ? [
             [
                 'control_type'=>'NumericTextBox',
                 'control_params'=>['label'=>Translate::GetLabel('column_span'),'tag_id'=>'dft_fp_colspan','tag_name'=>'colspan','value'=>$item->getProperty('colspan',1,'is_integer'),'align'=>'center','number_format'=>'0|||'],
             ],
-        ]),
-        (!in_array($cClass,['SmartComboBox','GroupCheckBox']) ? [] : [
+        ] : []),
+        (in_array($cClass,['SmartComboBox','GroupCheckBox']) ? [
             [
                 'control_type'=>'SmartComboBox',
                 'control_params'=>['label'=>Translate::GetLabel('form'),'tag_id'=>'dft_fp_id_sub_form','tag_name'=>'id_sub_form','required'=>TRUE,'disabled'=>(is_numeric($id) && $id>0),
@@ -128,36 +128,36 @@ $ctrl_params = [
                     ],
                 ],
             ],
-        ]),
-        ($cClass!='FormTitle' ? [] : [
+        ] : []),
+        ($cClass=='FormTitle' ? [
         [
                 'control_type'=>'EditBox',
                 'control_params'=>['label'=>Translate::GetLabel('title'),'required'=>TRUE,'tag_id'=>'dft_fp_label','tag_name'=>'label','value'=>$item->getProperty('label','','is_string'),'height'=>50,'placeholder'=>'Title'],
             ],
-        ]),
-        ($cClass!='FormSubTitle' ? [] : [
+        ] : []),
+        ($cClass=='FormSubTitle' ? [
             [
                 'control_type'=>'EditBox',
                 'control_params'=>['label'=>Translate::GetLabel('sub_title'),'required'=>TRUE,'tag_id'=>'dft_fp_label','tag_name'=>'label','value'=>$item->getProperty('label','','is_string'),'height'=>50,'placeholder'=>'Sub-title'],
             ],
-        ]),
-        ($cClass!='Message' ? [] : [
+        ] : []),
+        ($cClass=='Message' ? [
             [
                 'control_type'=>'TextBox',
                 'control_params'=>['label'=>Translate::GetLabel('short_text').' (max: 255)','tag_id'=>'dft_fp_label','tag_name'=>'label','value'=>$item->getProperty('label','','is_string'),'placeholder'=>'Field displayed label'],
             ],
-        ]),
-        ($cClass!='Message' ? [] : [
+        ] : []),
+        ($cClass=='Message' ? [
             [
                 'control_type'=>'EditBox',
                 'control_params'=>['label'=>Translate::GetLabel('long_text'),'tag_id'=>'dft_fp_description','tag_name'=>'description','value'=>$item->getProperty('description','','is_string'),'height'=>50],
-        ],
-        ]),
+            ],
+        ] : []),
         [
-        [
-            'control_type'=>'CustomControl',
-            'control_params'=>['value'=>implode("\n",$hFields)],
-        ],
+            [
+                'control_type'=>'CustomControl',
+                'control_params'=>['value'=>implode("\n",$hFields)],
+            ],
         ],
     ],
 ];
