@@ -16,7 +16,7 @@ $ctrl_params = [
 	],
 	'actions'=>[
 		[
-			'params'=>['value'=>Translate::GetButton('add_'.$type),'icon'=>'fa fa-plus-circle','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','UpdateContentTable','id_template'|{$idTemplate}~'pindex'|'{$pIndex}'~'type'|0~'close'|1~'{$type}sno'|dft_add_element_position:value,'{$target}')->dft_add_element_errors")],
+			'params'=>['value'=>Translate::GetButton('add_'.$type),'icon'=>'fa fa-plus-circle','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','UpdateContentTable','id_template'|{$idTemplate}~'pindex'|'{$pIndex}'~'type'|0~'close'|1~'{$type}sno'|dft_add_element_position:value~'ctarget'|'{$cTarget}','{$target}')->dft_add_element_errors")],
 		],
 	],
 ];

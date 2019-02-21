@@ -103,7 +103,7 @@ $ctrl_params = array(
             'uid'=>'content',
             'name'=>Translate::GetLabel('content'),
             'content_type'=>'ajax',
-            'content'=>"AjaxRequest('{$this->class}','ShowContentEditForm','id_template'|{$id},'{{t_target}}')->{{t_target}}",
+            'content'=>"AjaxRequest('\NETopes\Plugins\DForms\Modules\TemplatesContent\TemplatesContent','ShowContentEditForm','id_template'|{$id},'{{t_target}}')->{{t_target}}",
             'reload_onchange'=>TRUE,
             'autoload'=>FALSE,
         ),

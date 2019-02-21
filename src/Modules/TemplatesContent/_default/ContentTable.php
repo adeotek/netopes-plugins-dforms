@@ -40,9 +40,9 @@ if($renderType>1) {
 ?>
             <div class="dft-actions mt10 clearfix">
 <?php
-$btnAddCol = new Button(['value'=>Translate::GetButton('add_column'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-xxs ml20 pull-left'),'icon'=>'fa fa-plus-circle','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','ShowAddTableElementForm','id_template'|{$idTemplate}~'pindex'|'{$pIndex}'~'type'|'col'~'last_pos'|'{$colsNo}','{$target}')->modal")]);
+$btnAddCol = new Button(['value'=>Translate::GetButton('add_column'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-xxs ml20 pull-left'),'icon'=>'fa fa-plus-circle','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','ShowAddTableElementForm','id_template'|{$idTemplate}~'pindex'|'{$pIndex}'~'type'|'col'~'last_pos'|'{$colsNo}'~'ctarget'|'{$cTarget}','{$target}')->modal")]);
 echo $btnAddCol->Show();
-$btnAddRow = new Button(['value'=>Translate::GetButton('add_row'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-xxs ml20 pull-left'),'icon'=>'fa fa-plus-circle','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','ShowAddTableElementForm','id_template'|{$idTemplate}~'pindex'|'{$pIndex}'~'type'|'row'~'last_pos'|'{$rowsNo}','{$target}')->modal")]);
+$btnAddRow = new Button(['value'=>Translate::GetButton('add_row'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-xxs ml20 pull-left'),'icon'=>'fa fa-plus-circle','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','ShowAddTableElementForm','id_template'|{$idTemplate}~'pindex'|'{$pIndex}'~'type'|'row'~'last_pos'|'{$rowsNo}'~'ctarget'|'{$cTarget}','{$target}')->modal")]);
 echo $btnAddRow->Show();
 ?>
             </div>
@@ -56,7 +56,7 @@ echo $btnAddRow->Show();
 for($i=1;$i<=$colsNo;$i++) {
     $delColAct = '';
     if($colsNo>1) {
-        $btnDelCol = new DivButton(array('tooltip'=>Translate::GetButton('delete_column'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs pull-right'),'icon'=>'fa fa-times-circle','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','UpdateContentTable','id_template'|{$idTemplate}~'pindex'|'{$pIndex}'~'type'|'-1'~'colsno'|'{$i}','{$target}')->errors"),'confirm_text'=>Translate::GetMessage('confirm_delete')));
+        $btnDelCol = new DivButton(array('tooltip'=>Translate::GetButton('delete_column'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs pull-right'),'icon'=>'fa fa-times-circle','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','UpdateContentTable','id_template'|{$idTemplate}~'pindex'|'{$pIndex}'~'type'|'-1'~'colsno'|'{$i}'~'ctarget'|'{$cTarget}','{$target}')->errors"),'confirm_text'=>Translate::GetMessage('confirm_delete')));
         $delColAct = $btnDelCol->Show();
     }//if($colsNo>1)
 ?>
@@ -73,7 +73,7 @@ for($i=1;$i<=$colsNo;$i++) {
 for($i=1;$i<=$rowsNo;$i++) {
     $delRowAct = '';
     if($rowsNo>1) {
-        $btnDelRow = new DivButton(array('tag_id'=>'dft_del_col','tooltip'=>Translate::GetButton('delete_row'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs mr10'),'icon'=>'fa fa-times-circle','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','UpdateContentTable','id_template'|{$idTemplate}~'pindex'|'{$pIndex}'~'type'|'-1'~'rowsno'|'{$i}','{$target}')->errors"),'confirm_text'=>Translate::GetMessage('confirm_delete')));
+        $btnDelRow = new DivButton(array('tag_id'=>'dft_del_col','tooltip'=>Translate::GetButton('delete_row'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs mr10'),'icon'=>'fa fa-times-circle','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','UpdateContentTable','id_template'|{$idTemplate}~'pindex'|'{$pIndex}'~'type'|'-1'~'rowsno'|'{$i}'~'ctarget'|'{$cTarget}','{$target}')->errors"),'confirm_text'=>Translate::GetMessage('confirm_delete')));
         $delRowAct = $btnDelRow->Show();
     }//if($rowsNo>1)
 ?>
@@ -84,18 +84,18 @@ for($i=1;$i<=$rowsNo;$i++) {
     for($j=1;$j<=$colsNo;$j++) {
         $f = $fields->safeGet($i.'-'.$j,NULL,'is_object');
         if($f) {
-            $btn_edit_item = new DivButton(array('tag_id'=>'dfti_edit','tooltip'=>Translate::GetButton('edit'),'class'=>NApp::$theme->GetBtnSpecialLightClass('btn-xxs'),'icon'=>'fa fa-pencil-square-o','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','AddEditContentElement','id_template'|{$idTemplate}~'pindex'|'{$pIndex}'~'cols_no'|'{$colsNo}'~'id_item'|{$f->getProperty('id')}~'id_control'|{$f->getProperty('id_control')},'{$target}')->modal")));
-            $edit_item_act = $btn_edit_item->Show();
-            $btn_del_item = new DivButton(array('tag_id'=>'dfti_del','tooltip'=>Translate::GetButton('delete'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs'),'icon'=>'fa fa-times','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','DeleteContentElementRecord','id_template'|{$idTemplate}~'pindex'|'{$pIndex}'~'id'|{$f->getProperty('id')},'{$target}')->errors"),'confirm_text'=>Translate::GetMessage('confirm_delete')));
-            $del_item_act = $btn_del_item->Show();
+            $btnEditItem = new DivButton(array('tag_id'=>'dfti_edit','tooltip'=>Translate::GetButton('edit'),'class'=>NApp::$theme->GetBtnSpecialLightClass('btn-xxs'),'icon'=>'fa fa-pencil-square-o','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','AddEditContentElement','id_template'|{$idTemplate}~'pindex'|'{$pIndex}'~'cols_no'|'{$colsNo}'~'id_item'|{$f->getProperty('id')}~'id_control'|{$f->getProperty('id_control')}~'ctarget'|'{$cTarget}','{$target}')->modal")));
+            $editItemAct = $btnEditItem->Show();
+            $btnDelItem = new DivButton(array('tag_id'=>'dfti_del','tooltip'=>Translate::GetButton('delete'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs'),'icon'=>'fa fa-times','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','DeleteContentElementRecord','id_template'|{$idTemplate}~'pindex'|'{$pIndex}'~'id'|{$f->getProperty('id')}~'ctarget'|'{$cTarget}','{$target}')->errors"),'confirm_text'=>Translate::GetMessage('confirm_delete')));
+            $delItemAct = $btnDelItem->Show();
 ?>
                             <td class="ccolumn droppable" id="cell-<?=$pIndex.'-'.$i.'-'.$j?>" data-cell="<?=$pIndex.'-'.$i.'-'.$j?>" data-full="1">
                                 <span class="blank" style="display: none;"><?=$i.'-'.$j?></span>
                                 <div class="dft-item draggable move" data-id="<?=$f->getProperty('id')?>" data-cell="<?=$pIndex.'-'.$i.'-'.$j?>">
                                     <span class="name"><?=$this->module->GetItemTitle($f)?></span>
-                                    <?=$edit_item_act?>
+                                    <?=$editItemAct?>
                                     <span class="desc"><span class="title">[<?=$f->getProperty('class')?>]</span>&nbsp;-&nbsp;<?=$f->getProperty('control_name')?></span>
-                                    <?=$del_item_act?>
+                                    <?=$delItemAct?>
                                 </div>
                             </td>
 <?php

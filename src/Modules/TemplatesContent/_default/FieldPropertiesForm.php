@@ -31,7 +31,7 @@ switch($cClass) {
         $hFields[] = $ctrl->Show();
         break;
     case 'BasicForm':
-        $ctrl = new HiddenInput(['tag_id'=>'dft_fp_name','tag_name'=>'name','value'=>$item->getProperty('name',NULL,'is_string')]);
+        $ctrl = new HiddenInput(['tag_id'=>'dft_fp_name','tag_name'=>'name','value'=>$item->getProperty('name',\NETopes\Core\AppSession::GetNewUID($idTemplate.$cClass),'is_string')]);
         $hFields[] = $ctrl->Show();
         $ctrl = new HiddenInput(['tag_id'=>'dft_fp_label','tag_name'=>'label','value'=>$item->getProperty('label',$cClass,'is_string')]);
         $hFields[] = $ctrl->Show();
@@ -74,7 +74,7 @@ $ctrl_params = [
                     'placeholder'=>Translate::GetLabel('please_select_template'),
                     'load_type'=>'database',
                     'data_source'=>[
-                        'ds_class'=>'Components\DForms\Templates',
+                        'ds_class'=>'Plugins\DForms\Templates',
                         'ds_method'=>'GetItems',
                         'ds_params'=>['for_id'=>NULL,'for_validated'=>1,'for_state'=>1,'for_text'=>NULL,'for_ftype'=>NULL,'exclude_id'=>$idTemplate],
                     ],
