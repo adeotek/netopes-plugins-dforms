@@ -31,10 +31,6 @@ switch($cClass) {
         $hFields[] = $ctrl->Show();
         break;
     case 'BasicForm':
-        $ctrl = new HiddenInput(['tag_id'=>'dft_fp_name','tag_name'=>'name','value'=>$item->getProperty('name',\NETopes\Core\AppSession::GetNewUID($idTemplate.$cClass),'is_string')]);
-        $hFields[] = $ctrl->Show();
-        $ctrl = new HiddenInput(['tag_id'=>'dft_fp_label','tag_name'=>'label','value'=>$item->getProperty('label',$cClass,'is_string')]);
-        $hFields[] = $ctrl->Show();
         $ctrl = new HiddenInput(['tag_id'=>'dft_fp_required','tag_name'=>'required','value'=>$item->getProperty('required',0,'is_integer')]);
         $hFields[] = $ctrl->Show();
         $ctrl = new HiddenInput(['tag_id'=>'dft_fp_listing','tag_name'=>'listing','value'=>$item->getProperty('listing',0,'is_integer')]);
@@ -81,13 +77,13 @@ $ctrl_params = [
                 ],
             ],
         ] : []),
-        (!in_array($cClass,['Message','FormTitle','FormSubTitle','FormSeparator','BasicForm']) ? [
+        (!in_array($cClass,['Message','FormTitle','FormSubTitle','FormSeparator']) ? [
             [
                 'control_type'=>'TextBox',
                 'control_params'=>['label'=>Translate::GetLabel('field_name'),'required'=>TRUE,'tag_id'=>'dft_fp_name','tag_name'=>'name','value'=>$item->getProperty('name','','is_string'),'placeholder'=>'Field name (no spaces)'],
             ],
         ] : []),
-        (!in_array($cClass,['Message','FormTitle','FormSubTitle','FormSeparator','BasicForm']) ? [
+        (!in_array($cClass,['Message','FormTitle','FormSubTitle','FormSeparator']) ? [
             [
                 'control_type'=>'TextBox',
                 'control_params'=>['label'=>Translate::GetLabel('field_label'),'required'=>TRUE,'tag_id'=>'dft_fp_label','tag_name'=>'label','value'=>$item->getProperty('label','','is_string'),'placeholder'=>'Field displayed label'],

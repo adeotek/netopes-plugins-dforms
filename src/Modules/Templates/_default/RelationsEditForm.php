@@ -10,7 +10,7 @@ $ctrl_params = array(
     'with_pagination'=>TRUE,
     'sortby'=>array('column'=>'name','direction'=>'asc'),
     'qsearch'=>'for_text',
-    'data_source'=>'Plugins\DForms\Templates',
+    'ds_class'=>'Plugins\DForms\Templates',
     'ds_method'=>'GetRelations',
     'ds_params'=>array('for_id'=>NULL,'template_id'=>$idTemplate,'for_text'=>NULL),
     'auto_load_data'=>TRUE,
@@ -37,8 +37,8 @@ $ctrl_params = array(
             // 'filter_type'=>'combobox',
             // 'show_filter_cond_type'=>FALSE,
             // 'filter_params'=>array('value_field'=>'id','display_field'=>'name','selected_value'=>NULL),
-            // 'filter_data_call'=>array(
-            // 	'data_source'=>'_Custom\DFormsOffline',
+            // 'filter_data_source'=>array(
+            // 	'ds_class'=>'_Custom\DFormsOffline',
             // 	'ds_method'=>'GetDynamicFormsTemplatesFTypes',
             // ),
         ),
@@ -80,8 +80,8 @@ $ctrl_params = array(
             'filter_type'=>'combobox',
             'show_filter_cond_type'=>FALSE,
             'filter_params'=>array('value_field'=>'id','display_field'=>'name','selected_value'=>NULL),
-            'filter_data_call'=>array(
-                'data_source'=>'_Custom\DFormsOffline',
+            'filter_data_source'=>array(
+                'ds_class'=>'_Custom\DFormsOffline',
                 'ds_method'=>'GetGenericArrays',
                 'ds_params'=>array('type'=>'yes-no'),
             ),
