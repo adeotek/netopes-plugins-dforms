@@ -46,7 +46,7 @@ class Templates extends Module {
         $view->SetTitle('dynamic_forms_templates');
         $view->SetTargetId($listingTarget);
         if(!$this->AddDRights()) {
-            $btnAdd = new Button(['value'=>Translate::GetButton('add').' '.Translate::GetLabel('template'),'class'=>NApp::$theme->GetBtnPrimaryClass(),'icon'=>'fa fa-plus','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','ShowAddForm')->modal")]);
+            $btnAdd=new Button(['value'=>Translate::GetButton('add').' '.Translate::GetLabel('template'),'class'=>NApp::$theme->GetBtnPrimaryClass(),'icon'=>'fa fa-plus','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','ShowAddForm')->modal")]);
 	        $view->AddAction($btnAdd->Show());
         }//if(!$this->AddDRights())
         $view->AddTableView($this->GetViewFile('Listing'));
@@ -82,10 +82,10 @@ class Templates extends Module {
         $view->AddTabControl($this->GetViewFile('EditForm'));
         $view->SetTitle(Translate::GetButton('edit_template').': '.$item->getProperty('name').' ['.$item->getProperty('code').'] - Ver. '.$version.' ('.($version+1).')');
         if(!$this->ValidateDRights()) {
-            $btnValidate = new Button(['value'=>Translate::GetButton('validate'),'class'=>NApp::$theme->GetBtnSuccessClass('mr10'),'icon'=>'fa fa-check-square-o','onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->class,'method'=>'ValidateRecord','target'=>'errors','params'=>['id'=>$id]])]);
+            $btnValidate=new Button(['value'=>Translate::GetButton('validate'),'class'=>NApp::$theme->GetBtnSuccessClass('mr10'),'icon'=>'fa fa-check-square-o','onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->class,'method'=>'ValidateRecord','params'=>['id'=>$id]],['target_id'=>'errors'])]);
 	        $view->AddAction($btnValidate->Show());
         }//if(!$this->ValidateDRights()) {
-	    $btnBack = new Button(['value'=>Translate::GetButton('back'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-chevron-left','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','Listing')->main-content")]);
+        $btnBack=new Button(['value'=>Translate::GetButton('back'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-chevron-left','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','Listing')->main-content")]);
 	    $view->AddAction($btnBack->Show());
         $view->Render();
         NApp::Ajax()->ExecuteJs("$('#df_template_edit_code').focus();");
@@ -280,7 +280,7 @@ class Templates extends Module {
         $view = new AppView(get_defined_vars(),$this,'default');
         $view->SetTargetId($dgtarget);
         if(!$this->AddDRights()) {
-            $btnAdd = new Button(['value'=>Translate::GetButton('add'),'class'=>NApp::$theme->GetBtnPrimaryClass(),'icon'=>'fa fa-plus-circle','onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->class,'method'=>'ShowRelationAddEditForm','target'=>'modal','params'=>['id_template'=>$idTemplate,'target'=>$target]])]);
+            $btnAdd=new Button(['value'=>Translate::GetButton('add'),'class'=>NApp::$theme->GetBtnPrimaryClass(),'icon'=>'fa fa-plus-circle','onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->class,'method'=>'ShowRelationAddEditForm','params'=>['id_template'=>$idTemplate,'target'=>$target]],['target_id'=>'modal'])]);
             $view->AddAction($btnAdd->Show());
         }//if(!$this->AddDRights())
         $view->AddTableView($this->GetViewFile('RelationsEditForm'));

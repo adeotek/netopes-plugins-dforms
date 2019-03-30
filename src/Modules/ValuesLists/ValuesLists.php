@@ -41,7 +41,7 @@ class ValuesLists extends Module {
 		$view->AddTableView($this->GetViewFile('Listing'));
 		$view->SetTitle(Translate::GetLabel('values_lists'));
 		if(!$this->AddDRights()) {
-		    $btn_add = new Button(['value'=>Translate::GetButton('add').' '.Translate::GetLabel('values_list'),'class'=>NApp::$theme->GetBtnInfoClass(),'icon'=>'fa fa-plus','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','ShowAddForm')->modal")]);
+            $btn_add=new Button(['value'=>Translate::GetButton('add').' '.Translate::GetLabel('values_list'),'class'=>NApp::$theme->GetBtnInfoClass(),'icon'=>'fa fa-plus','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','ShowAddForm')->modal")]);
 		    $view->AddAction($btn_add->Show());
         }//if(!$this->AddDRights())
 		$view->SetTargetId('listing_content');
@@ -77,7 +77,7 @@ class ValuesLists extends Module {
 		$view = new AppView(get_defined_vars(),$this,'main');
 		$view->AddTabControl($this->GetViewFile('EditForm'));
 		$view->SetTitle($title);
-        $btnCancel = new Button(['value'=>Translate::GetButton('back'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-chevron-left','onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->class,'method'=>'Listing','target'=>'main-content'])]);
+        $btnCancel=new Button(['value'=>Translate::GetButton('back'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-chevron-left','onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->class,'method'=>'Listing'],['target_id'=>'main-content'])]);
         $view->AddAction($btnCancel->Show());
         $view->Render();
 		NApp::Ajax()->ExecuteJs("$('#df_list_edit_code').focus();");
@@ -157,7 +157,7 @@ class ValuesLists extends Module {
 					'value'=>Translate::GetButton('add'),
 					'class'=>NApp::$theme->GetBtnPrimaryClass(),
 					'icon'=>'fa fa-plus-circle',
-					'onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->class,'method'=>'ShowValueAddEditForm','target'=>'modal','params'=>['id_list'=>$idList,'target'=>$target]])]);
+                    'onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->class,'method'=>'ShowValueAddEditForm','params'=>['id_list'=>$idList,'target'=>$target]],['target_id'=>'modal'])]);
 				$view->AddAction($btnAdd->Show());
         	}//if(!$this->AddDRights())
 		} else {

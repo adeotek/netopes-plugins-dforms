@@ -14,6 +14,7 @@ use NETopes\Core\App\Module;
 use NETopes\Core\App\ModulesProvider;
 use NETopes\Core\App\Params;
 use NETopes\Core\App\Validator;
+use NETopes\Core\AppSession;
 use NETopes\Core\Controls\BasicForm;
 use NETopes\Core\Controls\Button;
 use NETopes\Core\Controls\Control;
@@ -420,12 +421,12 @@ class Instances extends Module {
         if($controlClass!='BasicForm' && strlen($fTagId)) {
             $fResponseTarget = get_array_value($ctrl_params,'response_target','df_'.$tName.'_errors','is_notempty_string');
             $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="'.$fResponseTarget.'">&nbsp;</div></div>');
-            $btnSave = new Button(['tag_id'=>'df_'.$tName.'_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','class'=>NApp::$theme->GetBtnPrimaryClass(),'onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','SaveRecord','id_template'|{$idTemplate}~'id'|{$idInstance}~'data'|df_{$tName}_form:form~'is_modal'|'{$isModal}'~'cmodule'|'{$cModule}'~'cmethod'|'{$cMethod}'~'ctarget'|'{$cTarget}','{$fTagId}')->{$fResponseTarget}")]);
+            $btnSave=new Button(['tag_id'=>'df_'.$tName.'_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','class'=>NApp::$theme->GetBtnPrimaryClass(),'onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','SaveRecord','id_template'|{$idTemplate}~'id'|{$idInstance}~'data'|df_{$tName}_form:form~'is_modal'|'{$isModal}'~'cmodule'|'{$cModule}'~'cmethod'|'{$cMethod}'~'ctarget'|'{$cTarget}','{$fTagId}')->{$fResponseTarget}")]);
             $view->AddAction($btnSave->Show());
             if($isModal) {
                 $btnBack = new Button(['tag_id'=>'df_'.$tName.'_cancel','value'=>Translate::GetButton('cancel'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-ban','onclick'=>"CloseModalForm()",]);
             } else {
-                $btnBack = new Button(['tag_id'=>'df_'.$tName.'_back','value'=>Translate::GetButton('back'),'icon'=>'fa fa-chevron-left','class'=>NApp::$theme->GetBtnDefaultClass(),'onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$cModule}','{$cMethod}','id_template'|{$idTemplate}~'id'|{$idInstance},'{$cTarget}')->{$cTarget}")]);
+                $btnBack=new Button(['tag_id'=>'df_'.$tName.'_back','value'=>Translate::GetButton('back'),'icon'=>'fa fa-chevron-left','class'=>NApp::$theme->GetBtnDefaultClass(),'onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$cModule}','{$cMethod}','id_template'|{$idTemplate}~'id'|{$idInstance},'{$cTarget}')->{$cTarget}")]);
             }//if($isModal)
             $view->AddAction($btnBack->Show());
         }//if($controlClass!='BasicForm' && strlen($fTagId))
@@ -570,7 +571,7 @@ class Instances extends Module {
 		}//if($error)
 
 		$template = DataProvider::Get('Plugins\DForms\Instances','GetTemplate',['for_id'=>$idTemplate]);
-		$transaction = \NETopes\Core\AppSession::GetNewUID(get_array_value($template,'code','N/A','is_notempty_string'));
+        $transaction=AppSession::GetNewUID(get_array_value($template,'code','N/A','is_notempty_string'));
 		DataProvider::StartTransaction('Plugins\DForms\Instances',$transaction);
 		try {
 			$result = DataProvider::Get('Plugins\DForms\Instances','SetNewInstance',[
@@ -624,7 +625,7 @@ class Instances extends Module {
 		$cModule = $params->safeGet('cmodule',get_called_class(),'is_notempty_string');
 		$cMethod = $params->safeGet('cmethod','Listing','is_notempty_string');
 		$cTarget = $params->safeGet('ctarget','main-content','is_notempty_string');
-		NApp::Ajax()->Execute("AjaxRequest('{$cModule}','{$cMethod}','id_template'|{$idTemplate},'{$cTarget}')->{$cTarget}");
+        NApp::Ajax()->LegacyExecute("AjaxRequest('{$cModule}','{$cMethod}','id_template'|{$idTemplate},'{$cTarget}')->{$cTarget}");
 	}//END public function SaveNewRecord
 	/**
 	 * description
@@ -760,7 +761,7 @@ class Instances extends Module {
 		}//if($error)
 
 		$template = DataProvider::Get('Plugins\DForms\Instances','GetTemplate',['for_id'=>$idTemplate]);
-		$transaction = \NETopes\Core\AppSession::GetNewUID(get_array_value($template,'code','N/A','is_notempty_string'));
+        $transaction=AppSession::GetNewUID(get_array_value($template,'code','N/A','is_notempty_string'));
 		DataProvider::StartTransaction('Plugins\DForms\Instances',$transaction);
 		try {
 			$result = DataProvider::Get('Plugins\DForms\Instances','UnsetInstanceValues',['instance_id'=>$idInstance],['transaction'=>$transaction]);
@@ -815,7 +816,7 @@ class Instances extends Module {
 		$cModule = $params->safeGet('cmodule',get_called_class(),'is_notempty_string');
 		$cMethod = $params->safeGet('cmethod','Listing','is_notempty_string');
 		$cTarget = $params->safeGet('ctarget','main-content','is_notempty_string');
-		NApp::Ajax()->Execute("AjaxRequest('{$cModule}','{$cMethod}','id_template'|{$idTemplate},'{$cTarget}')->{$cTarget}");
+        NApp::Ajax()->LegacyExecute("AjaxRequest('{$cModule}','{$cMethod}','id_template'|{$idTemplate},'{$cTarget}')->{$cTarget}");
 	}//END public function SaveRecord
 	/**
 	 * description

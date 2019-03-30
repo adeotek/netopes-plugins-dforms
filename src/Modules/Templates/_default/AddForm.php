@@ -46,7 +46,7 @@ $ctrl_params = array(
     ),
     'actions'=>array(
         array(
-            'params'=>array('value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','AddEditRecord',
+            'params'=>array('value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','AddEditRecord',
                 'id'|''
                 ~'code'|df_template_add_code:value
                 ~'name'|df_template_add_name:value

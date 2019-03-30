@@ -56,7 +56,7 @@ $ctrl_params = array(
                     ),
                     'actions'=>array(
                         array(
-                            'params'=>array('tag_id'=>'df_template_edit_save1','value'=>Translate::GetButton('save_and_close'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','AddEditRecord',
+                            'params'=>array('tag_id'=>'df_template_edit_save1','value'=>Translate::GetButton('save_and_close'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','AddEditRecord',
                                 'id'|'{$id}'
                                 ~'close'|1
                                 ~'code'|df_template_edit_code:value
@@ -67,7 +67,7 @@ $ctrl_params = array(
                         ),
                         //~'state'|df_template_edit_state:value
                         array(
-                            'params'=>array('tag_id'=>'df_template_edit_save0','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','AddEditRecord',
+                            'params'=>array('tag_id'=>'df_template_edit_save0','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','AddEditRecord',
                                 'id'|'{$id}'
                                 ~'close'|0
                                 ~'code'|df_template_edit_code:value
@@ -128,14 +128,14 @@ $ctrl_params = array(
                     ),
                     'actions'=>array(
                         array(
-                            'params'=>array('value'=>Translate::GetButton('save_and_close'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','SetPrintTemplate',
+                            'params'=>array('value'=>Translate::GetButton('save_and_close'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','SetPrintTemplate',
                                 'id'|'{$id}'
                                 ~'close'|1
                                 ~'print_template'|GetCkEditorData('df_template_edit_print_template_value')
                             ,'df_template_edit_form')->df_template_edit_errors")),
                         ),
                         array(
-                            'params'=>array('value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','SetPrintTemplate',
+                            'params'=>array('value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','SetPrintTemplate',
                                 'id'|'{$id}'
                                 ~'close'|0
                                 ~'print_template'|GetCkEditorData('df_template_edit_print_template_value')

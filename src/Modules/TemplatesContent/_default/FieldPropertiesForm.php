@@ -1,4 +1,5 @@
 <?php
+use NETopes\Core\AppSession;
 use NETopes\Core\Controls\HiddenInput;
 /**
  * @var int $idTemplate
@@ -19,7 +20,7 @@ switch($cClass) {
     case 'FormSubTitle':
         $ctrl = new HiddenInput(['tag_id'=>'dft_fp_itype','tag_name'=>'itype','value'=>$item->getProperty('itype',1,'is_integer')]);
         $hFields[] = $ctrl->Show();
-        $ctrl = new HiddenInput(['tag_id'=>'dft_fp_name','tag_name'=>'name','value'=>$item->getProperty('name',\NETopes\Core\AppSession::GetNewUID($idTemplate.$cClass),'is_string')]);
+        $ctrl=new HiddenInput(['tag_id'=>'dft_fp_name','tag_name'=>'name','value'=>$item->getProperty('name',AppSession::GetNewUID($idTemplate.$cClass),'is_string')]);
         $hFields[] = $ctrl->Show();
         if($cClass=='FormSeparator') {
             $ctrl = new HiddenInput(['tag_id'=>'dft_fp_label','tag_name'=>'label','value'=>$item->getProperty('label',$cClass,'is_string')]);

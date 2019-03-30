@@ -5,7 +5,7 @@
  * @var \NETopes\Core\Data\DataSet $templatePages
  * @var int $idTemplate
  */
-?>
+use NETopes\Core\App\ModulesProvider; ?>
 <div class="dft-container clearfix" id="dft-container">
 	<div class="side-column">
 		<span class="dft-items-list-title"><?=Translate::GetLabel('fields_types')?></span>
@@ -33,7 +33,7 @@
 <?php
     if($templateProps->getProperty('render_type',1,'is_integer')>1) {
         $pagesNo = $templateProps->getProperty('pagesno',1,'is_integer');
-        $btn_add_page = new NETopes\Core\Controls\Button(['value'=>Translate::GetButton('add_page'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-sm pull-left'),'icon'=>'fa fa-plus-circle','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','ShowAddPageForm','id_template'|'{$idTemplate}'~'pagesno'|'{$pagesNo}','{$target}')->modal")]);
+        $btn_add_page=new NETopes\Core\Controls\Button(['value'=>Translate::GetButton('add_page'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-sm pull-left'),'icon'=>'fa fa-plus-circle','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','ShowAddPageForm','id_template'|'{$idTemplate}'~'pagesno'|'{$pagesNo}','{$target}')->modal")]);
         echo $btn_add_page->Show();
     }//if($templateProps->getProperty('render_type',1,'is_integer')>1)
 ?>
@@ -48,7 +48,7 @@
 		    $pageTargetId = 'df_template_fields_p'.$pageIndex;
 ?>
             <div class="dft-content-page clearfix" id="<?=$pageTargetId?>">
-                <?php \NETopes\Core\App\ModulesProvider::Exec($this->class,'ShowContentTable',['id_template'=>$idTemplate,'pindex'=>$pageIndex,'target'=>$pageTargetId,'ctarget'=>$target]); ?>
+                <?php ModulesProvider::Exec($this->class,'ShowContentTable',['id_template'=>$idTemplate,'pindex'=>$pageIndex,'target'=>$pageTargetId,'ctarget'=>$target]); ?>
             </div>
 <?php
 		}//END foreach

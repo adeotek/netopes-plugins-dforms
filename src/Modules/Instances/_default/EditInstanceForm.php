@@ -9,7 +9,7 @@
 		if(strlen($fTagId) && strlen($fResponseTarget)) {
 			$ctrl_params['actions'] = array(
 				array(
-					'params'=>array('tag_id'=>'df_'.$tName.'_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','class'=>'btn btn-primary','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','SaveRecord','id_template'|{$idTemplate}~'id'|{$idInstance}~'data'|df_{$tName}_form:form~'is_modal'|'{$is_modal}'~'cmodule'|'{$cModule}'~'cmethod'|'{$cMethod}'~'ctarget'|'{$cTarget}','{$fTagId}')->{$fResponseTarget}")),
+                    'params'=>array('tag_id'=>'df_'.$tName.'_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','class'=>'btn btn-primary','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','SaveRecord','id_template'|{$idTemplate}~'id'|{$idInstance}~'data'|df_{$tName}_form:form~'is_modal'|'{$is_modal}'~'cmodule'|'{$cModule}'~'cmethod'|'{$cMethod}'~'ctarget'|'{$cTarget}','{$fTagId}')->{$fResponseTarget}")),
 				),
 			);
 			if($is_modal) {
@@ -19,7 +19,7 @@
 				);
 			} else {
 				$ctrl_params['actions'][] = array(
-					'params'=>array('tag_id'=>'df_'.$tName.'_back','value'=>Translate::GetButton('back'),'icon'=>'fa fa-chevron-left','class'=>'btn btn-default','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$cModule}','{$cMethod}','id_template'|{$idTemplate}~'id'|{$idInstance},'{$cTarget}')->{$cTarget}")),
+                    'params'=>array('tag_id'=>'df_'.$tName.'_back','value'=>Translate::GetButton('back'),'icon'=>'fa fa-chevron-left','class'=>'btn btn-default','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$cModule}','{$cMethod}','id_template'|{$idTemplate}~'id'|{$idInstance},'{$cTarget}')->{$cTarget}")),
 				);
 			}//if($is_modal)
 		}//if(strlen($fTagId) && strlen($fResponseTarget))

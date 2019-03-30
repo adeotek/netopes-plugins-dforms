@@ -252,7 +252,7 @@ class TemplatesContent extends Module {
 		$view->SetTitle(Translate::GetLabel('field_properties'));
 		$view->SetIsModalView(TRUE);
 		$view->SetModalWidth(550);
-		$customClose = NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','CancelAddEditContentElement','id_template'|{$idTemplate}~'pindex'|'{$pIndex}','{$target}')->dft_fp_errors");
+        $customClose=NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','CancelAddEditContentElement','id_template'|{$idTemplate}~'pindex'|'{$pIndex}','{$target}')->dft_fp_errors");
 		$view->SetModalCustomClose('"'.addcslashes($customClose,'\\').'"');
         $view->AddBasicForm($this->GetViewFile('FieldPropertiesForm'),[
             'container_type'=>'default',
@@ -265,7 +265,7 @@ class TemplatesContent extends Module {
             ]);
         }//if(is_object($tabCtrl))
         $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="dft_fp_form_errors"></div></div>');
-		$btnSave = new Button(['value'=>Translate::GetButton('save'),'class'=>NApp::$theme->GetBtnPrimaryClass(),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("AjaxRequest('{$this->class}','AddEditContentElementRecord',
+        $btnSave=new Button(['value'=>Translate::GetButton('save'),'class'=>NApp::$theme->GetBtnPrimaryClass(),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','AddEditContentElementRecord',
                 'id_template'|{$idTemplate}
                 ~'pindex'|'{$pIndex}'
                 ~'id_item'|'{$id}'
