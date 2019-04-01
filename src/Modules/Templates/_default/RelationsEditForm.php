@@ -1,5 +1,5 @@
 <?php
-$ctrl_params = array(
+$ctrl_params=[
     'module'=>$this->class,
     'method'=>$this->GetCurrentMethod(),
     'persistent_state'=>FALSE,
@@ -8,25 +8,25 @@ $ctrl_params = array(
     'scrollable'=>FALSE,
     'with_filter'=>TRUE,
     'with_pagination'=>TRUE,
-    'sortby'=>array('column'=>'name','direction'=>'asc'),
+    'sortby'=>['column'=>'name','direction'=>'asc'],
     'qsearch'=>'for_text',
     'ds_class'=>'Plugins\DForms\Templates',
     'ds_method'=>'GetRelations',
-    'ds_params'=>array('for_id'=>NULL,'template_id'=>$idTemplate,'for_text'=>NULL),
+    'ds_params'=>['for_id'=>NULL,'template_id'=>$idTemplate,'for_text'=>NULL],
     'auto_load_data'=>TRUE,
-    'columns'=>array(
-        'actions'=>array(
+    'columns'=>[
+        'actions'=>[
             'type'=>'actions',
             'visual_count'=>1,
-            'actions'=>array(
-                array(
+            'actions'=>[
+                [
                     'type'=>'DivButton',
                     'command_string'=>"AjaxRequest('{$this->class}','ShowRelationAddEditForm','id'|{{id}}~'id_template'|{{id_template}},'{$target}')->modal",
-                    'params'=>array('tooltip'=>Translate::GetButton('edit'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-xxs'),'icon'=>'fa fa-pencil-square-o'),
-                ),
-            ),
-        ),
-        'relation_type'=>array(
+                    'params'=>['tooltip'=>Translate::GetButton('edit'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-xxs'),'icon'=>'fa fa-pencil-square-o'],
+                ],
+            ],
+        ],
+        'relation_type'=>[
             'db_field'=>'relation_type',
             'data_type'=>'string',
             'type'=>'value',
@@ -41,8 +41,8 @@ $ctrl_params = array(
             // 	'ds_class'=>'_Custom\DFormsOffline',
             // 	'ds_method'=>'GetDynamicFormsTemplatesFTypes',
             // ),
-        ),
-        'name'=>array(
+        ],
+        'name'=>[
             'db_field'=>'name',
             'data_type'=>'string',
             'type'=>'value',
@@ -50,8 +50,8 @@ $ctrl_params = array(
             'label'=>Translate::GetLabel('name'),
             'sortable'=>TRUE,
             'filterable'=>TRUE,
-        ),
-        'table_name'=>array(
+        ],
+        'table_name'=>[
             'db_field'=>'table_name',
             'data_type'=>'string',
             'type'=>'value',
@@ -59,8 +59,8 @@ $ctrl_params = array(
             'label'=>Translate::GetLabel('table'),
             'sortable'=>TRUE,
             'filterable'=>TRUE,
-        ),
-        'column_name'=>array(
+        ],
+        'column_name'=>[
             'db_field'=>'column_name',
             'data_type'=>'string',
             'type'=>'value',
@@ -68,8 +68,8 @@ $ctrl_params = array(
             'label'=>Translate::GetLabel('column'),
             'sortable'=>TRUE,
             'filterable'=>TRUE,
-        ),
-        'required'=>array(
+        ],
+        'required'=>[
             'width'=>'80',
             'db_field'=>'required',
             'data_type'=>'numeric',
@@ -79,23 +79,23 @@ $ctrl_params = array(
             'filterable'=>TRUE,
             'filter_type'=>'combobox',
             'show_filter_cond_type'=>FALSE,
-            'filter_params'=>array('value_field'=>'id','display_field'=>'name','selected_value'=>NULL),
-            'filter_data_source'=>array(
+            'filter_params'=>['value_field'=>'id','display_field'=>'name','selected_value'=>NULL],
+            'filter_data_source'=>[
                 'ds_class'=>'_Custom\DFormsOffline',
                 'ds_method'=>'GetGenericArrays',
-                'ds_params'=>array('type'=>'yes-no'),
-            ),
-        ),
-        'end_actions'=>array(
+                'ds_params'=>['type'=>'yes-no'],
+            ],
+        ],
+        'end_actions'=>[
             'type'=>'actions',
             'visual_count'=>1,
-            'actions'=>array(
-                array(
+            'actions'=>[
+                [
                     'type'=>'DivButton',
                     'command_string'=>"AjaxRequest('{$this->class}','DeleteRelationRecord','id'|{{id}}~'id_template'|{{id_template}},'{$target}')->errors",
-                    'params'=>array('tooltip'=>Translate::GetButton('delete'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs'),'icon'=>'fa fa-times','confirm_text'=>Translate::GetMessage('confirm_delete')),
-                ),
-            ),
-        ),
-    ),
-);
+                    'params'=>['tooltip'=>Translate::GetButton('delete'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs'),'icon'=>'fa fa-times','confirm_text'=>Translate::GetMessage('confirm_delete')],
+                ],
+            ],
+        ],
+    ],
+];

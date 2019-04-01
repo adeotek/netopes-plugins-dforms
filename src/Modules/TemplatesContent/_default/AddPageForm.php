@@ -3,10 +3,12 @@
  * @var int $idTemplate
  * @var int $maxPos
  */
-$positions = [];
-for($i=0;$i<$maxPos;$i++) { $positions[] = ['val'=>$i,'name'=>Translate::GetLabel('page').' '.($i+1)]; }
-$positions[] = ['val'=>$maxPos,'name'=>Translate::GetLabel('end')];
-$ctrl_params = [
+$positions=[];
+for($i=0; $i<$maxPos; $i++) {
+    $positions[]=['val'=>$i,'name'=>Translate::GetLabel('page').' '.($i + 1)];
+}
+$positions[]=['val'=>$maxPos,'name'=>Translate::GetLabel('end')];
+$ctrl_params=[
     'tag_id'=>'dft_add_page_form',
     'response_target'=>'dft_add_page_errors',
     'cols_no'=>1,

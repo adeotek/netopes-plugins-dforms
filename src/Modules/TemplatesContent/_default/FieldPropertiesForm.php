@@ -1,45 +1,46 @@
 <?php
 use NETopes\Core\AppSession;
 use NETopes\Core\Controls\HiddenInput;
+
 /**
- * @var int $idTemplate
- * @var int $idControl
- * @var int $fRow
- * @var int $fCol
- * @var int $colsNo
- * @var string $cClass
- * @var string $cDataType
+ * @var int                              $idTemplate
+ * @var int                              $idControl
+ * @var int                              $fRow
+ * @var int                              $fCol
+ * @var int                              $colsNo
+ * @var string                           $cClass
+ * @var string                           $cDataType
  * @var \NETopes\Core\Data\VirtualEntity $fieldType
  * @var \NETopes\Core\Data\VirtualEntity $item
  */
-$hFields = [];
+$hFields=[];
 switch($cClass) {
     case 'Message':
     case 'FormTitle':
     case 'FormSeparator':
     case 'FormSubTitle':
-        $ctrl = new HiddenInput(['tag_id'=>'dft_fp_itype','tag_name'=>'itype','value'=>$item->getProperty('itype',1,'is_integer')]);
-        $hFields[] = $ctrl->Show();
+        $ctrl=new HiddenInput(['tag_id'=>'dft_fp_itype','tag_name'=>'itype','value'=>$item->getProperty('itype',1,'is_integer')]);
+        $hFields[]=$ctrl->Show();
         $ctrl=new HiddenInput(['tag_id'=>'dft_fp_name','tag_name'=>'name','value'=>$item->getProperty('name',AppSession::GetNewUID($idTemplate.$cClass),'is_string')]);
-        $hFields[] = $ctrl->Show();
+        $hFields[]=$ctrl->Show();
         if($cClass=='FormSeparator') {
-            $ctrl = new HiddenInput(['tag_id'=>'dft_fp_label','tag_name'=>'label','value'=>$item->getProperty('label',$cClass,'is_string')]);
-            $hFields[] = $ctrl->Show();
+            $ctrl=new HiddenInput(['tag_id'=>'dft_fp_label','tag_name'=>'label','value'=>$item->getProperty('label',$cClass,'is_string')]);
+            $hFields[]=$ctrl->Show();
         }//if($cClass=='FormTitle')
-        $ctrl = new HiddenInput(['tag_id'=>'dft_fp_required','tag_name'=>'required','value'=>$item->getProperty('required',0,'is_integer')]);
-        $hFields[] = $ctrl->Show();
-        $ctrl = new HiddenInput(['tag_id'=>'dft_fp_listing','tag_name'=>'listing','value'=>$item->getProperty('listing',0,'is_integer')]);
-        $hFields[] = $ctrl->Show();
+        $ctrl=new HiddenInput(['tag_id'=>'dft_fp_required','tag_name'=>'required','value'=>$item->getProperty('required',0,'is_integer')]);
+        $hFields[]=$ctrl->Show();
+        $ctrl=new HiddenInput(['tag_id'=>'dft_fp_listing','tag_name'=>'listing','value'=>$item->getProperty('listing',0,'is_integer')]);
+        $hFields[]=$ctrl->Show();
         break;
     case 'BasicForm':
-        $ctrl = new HiddenInput(['tag_id'=>'dft_fp_required','tag_name'=>'required','value'=>$item->getProperty('required',0,'is_integer')]);
-        $hFields[] = $ctrl->Show();
-        $ctrl = new HiddenInput(['tag_id'=>'dft_fp_listing','tag_name'=>'listing','value'=>$item->getProperty('listing',0,'is_integer')]);
-        $hFields[] = $ctrl->Show();
+        $ctrl=new HiddenInput(['tag_id'=>'dft_fp_required','tag_name'=>'required','value'=>$item->getProperty('required',0,'is_integer')]);
+        $hFields[]=$ctrl->Show();
+        $ctrl=new HiddenInput(['tag_id'=>'dft_fp_listing','tag_name'=>'listing','value'=>$item->getProperty('listing',0,'is_integer')]);
+        $hFields[]=$ctrl->Show();
         break;
 }//END switch
 
-$ctrl_params = [
+$ctrl_params=[
     'tag_id'=>'dft_fp_form',
     'cols_no'=>1,
     'label_cols'=>4,
@@ -127,7 +128,7 @@ $ctrl_params = [
             ],
         ] : []),
         ($cClass=='FormTitle' ? [
-        [
+            [
                 'control_type'=>'EditBox',
                 'control_params'=>['label'=>Translate::GetLabel('title'),'required'=>TRUE,'tag_id'=>'dft_fp_label','tag_name'=>'label','value'=>$item->getProperty('label','','is_string'),'height'=>50,'placeholder'=>'Title'],
             ],

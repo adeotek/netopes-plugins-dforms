@@ -1,5 +1,5 @@
 <?php
-$ctrl_params = array(
+$ctrl_params=[
     'module'=>$this->class,
     'method'=>$this->GetCurrentMethod(),
     'persistent_state'=>TRUE,
@@ -8,26 +8,26 @@ $ctrl_params = array(
     'scrollable'=>FALSE,
     'with_filter'=>TRUE,
     'with_pagination'=>TRUE,
-    'sortby'=>array('column'=>'name','direction'=>'asc'),
+    'sortby'=>['column'=>'name','direction'=>'asc'],
     'qsearch'=>'for_text',
     'ds_class'=>'Plugins\DForms\ValuesLists',
     'ds_method'=>'GetValues',
-    'ds_params'=>array('for_id'=>NULL,'list_id'=>$idList,'for_ltype'=>NULL,'for_state'=>NULL,'for_implicit'=>NULL,'for_text'=>NULL),
+    'ds_params'=>['for_id'=>NULL,'list_id'=>$idList,'for_ltype'=>NULL,'for_state'=>NULL,'for_implicit'=>NULL,'for_text'=>NULL],
     'auto_load_data'=>TRUE,
-    'columns'=>array(
-        'actions'=>($edit ? array(
+    'columns'=>[
+        'actions'=>($edit ? [
             'type'=>'actions',
             'visual_count'=>1,
-            'actions'=>array(
-                array(
+            'actions'=>[
+                [
                     'type'=>'DivButton',
                     'dright'=>'edit',
                     'command_string'=>"AjaxRequest('{$this->class}','ShowValueAddEditForm','id'|{{id}}~'id_list'|{{id_list}},'{$target}')->modal",
-                    'params'=>array('tooltip'=>Translate::GetButton('edit'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-xxs'),'icon'=>'fa fa-pencil-square-o'),
-                ),
-            ),
-        ) : []),
-        'name'=>array(
+                    'params'=>['tooltip'=>Translate::GetButton('edit'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-xxs'),'icon'=>'fa fa-pencil-square-o'],
+                ],
+            ],
+        ] : []),
+        'name'=>[
             'db_field'=>'name',
             'data_type'=>'string',
             'type'=>'value',
@@ -35,8 +35,8 @@ $ctrl_params = array(
             'label'=>Translate::GetLabel('name'),
             'sortable'=>TRUE,
             'filterable'=>TRUE,
-        ),
-        'value'=>array(
+        ],
+        'value'=>[
             'db_field'=>'value',
             'data_type'=>'string',
             'type'=>'value',
@@ -44,8 +44,8 @@ $ctrl_params = array(
             'label'=>Translate::GetLabel('value'),
             'sortable'=>TRUE,
             'filterable'=>TRUE,
-        ),
-        'state'=>array(
+        ],
+        'state'=>[
             'width'=>'80',
             'db_field'=>'state',
             'data_type'=>'numeric',
@@ -55,14 +55,14 @@ $ctrl_params = array(
             'filterable'=>TRUE,
             'filter_type'=>'combobox',
             'show_filter_cond_type'=>FALSE,
-            'filter_params'=>array('value_field'=>'id','display_field'=>'name','selected_value'=>NULL),
-            'filter_data_source'=>array(
+            'filter_params'=>['value_field'=>'id','display_field'=>'name','selected_value'=>NULL],
+            'filter_data_source'=>[
                 'ds_class'=>'_Custom\DFormsOffline',
                 'ds_method'=>'GetGenericArrays',
-                'ds_params'=>array('type'=>'active'),
-            ),
-        ),
-        'implicit'=>array(
+                'ds_params'=>['type'=>'active'],
+            ],
+        ],
+        'implicit'=>[
             'width'=>'80',
             'db_field'=>'implicit',
             'data_type'=>'numeric',
@@ -72,14 +72,14 @@ $ctrl_params = array(
             'filterable'=>TRUE,
             'filter_type'=>'combobox',
             'show_filter_cond_type'=>FALSE,
-            'filter_params'=>array('value_field'=>'id','display_field'=>'name','selected_value'=>NULL),
-            'filter_data_source'=>array(
+            'filter_params'=>['value_field'=>'id','display_field'=>'name','selected_value'=>NULL],
+            'filter_data_source'=>[
                 'ds_class'=>'_Custom\DFormsOffline',
                 'ds_method'=>'GetGenericArrays',
-                'ds_params'=>array('type'=>'yes-no'),
-            ),
-        ),
-        'create_date'=>array(
+                'ds_params'=>['type'=>'yes-no'],
+            ],
+        ],
+        'create_date'=>[
             'width'=>'130',
             'db_field'=>'create_date',
             'data_type'=>'datetime',
@@ -89,18 +89,18 @@ $ctrl_params = array(
             'label'=>Translate::GetLabel('create_date'),
             'sortable'=>TRUE,
             'filterable'=>FALSE,
-        ),
-        'end_actions'=>($edit ? array(
+        ],
+        'end_actions'=>($edit ? [
             'type'=>'actions',
             'visual_count'=>1,
-            'actions'=>array(
-                array(
+            'actions'=>[
+                [
                     'type'=>'DivButton',
                     'dright'=>'delete',
                     'command_string'=>"AjaxRequest('{$this->class}','DeleteValueRecord','id'|{{id}}~'id_list'|{{id_list}},'{$target}')->errors",
-                    'params'=>array('tooltip'=>Translate::GetButton('delete'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs'),'icon'=>'fa fa-times','confirm_text'=>Translate::GetMessage('confirm_delete')),
-                ),
-            ),
-        ) : []),
-    ),
-);
+                    'params'=>['tooltip'=>Translate::GetButton('delete'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs'),'icon'=>'fa fa-times','confirm_text'=>Translate::GetMessage('confirm_delete')],
+                ],
+            ],
+        ] : []),
+    ],
+];

@@ -1,50 +1,50 @@
 <?php
-$ctrl_params = array(
+$ctrl_params=[
     'tag_id'=>'df_list_edit_tabs',
-    'tabs'=>array(
-        array(
+    'tabs'=>[
+        [
             'type'=>'fixed',
             'uid'=>'def',
             'name'=>Translate::GetLabel('general'),
             'content_type'=>'control',
-            'content'=>array(
+            'content'=>[
                 'control_type'=>'BasicForm',
-                'control_params'=>array(
+                'control_params'=>[
                     'tag_id'=>'df_list_edit_form',
                     'response_target'=>'df_list_edit_errors',
                     'cols_no'=>1,
-                    'content'=>array(
-                        array(
-                            array(
+                    'content'=>[
+                        [
+                            [
                                 'control_type'=>'TextBox',
-                                'control_params'=>array('tag_id'=>'df_list_edit_ltype','tag_name'=>'ltype','value'=>$item->getProperty('ltype','','is_string'),'label'=>Translate::GetLabel('code'),'required'=>TRUE,'readonly'=>TRUE),
-                            ),
-                        ),
-                        array(
-                            array(
+                                'control_params'=>['tag_id'=>'df_list_edit_ltype','tag_name'=>'ltype','value'=>$item->getProperty('ltype','','is_string'),'label'=>Translate::GetLabel('code'),'required'=>TRUE,'readonly'=>TRUE],
+                            ],
+                        ],
+                        [
+                            [
                                 'control_type'=>'TextBox',
-                                'control_params'=>array('tag_id'=>'df_list_edit_name','tag_name'=>'name','value'=>$item->getProperty('name','','is_string'),'label'=>Translate::GetLabel('name'),'onenter_button'=>'df_list_edit_save'),
-                            ),
-                        ),
-                        array(
-                            array(
+                                'control_params'=>['tag_id'=>'df_list_edit_name','tag_name'=>'name','value'=>$item->getProperty('name','','is_string'),'label'=>Translate::GetLabel('name'),'onenter_button'=>'df_list_edit_save'],
+                            ],
+                        ],
+                        [
+                            [
                                 'control_type'=>'CheckBox',
-                                'control_params'=>array('tag_id'=>'df_list_edit_state','tag_name'=>'state','value'=>$item->getProperty('state',1,'is_numeric'),'label'=>Translate::GetLabel('active'),'class'=>'pull-left'),
-                            ),
-                        ),
-                    ),
-                    'actions'=>array(
-                        array(
-                            'params'=>array('tag_id'=>'df_list_edit_save','value'=>Translate::GetButton('save_and_close'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','AddEditRecord','id'|'{$id}'~'close'|0~df_list_edit_form:form,'df_list_edit_form')->df_list_edit_errors")),
-                        ),
-                        array(
-                            'params'=>array('tag_id'=>'df_list_edit_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','AddEditRecord',,'df_list_edit_form')->df_list_edit_errors")),
-                        ),
-                    ),
-                ),
-            ),
-        ),
-        array(
+                                'control_params'=>['tag_id'=>'df_list_edit_state','tag_name'=>'state','value'=>$item->getProperty('state',1,'is_numeric'),'label'=>Translate::GetLabel('active'),'class'=>'pull-left'],
+                            ],
+                        ],
+                    ],
+                    'actions'=>[
+                        [
+                            'params'=>['tag_id'=>'df_list_edit_save','value'=>Translate::GetButton('save_and_close'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','AddEditRecord','id'|'{$id}'~'close'|0~df_list_edit_form:form,'df_list_edit_form')->df_list_edit_errors")],
+                        ],
+                        [
+                            'params'=>['tag_id'=>'df_list_edit_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','AddEditRecord',,'df_list_edit_form')->df_list_edit_errors")],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        [
             'type'=>'fixed',
             'uid'=>'values',
             'name'=>Translate::GetLabel('values'),
@@ -52,6 +52,6 @@ $ctrl_params = array(
             'content'=>"AjaxRequest('{$this->class}','ValuesListing','id_list'|{$id}~'edit'|1,'{{t_target}}')->{{t_target}}",
             'reload_onchange'=>TRUE,
             'autoload'=>FALSE,
-        ),
-    ),
-);
+        ],
+    ],
+];
