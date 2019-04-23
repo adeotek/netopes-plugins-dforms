@@ -199,7 +199,7 @@ class Controls extends Module {
             $data=$params->safeGet('data','','is_string');
             if(strlen($data)) {
                 try {
-                    $data=unserialize($data);
+                    $data=json_decode($data,TRUE);
                 } catch(Error | Exception $e) {
                     NApp::Elog($e);
                     $data=[];
@@ -285,6 +285,6 @@ class Controls extends Module {
                 }//END switch
             }//END foreach
         }//if(is_iterable($cParams) && count($cParams))
-        return serialize($result);
+        return json_encode($result);
     }//END public function ProcessFieldProperties
 }//END class Controls extends Module

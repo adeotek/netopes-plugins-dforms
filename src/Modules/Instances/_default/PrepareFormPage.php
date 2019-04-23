@@ -35,7 +35,7 @@ foreach($fields as $field) {
     $fClass=$field->getProperty('class','','is_string');
     // if($idSubForm) { NApp::Dlog($field,$fClass); }
     $fParamsStr=$field->getProperty('params','','is_string');
-    $fParams=strlen($fParamsStr) ? @unserialize($fParamsStr) : [];
+    $fParams=strlen($fParamsStr) ? json_decode($fParamsStr,TRUE) : [];
     switch($fClass) {
         case 'FormTitle':
             $formContent[$row]=[

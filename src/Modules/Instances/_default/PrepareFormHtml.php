@@ -121,7 +121,7 @@ if(is_array($fields) && count($fields)) {
             }//if(!strlen($fClass))
             // if($idSubForm) { NApp::Dlog($field,$fClass); }
             $fparams=get_array_value($field,'params','','is_string');
-            $fParams=strlen($fparams) ? @unserialize($fparams) : [];
+            $fParams=strlen($fparams) ? json_decode($fparams,TRUE) : [];
             $css_class=get_array_value($fParams,'class','','is_string');
             switch($fClass) {
                 case 'FormTitle':
