@@ -29,7 +29,7 @@ class InstancesPdf extends PdfDocument {
             'font'=>'freeserif',
             'font_style'=>'',
             'font_size'=>8,
-            'mask'=>Translate::Get('dlabel_page',$this->langcode).' {{page}} '.Translate::Get('dlabel_from',$this->langcode).' {{pages_no}}',
+            'mask'=>Translate::Get('dlabel_page',$this->langcode).' {!page!} '.Translate::Get('dlabel_from',$this->langcode).' {!pages_no!}',
             'align'=>'C',
         ];
         parent::_Init();

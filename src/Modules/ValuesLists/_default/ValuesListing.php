@@ -22,7 +22,7 @@ $ctrl_params=[
                 [
                     'type'=>'DivButton',
                     'dright'=>'edit',
-                    'command_string'=>"AjaxRequest('{$this->class}','ShowValueAddEditForm','id'|{{id}}~'id_list'|{{id_list}},'{$target}')->modal",
+                    'command_string'=>"AjaxRequest('{$this->class}','ShowValueAddEditForm','id'|{!id!}~'id_list'|{!id_list!},'{$target}')->modal",
                     'params'=>['tooltip'=>Translate::GetButton('edit'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-xxs'),'icon'=>'fa fa-pencil-square-o'],
                 ],
             ],
@@ -97,7 +97,7 @@ $ctrl_params=[
                 [
                     'type'=>'DivButton',
                     'dright'=>'delete',
-                    'command_string'=>"AjaxRequest('{$this->class}','DeleteValueRecord','id'|{{id}}~'id_list'|{{id_list}},'{$target}')->errors",
+                    'command_string'=>"AjaxRequest('{$this->class}','DeleteValueRecord','id'|{!id!}~'id_list'|{!id_list!},'{$target}')->errors",
                     'params'=>['tooltip'=>Translate::GetButton('delete'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs'),'icon'=>'fa fa-times','confirm_text'=>Translate::GetMessage('confirm_delete')],
                 ],
             ],

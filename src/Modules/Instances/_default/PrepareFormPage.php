@@ -109,7 +109,7 @@ foreach($fields as $field) {
             if(!is_array($fParams) || !count($fParams)) {
                 if($columnsToSkip>0) {
                     $columnsToSkip--;
-                    continue;
+                    continue 2;
                 }//if($columnsToSkip>0)
                 $formContent[$row][]=[];
             } else {

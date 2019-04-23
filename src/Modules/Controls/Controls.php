@@ -133,7 +133,7 @@ class Controls extends Module {
                     break;
                 case 'auto':
                     $fpCType='HiddenInput';
-                    $fpValue='{_dfp_{'.$fpKey.'}}';
+                    $fpValue='{_dfp_!'.$fpKey.'!}';
                     $fpLabel=NULL;
                     $hidden=TRUE;
                     break;

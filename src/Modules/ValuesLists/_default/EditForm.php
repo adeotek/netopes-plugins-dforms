@@ -49,7 +49,7 @@ $ctrl_params=[
             'uid'=>'values',
             'name'=>Translate::GetLabel('values'),
             'content_type'=>'ajax',
-            'content'=>"AjaxRequest('{$this->class}','ValuesListing','id_list'|{$id}~'edit'|1,'{{t_target}}')->{{t_target}}",
+            'content'=>"AjaxRequest('{$this->class}','ValuesListing','id_list'|{$id}~'edit'|1,'{!t_target!}')->{!t_target!}",
             'reload_onchange'=>TRUE,
             'autoload'=>FALSE,
         ],
