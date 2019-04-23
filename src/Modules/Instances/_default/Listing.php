@@ -42,13 +42,15 @@ $ctrl_params=[
                 [
                     'dright'=>'edit',
                     'type'=>'DivButton',
-                    'command_string'=>"AjaxRequest('{$this->class}','ShowEditForm','id'|{!id!}~'id_template'|'{!id_template!}'~'cmodule'|'{$cModule}'~'cmethod'|'{$cMethod}'~'ctarget'|'{$cTarget}')->main-content",
+                    'ajax_command'=>"{ 'module': '{$this->class}', 'method': 'ShowEditForm', 'params': { 'id': {!id!}, 'id_template': '{!id_template!}', 'cmodule': '{$cModule}', 'cmethod': '{$cMethod}', 'ctarget': '{$cTarget}' } }",
+                    'ajax_target_id'=>'main-content',
                     'params'=>['tag_id'=>'df_instance_edit_btn','tooltip'=>Translate::GetButton('edit'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-xxs'),'icon'=>'fa fa-pencil-square-o'],
                 ],
                 [
                     'dright'=>'view',
                     'type'=>'DivButton',
-                    'command_string'=>"AjaxRequest('{$this->class}','ShowViewForm','id'|{!id!}~'id_template'|'{!id_template!}'~'is_modal'|1)->modal",
+                    'ajax_command'=>"{ 'module': '{$this->class}', 'method': 'ShowViewForm', 'params': { 'id': {!id!}, 'id_template': '{!id_template!}', 'is_modal': 1 } }",
+                    'ajax_target_id'=>'modal',
                     'params'=>['tag_id'=>'df_template_view_btn','tooltip'=>Translate::GetButton('view'),'class'=>NApp::$theme->GetBtnInfoClass('btn-xxs pull-right'),'icon'=>'fa fa-eye'],
                 ],
             ],
@@ -240,7 +242,8 @@ $ctrl_params['columns']['end_actions']=[
         [
             'dright'=>'delete',
             'type'=>'DivButton',
-            'command_string'=>"AjaxRequest('{$this->class}','DeleteRecord','id'|{!id!}~'id_template'|'{!id_template!}'~'cmodule'|'{$cModule}'~'cmethod'|'{$cMethod}'~'ctarget'|'{$cTarget}')->errors",
+            'ajax_command'=>"{ 'module': '{$this->class}', 'method': 'DeleteRecord', 'params': { 'id': {!id!}, 'id_template': '{!id_template!}', 'cmodule': '{$cModule}', 'cmethod': '{$cMethod}', 'ctarget': '{$cTarget}' } }",
+            'ajax_target_id'=>'errors',
             'params'=>['tooltip'=>Translate::GetButton('delete'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs'),'icon'=>'fa fa-times','confirm_text'=>Translate::GetMessage('confirm_delete'),'conditions'=>[['field'=>'ftype','type'=>'!=','value'=>2]]],
         ],
     ],

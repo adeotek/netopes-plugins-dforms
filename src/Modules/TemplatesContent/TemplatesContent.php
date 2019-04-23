@@ -298,7 +298,7 @@ class TemplatesContent extends Module {
         $view->SetTitle(Translate::GetLabel('field_properties'));
         $view->SetIsModalView(TRUE);
         $view->SetModalWidth(550);
-        $customClose=NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','CancelAddEditContentElement','id_template'|{$idTemplate}~'pindex'|'{$pIndex}','{$target}')->dft_fp_errors");
+        $customClose=NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'CancelAddEditContentElement', 'params': { 'id_template': {$idTemplate}, 'pindex': '{$pIndex}', 'target': '{$target}' } }",'dft_fp_errors');
         $view->SetModalCustomClose('"'.addcslashes($customClose,'\\').'"');
         $view->AddBasicForm($this->GetViewFile('FieldPropertiesForm'),[
             'container_type'=>'default',
@@ -311,20 +311,7 @@ class TemplatesContent extends Module {
             ]);
         }//if(is_object($tabCtrl))
         $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="dft_fp_form_errors"></div></div>');
-        $btnSave=new Button(['value'=>Translate::GetButton('save'),'class'=>NApp::$theme->GetBtnPrimaryClass(),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','AddEditContentElementRecord',
-                'id_template'|{$idTemplate}
-                ~'pindex'|'{$pIndex}'
-                ~'id_item'|'{$id}'
-                ~'class'|'{$cClass}'
-                ~'data_type'|'{$cDataType}'
-                ~'frow'|'{$fRow}'
-                ~'fcol'|'{$fCol}'
-                ~'id_control'|'{$idControl}'
-                ~'ptarget'|'{$target}'
-                ~'ctarget'|'{$cTarget}'
-                ~dft_fp_form:form
-                ~'properties'|dft_fp_properties_tab:form
-            ,'dft_fp_form')->dft_fp_form_errors")]);
+        $btnSave=new Button(['value'=>Translate::GetButton('save'),'class'=>NApp::$theme->GetBtnPrimaryClass(),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'AddEditContentElementRecord', 'params': { 'id_template': {$idTemplate}, 'pindex': '{$pIndex}', 'id_item': '{$id}', 'class': '{$cClass}', 'data_type': '{$cDataType}', 'frow': '{$fRow}', 'fcol': '{$fCol}', 'id_control': '{$idControl}', 'ptarget': '{$target}', 'ctarget': '{$cTarget}', 'properties': '{nGet|dft_fp_properties_tab:form}', 'target': 'dft_fp_form' }, 'arrayParams': [ '{nGet|dft_fp_form:form}' ] }",'dft_fp_form_errors')]);
         $view->AddAction($btnSave->Show());
         $btnCancel=new Button(['value'=>Translate::GetButton('cancel'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-ban','onclick'=>$customClose]);
         $view->AddAction($btnCancel->Show());

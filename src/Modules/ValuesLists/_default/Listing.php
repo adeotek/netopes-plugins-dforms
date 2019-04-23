@@ -22,13 +22,15 @@ $ctrl_params=[
                 [
                     'type'=>'DivButton',
                     'dright'=>'edit',
-                    'command_string'=>"AjaxRequest('{$this->class}','ShowEditForm','id'|{!id!})->main-content",
+                    'ajax_command'=>"{ 'module': '{$this->class}', 'method': 'ShowEditForm', 'params': { 'id': {!id!} } }",
+                    'ajax_target_id'=>'main-content',
                     'params'=>['tooltip'=>Translate::GetButton('edit'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-xxs'),'icon'=>'fa fa-pencil-square-o'],
                 ],
                 [
                     'type'=>'DivButton',
                     'dright'=>'view',
-                    'command_string'=>"AjaxRequest('{$this->class}','ValuesListing','id_list'|'{!id!}','modal')->modal",
+                    'ajax_command'=>"{ 'module': '{$this->class}', 'method': 'ValuesListing', 'params': { 'id_list': '{!id!}', 'target': 'modal' } }",
+                    'ajax_target_id'=>'modal',
                     'params'=>['tooltip'=>Translate::GetButton('values'),'class'=>NApp::$theme->GetBtnInfoClass('btn-xxs'),'icon'=>'fa fa-list','conditions'=>[['field'=>'vcount','type'=>'>','value'=>0]]],
                 ],
             ],
@@ -97,7 +99,8 @@ $ctrl_params=[
                 [
                     'type'=>'DivButton',
                     'dright'=>'delete',
-                    'command_string'=>"AjaxRequest('{$this->class}','DeleteRecord','id'|{!id!})->errors",
+                    'ajax_command'=>"{ 'module': '{$this->class}', 'method': 'DeleteRecord', 'params': { 'id': {!id!} } }",
+                    'ajax_target_id'=>'errors',
                     'params'=>['tooltip'=>Translate::GetButton('delete'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs'),'icon'=>'fa fa-times','confirm_text'=>Translate::GetMessage('confirm_delete')],
                 ],
             ],

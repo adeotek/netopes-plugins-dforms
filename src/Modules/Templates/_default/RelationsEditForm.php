@@ -21,7 +21,8 @@ $ctrl_params=[
             'actions'=>[
                 [
                     'type'=>'DivButton',
-                    'command_string'=>"AjaxRequest('{$this->class}','ShowRelationAddEditForm','id'|{!id!}~'id_template'|{!id_template!},'{$target}')->modal",
+                    'ajax_command'=>"{ 'module': '{$this->class}', 'method': 'ShowRelationAddEditForm', 'params': { 'id': {!id!}, 'id_template': {!id_template!}, 'target': '{$target}' } }",
+                    'ajax_target_id'=>'modal',
                     'params'=>['tooltip'=>Translate::GetButton('edit'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-xxs'),'icon'=>'fa fa-pencil-square-o'],
                 ],
             ],
@@ -92,7 +93,8 @@ $ctrl_params=[
             'actions'=>[
                 [
                     'type'=>'DivButton',
-                    'command_string'=>"AjaxRequest('{$this->class}','DeleteRelationRecord','id'|{!id!}~'id_template'|{!id_template!},'{$target}')->errors",
+                    'ajax_command'=>"{ 'module': '{$this->class}', 'method': 'DeleteRelationRecord', 'params': { 'id': {!id!}, 'id_template': {!id_template!}, 'target': '{$target}' } }",
+                    'ajax_target_id'=>'errors',
                     'params'=>['tooltip'=>Translate::GetButton('delete'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs'),'icon'=>'fa fa-times','confirm_text'=>Translate::GetMessage('confirm_delete')],
                 ],
             ],

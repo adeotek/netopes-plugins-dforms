@@ -454,12 +454,12 @@ class Instances extends Module {
         if($controlClass!='BasicForm' && strlen($fTagId)) {
             $fResponseTarget=get_array_value($ctrl_params,'response_target','df_'.$tName.'_errors','is_notempty_string');
             $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="'.$fResponseTarget.'">&nbsp;</div></div>');
-            $btnSave=new Button(['tag_id'=>'df_'.$tName.'_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','class'=>NApp::$theme->GetBtnPrimaryClass(),'onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','SaveRecord','id_template'|{$idTemplate}~'id'|{$idInstance}~'data'|df_{$tName}_form:form~'is_modal'|'{$isModal}'~'cmodule'|'{$cModule}'~'cmethod'|'{$cMethod}'~'ctarget'|'{$cTarget}','{$fTagId}')->{$fResponseTarget}")]);
+            $btnSave=new Button(['tag_id'=>'df_'.$tName.'_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','class'=>NApp::$theme->GetBtnPrimaryClass(),'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'SaveRecord', 'params': { 'id_template': {$idTemplate}, 'id': {$idInstance}, 'data': '{nGet|df_{$tName}_form:form}', 'is_modal': '{$isModal}', 'cmodule': '{$cModule}', 'cmethod': '{$cMethod}', 'ctarget': '{$cTarget}', 'target': '{$fTagId}' } }",$fResponseTarget)]);
             $view->AddAction($btnSave->Show());
             if($isModal) {
                 $btnBack=new Button(['tag_id'=>'df_'.$tName.'_cancel','value'=>Translate::GetButton('cancel'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-ban','onclick'=>"CloseModalForm()",]);
             } else {
-                $btnBack=new Button(['tag_id'=>'df_'.$tName.'_back','value'=>Translate::GetButton('back'),'icon'=>'fa fa-chevron-left','class'=>NApp::$theme->GetBtnDefaultClass(),'onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$cModule}','{$cMethod}','id_template'|{$idTemplate}~'id'|{$idInstance},'{$cTarget}')->{$cTarget}")]);
+                $btnBack=new Button(['tag_id'=>'df_'.$tName.'_back','value'=>Translate::GetButton('back'),'icon'=>'fa fa-chevron-left','class'=>NApp::$theme->GetBtnDefaultClass(),'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$cModule}', 'method': '{$cMethod}', 'params': { 'id_template': {$idTemplate}, 'id': {$idInstance}, 'target': '{$cTarget}' } }",$cTarget)]);
             }//if($isModal)
             $view->AddAction($btnBack->Show());
         }//if($controlClass!='BasicForm' && strlen($fTagId))
@@ -682,7 +682,7 @@ class Instances extends Module {
         $cModule=$params->safeGet('cmodule',get_called_class(),'is_notempty_string');
         $cMethod=$params->safeGet('cmethod','Listing','is_notempty_string');
         $cTarget=$params->safeGet('ctarget','main-content','is_notempty_string');
-        NApp::Ajax()->LegacyExecute("AjaxRequest('{$cModule}','{$cMethod}','id_template'|{$idTemplate},'{$cTarget}')->{$cTarget}");
+        NApp::Ajax()->Execute("{ 'module': '{$cModule}', 'method': '{$cMethod}', 'params': { 'id_template': {$idTemplate}, 'target': '{$cTarget}' } }",$cTarget);
     }//END public function SaveNewRecord
 
     /**
@@ -897,7 +897,7 @@ class Instances extends Module {
         $cModule=$params->safeGet('cmodule',get_called_class(),'is_notempty_string');
         $cMethod=$params->safeGet('cmethod','Listing','is_notempty_string');
         $cTarget=$params->safeGet('ctarget','main-content','is_notempty_string');
-        NApp::Ajax()->LegacyExecute("AjaxRequest('{$cModule}','{$cMethod}','id_template'|{$idTemplate},'{$cTarget}')->{$cTarget}");
+        NApp::Ajax()->Execute("{ 'module': '{$cModule}', 'method': '{$cMethod}', 'params': { 'id_template': {$idTemplate}, 'target': '{$cTarget}' } }",$cTarget);
     }//END public function SaveRecord
 
     /**

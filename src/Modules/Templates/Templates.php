@@ -51,7 +51,7 @@ class Templates extends Module {
         $view->SetTitle('dynamic_forms_templates');
         $view->SetTargetId($listingTarget);
         if(!$this->AddDRights()) {
-            $btnAdd=new Button(['value'=>Translate::GetButton('add').' '.Translate::GetLabel('template'),'class'=>NApp::$theme->GetBtnPrimaryClass(),'icon'=>'fa fa-plus','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','ShowAddForm')->modal")]);
+            $btnAdd=new Button(['value'=>Translate::GetButton('add').' '.Translate::GetLabel('template'),'class'=>NApp::$theme->GetBtnPrimaryClass(),'icon'=>'fa fa-plus','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'ShowAddForm', 'params': {  } }",'modal')]);
             $view->AddAction($btnAdd->Show());
         }//if(!$this->AddDRights())
         $view->AddTableView($this->GetViewFile('Listing'));
@@ -96,7 +96,7 @@ class Templates extends Module {
             $btnValidate=new Button(['value'=>Translate::GetButton('validate'),'class'=>NApp::$theme->GetBtnSuccessClass('mr10'),'icon'=>'fa fa-check-square-o','onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->class,'method'=>'ValidateRecord','params'=>['id'=>$id]],['target_id'=>'errors'])]);
             $view->AddAction($btnValidate->Show());
         }//if(!$this->ValidateDRights()) {
-        $btnBack=new Button(['value'=>Translate::GetButton('back'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-chevron-left','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','Listing')->main-content")]);
+        $btnBack=new Button(['value'=>Translate::GetButton('back'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-chevron-left','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'Listing', 'params': {  } }",'main-content')]);
         $view->AddAction($btnBack->Show());
         $view->Render();
         NApp::Ajax()->ExecuteJs("$('#df_template_edit_code').focus();");
