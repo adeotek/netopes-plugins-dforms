@@ -7,6 +7,9 @@ use NETopes\Core\Controls\TextBox;
  * @var \NETopes\Core\Data\VirtualEntity $templatePage
  * @var int                              $idTemplate
  * @var string                           $cTarget
+ * @var string                           $target
+ * @var array                            $fields
+ * @var int                              $pIndex
  */
 $colsNo=$templatePage->getProperty('colsno',1,'is_not0_integer');
 $rowsNo=$templatePage->getProperty('rowsno',1,'is_not0_integer');
@@ -58,9 +61,37 @@ if($renderType>1) {
                 for($i=1; $i<=$colsNo; $i++) {
                     $delColAct='';
                     if($colsNo>1) {
-                        $btnDelCol=new DivButton(['tooltip'=>Translate::GetButton('delete_column'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs pull-right'),'icon'=>'fa fa-times-circle','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'UpdateContentTable', 'params': { 'id_template': {$idTemplate}, 'pindex': '{$pIndex}', 'type': '-1', 'colsno': '{$i}', 'ctarget': '{$cTarget}', 'target': '{$target}')->errors") } }",'modal')]);
+                        $btnDelCol=new DivButton(['tooltip'=>Translate::GetButton('delete_column'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs pull-right'),'icon'=>'fa fa-times-circle','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'UpdateContentTable', 'params': { 'id_template': {$idTemplate}, 'pindex': '{$pIndex}', 'type': '-1', 'colsno': '{$i}', 'ctarget': '{$cTarget}', 'target': '{$target}' } }",'errors')]);
+                        $delColAct=$btnDelCol->Show();
+                    }//if($colsNo>1)
+                    ?>
+					<th class="ccolumn"><?= Translate::GetLabel('column').' '.$i.$delColAct ?></th>
+                    <?= ($i<$colsNo ? $cSeparator : '') ?>
+                    <?php
+                }//END for
+                ?>
+				<th class="auto">&nbsp;</th>
+			</tr>
+			</thead>
+			<tbody>
+            <?php
+            for($i=1; $i<=$rowsNo; $i++) {
+                $delRowAct='';
+                if($rowsNo>1) {
+                    $btnDelRow=new DivButton(['tag_id'=>'dft_del_col','tooltip'=>Translate::GetButton('delete_row'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs mr10'),'icon'=>'fa fa-times-circle','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'UpdateContentTable', 'params': { 'id_template': {$idTemplate}, 'pindex': '{$pIndex}', 'type': '-1', 'rowsno': '{$i}', 'ctarget': '{$cTarget}', 'target': '{$target}' } }",'errors'),'confirm_text'=>Translate::GetMessage('confirm_delete')]);
+                    $delRowAct=$btnDelRow->Show();
+                }//if($rowsNo>1)
+                ?>
+				<tr>
+					<td class="auto">&nbsp;</td>
+					<td class="label"><?= $delRowAct.Translate::GetLabel('row').' '.$i ?></td>
+                    <?php
+                    for($j=1; $j<=$colsNo; $j++) {
+                        $f=$fields->safeGet($i.'-'.$j,NULL,'is_object');
+                        if($f) {
+                            $btnEditItem=new DivButton(['tag_id'=>'dfti_edit','tooltip'=>Translate::GetButton('edit'),'class'=>NApp::$theme->GetBtnSpecialLightClass('btn-xxs'),'icon'=>'fa fa-pencil-square-o','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'AddEditContentElement', 'params': { 'id_template': {$idTemplate}, 'pindex': '{$pIndex}', 'cols_no': '{$colsNo}', 'id_item': {$f->getProperty('id')}, 'id_control': {$f->getProperty('id_control')}, 'ctarget': '{$cTarget}', 'target': '{$target}' } }",'modal')]);
                             $editItemAct=$btnEditItem->Show();
-                            $btnDelItem=new DivButton(['tag_id'=>'dfti_del','tooltip'=>Translate::GetButton('delete'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs'),'icon'=>'fa fa-times','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','DeleteContentElementRecord','id_template'|{$idTemplate}~'pindex'|'{$pIndex}'~'id'|{$f->getProperty('id')}~'ctarget'|'{$cTarget}','{$target}')->errors"),'confirm_text'=>Translate::GetMessage('confirm_delete')]);
+                            $btnDelItem=new DivButton(['tag_id'=>'dfti_del','tooltip'=>Translate::GetButton('delete'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs'),'icon'=>'fa fa-times','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'DeleteContentElementRecord', 'params': { 'id_template': {$idTemplate}, 'pindex': '{$pIndex}', 'id': {$f->getProperty('id')}, 'ctarget': '{$cTarget}', 'target': '{$target}' } }",'errors'),'confirm_text'=>Translate::GetMessage('confirm_delete')]);
                             $delItemAct=$btnDelItem->Show();
                             ?>
 							<td class="ccolumn droppable" id="cell-<?= $pIndex.'-'.$i.'-'.$j ?>" data-cell="<?= $pIndex.'-'.$i.'-'.$j ?>"
@@ -109,7 +140,6 @@ $this->AddJsScript("
             var cellid = $(ui.draggable).attr('data-id');
             var ths = $(this); 
             if($(ui.draggable).hasClass('clone')) {
-                console.log('is add!');
                 var acb = function() {
                     $(ths).find('span.blank').hide();
                     $(ths).append($(ui.draggable).clone());
@@ -126,9 +156,8 @@ $this->AddJsScript("
                     });
                     $(ths).attr('data-full','1');
                 };
-                ".NApp::Ajax()->LegacyPrepareWithCallback("AjaxRequest('{$this->class}','AddEditContentElement','id_template'|{$idTemplate}~'pindex'|'{$pIndex}'~'cols_no'|'{$colsNo}'~'id_control'|cellid~'cell'|cell,'{$target}')->modal-<cellid-<cell",'acb')."
+                ".NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'AddEditContentElement', 'params': { 'id_template': {$idTemplate}, 'pindex': '{$pIndex}', 'cols_no': '{$colsNo}', 'id_control': cellid, 'cell': cell, 'target': '{$target}' } }",'modal',['cellid','cell'],TRUE,NULL,TRUE,'acb')."
             } else {
-                console.log('is move!');
                 var acb = function() {
                     var ocell = $(ui.draggable).attr('data-cell');
                     console.log('ocell: '+ocell);
@@ -143,13 +172,13 @@ $this->AddJsScript("
                             helper: 'clone',
                             snap: true
                         });
-                    });						
+                    });
                     $('#cell-'+ocell).find('.draggable').remove();
                     $('#cell-'+ocell).attr('data-full','0');
                     $('#cell-'+ocell).find('span.blank').show();
                     $(ths).attr('data-full','1');
                 };
-                ".NApp::Ajax()->LegacyPrepareWithCallback("AjaxRequest('{$this->class}','MoveContentElement','id_template'|{$idTemplate}~'pindex'|'{$pIndex}'~'id_item'|cellid~'cell'|cell,'{$target}')->errors-<cellid-<cell",'acb')."
+                ".NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'MoveContentElement', 'params': { 'id_template': {$idTemplate}, 'pindex': '{$pIndex}', 'id_item': cellid, 'cell': cell, 'target': '{$target}' } }",'errors',['cellid','cell'],TRUE,NULL,TRUE,'acb')."
             }
         }
     });

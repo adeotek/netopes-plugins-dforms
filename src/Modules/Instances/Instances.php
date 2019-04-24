@@ -133,7 +133,7 @@ class Instances extends Module {
             $tmpCtrl['label_width']=NULL;
             $tmpCtrl['width']=NULL;
             $tmpCtrl['tag_id']=$tagId.'-'.$i;
-            $tmpCtrl['value']=get_array_value($fValues,$i,NULL,'isset');
+            $tmpCtrl['value']=get_array_value($fValuesArray,$i,NULL,'isset');
             if(strpos($themeType,'bootstrap')!==FALSE) {
                 $tmpCtrl['class'].=' form-control';
             }
