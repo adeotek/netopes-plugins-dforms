@@ -91,12 +91,12 @@ foreach($fields as $field) {
                 $fParams['value'].=$basicForm->Show();
                 // NApp::Dlog($fParams['value'],'fcontent');
                 if($i>0) {
-                    $ctrl_ract=new Button(['value'=>'&nbsp;'.Translate::GetButton('remove_field'),'icon'=>'fa fa-minus-circle','class'=>'clsRepeatableCtrlBtn remove-ctrl-btn','clear_base_class'=>TRUE,'onclick'=>"RemoveRepeatableControl(this,'{$tagId}-{$i}')"]);
+                    $ctrl_ract=new Button(['value'=>Translate::GetButton('remove_field'),'icon'=>'fa fa-minus-circle','class'=>NApp::$theme->GetBtnWarningClass('clsRepeatableCtrlBtn'),'clear_base_class'=>TRUE,'onclick'=>"RemoveRepeatableControl(this,'{$tagId}-{$i}')"]);
                     $fParams['value'].=$ctrl_ract->Show();
                 }//if($i>0)
             }//END for
             if($fIType==2) {
-                $ctrl_ract=new Button(['value'=>Translate::GetButton('add_element'),'icon'=>'fa fa-plus-circle','class'=>NApp::$theme->GetBtnDefaultClass('clsRepeatCtrlBtn'),'onclick'=>"RepeatControl(this,'{$tagId}')",'extra_tag_params'=>'data-ract="&nbsp;'.Translate::GetButton('remove_element').'"']);
+                $ctrl_ract=new Button(['value'=>Translate::GetButton('add_element'),'icon'=>'fa fa-plus-circle','class'=>NApp::$theme->GetBtnDefaultClass('clsRepeatCtrlBtn'),'onclick'=>"RepeatControl(this,'{$tagId}')",'extra_tag_params'=>'data-ract="'.Translate::GetButton('remove_element').'" data-ract-class="'.NApp::$theme->GetBtnWarningClass('clsRepeatableCtrlBtn pull-right').'"']);
                 $fParams['value'].=$ctrl_ract->Show();
             }//if($fIType==2)
             $formContent[$row][]=[
