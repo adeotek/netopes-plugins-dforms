@@ -163,7 +163,7 @@ if(is_iterable($relations) && count($relations)) {
 }//if(is_iterable($relations) && count($relations))
 
 if($multiPage) {
-    $page_params=[
+    $ctrl_params=[
         'type'=>'fixed',
         'uid'=>$tName.'-'.$pIndex,
         'name'=>$page->getProperty('tr_title'),
@@ -178,17 +178,17 @@ if($multiPage) {
         ],
     ];
     if(strlen($themeType)) {
-        $page_params['content']['control_params']['theme_type']=$themeType;
+        $ctrl_params['content']['control_params']['theme_type']=$themeType;
     }
     if(is_numeric($labelCols) && $labelCols>=1 && $labelCols<=12) {
-        $page_params['content']['control_params']['label_cols']=$labelCols;
+        $ctrl_params['content']['control_params']['label_cols']=$labelCols;
     }
     if(strlen($controlsSize)) {
-        $page_params['content']['control_params']['controls_size']=$controlsSize;
+        $ctrl_params['content']['control_params']['controls_size']=$controlsSize;
     }
-    $page_params['content']['control_params']['content']=$formContent;
+    $ctrl_params['content']['control_params']['content']=$formContent;
 } else {
-    $page_params=[
+    $ctrl_params=[
         'control_class'=>'BasicForm',
         'tname'=>$tName,
         'tag_id'=>'df_'.$tName.'_form',
@@ -196,13 +196,13 @@ if($multiPage) {
         'cols_no'=>$colsNo,
     ];
     if(strlen($themeType)) {
-        $page_params['theme_type']=$themeType;
+        $ctrl_params['theme_type']=$themeType;
     }
     if(is_numeric($labelCols) && $labelCols>=1 && $labelCols<=12) {
-        $page_params['label_cols']=$labelCols;
+        $ctrl_params['label_cols']=$labelCols;
     }
     if(strlen($controlsSize)) {
-        $page_params['controls_size']=$controlsSize;
+        $ctrl_params['controls_size']=$controlsSize;
     }
-    $page_params['content']=$formContent;
+    $ctrl_params['content']=$formContent;
 }//if($multiPage)

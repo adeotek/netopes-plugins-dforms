@@ -244,7 +244,7 @@ class Instances extends Module {
      * @throws \NETopes\Core\AppException
      * @access protected
      */
-    protected function PrepareFormPage(?Params $params,VirtualEntity $template,DataSet $relations,VirtualEntity $page,string $tName,bool $multiPage=FALSE,?int $idInstance=NULL,?int $idSubForm=NULL,?int $idItem=NULL,?int $index=NULL): ?array {
+    protected function PrepareFormPage(?Params $params,VirtualEntity $template,?DataSet $relations,VirtualEntity $page,string $tName,bool $multiPage=FALSE,?int $idInstance=NULL,?int $idSubForm=NULL,?int $idItem=NULL,?int $index=NULL): ?array {
         // NApp::Dlog(['$template'=>$template,'$relations'=>$relations,'$page'=>$page,'$tName'=>$tName,'$multiPage'=>$multiPage,'$idInstance'=>$idInstance,'$idSubForm'=>$idSubForm,'$idItem'=>$idItem,'$index'=>$index],'PrepareFormPage');
         if($idSubForm) {
             $fields=DataProvider::Get('Plugins\DForms\Instances','GetStructure',[
@@ -267,7 +267,7 @@ class Instances extends Module {
         $separatorWidth=$template->getProperty('separator_width','','is_string');
         $labelCols=$template->getProperty('label_cols',NULL,'is_not0_integer');
         require($this->GetViewFile('PrepareFormPage'));
-        return (isset($page_params) ? $page_params : NULL);
+        return (isset($ctrl_params) ? $ctrl_params : NULL);
     }//END protected function PrepareFormPage
 
     /**
