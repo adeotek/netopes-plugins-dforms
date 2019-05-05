@@ -162,6 +162,19 @@
 }
 /* END Dynamic forms templates */
 /*** Dynamic forms ***/
+/*** Repeatable controls ***/
+.cloned-form-ctrls {
+	padding-bottom: 15px;
+	margin-bottom: 15px;
+	border-bottom: 1px solid #ddd;
+}
+
+.clsSubForm.clsRepeatableField:not(.ctrl-clone) {
+	border-bottom: 1px solid #ddd;
+	margin-bottom: 15px;
+}
+
+/* END Repeatable controls */
 /*** Repeatable controls actions ***/
 .ctrl-repeatable .input-group { margin-bottom: 8px; }
 .input-group-btn > .btn.clsRemoveRepeatableFieldBtn { padding: 3px 12px !important; }
