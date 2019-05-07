@@ -188,10 +188,11 @@ if($multiPage) {
     }
     $ctrl_params['content']['control_params']['content']=$formContent;
 } else {
+    $formId='df_'.$tName.'_form';
     $ctrl_params=[
         'control_class'=>'BasicForm',
         'tname'=>$tName,
-        'tag_id'=>'df_'.$tName.'_form',
+        'tag_id'=>$formId,
         'response_target'=>'df_'.$tName.'_errors',
         'cols_no'=>$colsNo,
     ];
