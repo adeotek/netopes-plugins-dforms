@@ -15,8 +15,9 @@ $ctrl_params=[
                     'placeholder'=>Translate::GetLabel('please_select'),
                     'load_type'=>'database',
                     'data_source'=>[
-                        'ds_class'=>'Plugins\DForms\Templates',
-                        'ds_method'=>'GetRelationsTypes',
+                        'ds_class'=>'Plugins\DForms\Relations',
+                        'ds_method'=>'GetTypeItems',
+                        'ds_params'=>['for_state'=>1],
                         'ds_extra_params'=>['sort'=>['NAME'=>'ASC']],
                     ],
                 ],

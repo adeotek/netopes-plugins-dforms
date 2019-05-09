@@ -284,20 +284,6 @@ abstract class BaseTemplates extends DataSource {
     abstract public function SetPropertiesItem($params=[],$extra_params=[]);
 
     /**
-     * GetRelationsTypes default parameters
-     */
-    const GET_RELATIONS_TYPES=['for_id'=>NULL,'for_text'=>NULL];
-
-    /**
-     * Gets relations types
-     *
-     * @param array $params ['for_id'=>NULL,'for_text'=>NULL]
-     * @param array $extra_params
-     * @return mixed
-     */
-    abstract public function GetRelationsTypes($params=[],$extra_params=[]);
-
-    /**
      * GetRelations default parameters
      */
     const GET_RELATIONS_ITEMS=['for_id'=>NULL,'template_id'=>NULL,'for_version'=>NULL,'for_text'=>NULL];

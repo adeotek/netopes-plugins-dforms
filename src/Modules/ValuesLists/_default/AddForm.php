@@ -25,7 +25,7 @@ $ctrl_params=[
     ],
     'actions'=>[
         [
-            'params'=>['tag_id'=>'df_list_add_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','AddEditRecord',df_list_add_form:form,'df_list_add_form')->df_list_add_errors")],
+            'params'=>['tag_id'=>'df_list_add_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'AddEditRecord', 'params': { 'target': 'df_list_add_form' }, 'arrayParams': [ '{nGet|df_list_add_form:form}' ] }",'df_list_add_errors')],
         ],
         [
             'type'=>'CloseModal',

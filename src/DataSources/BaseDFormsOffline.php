@@ -109,4 +109,20 @@ abstract class BaseDFormsOffline extends OfflineBase {
         ];
         return $result;
     }//END public function GetDynamicFormsDesignRenderTypes
+
+    /**
+     * description
+     *
+     * @param array $params Parameters array
+     * @param array $extra_params
+     * @return array
+     * @access public
+     */
+    public function GetDataTypes($params=[],$extra_params=[]) {
+        $result=[
+            ['id'=>'integer','name'=>'INTEGER'],
+            ['id'=>'string','name'=>'STRING'],
+        ];
+        return $result;
+    }//END public function GetDataTypes
 }//END abstract class BaseDFormsOffline extends OfflineBase

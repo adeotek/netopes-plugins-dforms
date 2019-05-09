@@ -655,7 +655,7 @@ class Instances extends Module {
                         'in_name'=>NULL,
                         'in_index'=>NULL,
                     ],['transaction'=>$transaction]);
-                    if(get_array_value($result,0,0,'is_integer','inserted_id')<=0) {
+                    if(get_array_value($result,[0,'inserted_id'],0,'is_integer')<=0) {
                         throw new AppException('Database error on instance value insert!');
                     }
                 }//if($field['itype']==2 || $field['parent_itype']==2 && is_array($field['value']))
@@ -668,7 +668,7 @@ class Instances extends Module {
                     'in_ivalue'=>$r['ivalue'],
                     'in_svalue'=>$r['svalue'],
                 ],['transaction'=>$transaction]);
-                if(get_array_value($result,0,0,'is_integer','inserted_id')<=0) {
+                if(get_array_value($result,[0,'inserted_id'],0,'is_integer')<=0) {
                     throw new AppException('Database error on instance value insert!');
                 }
             }//END foreach
@@ -685,7 +685,8 @@ class Instances extends Module {
         $cModule=$params->safeGet('cmodule',get_called_class(),'is_notempty_string');
         $cMethod=$params->safeGet('cmethod','Listing','is_notempty_string');
         $cTarget=$params->safeGet('ctarget','main-content','is_notempty_string');
-        NApp::Ajax()->Execute("{ 'module': '{$cModule}', 'method': '{$cMethod}', 'params': { 'id_template': {$idTemplate}, 'target': '{$cTarget}' } }",$cTarget);
+        ModulesProvider::Exec($cModule,$cMethod,['id_template'=>$idTemplate,'target'=>$cTarget],$cTarget);
+        // NApp::Ajax()->Execute("{ 'module': '{$cModule}', 'method': '{$cMethod}', 'params': { 'id_template': {$idTemplate}, 'target': '{$cTarget}' } }",$cTarget);
     }//END public function SaveNewRecord
 
     /**
@@ -856,7 +857,7 @@ class Instances extends Module {
                             'in_name'=>NULL,
                             'in_index'=>$index,
                         ],['transaction'=>$transaction]);
-                        if(get_array_value($result,0,0,'is_integer','inserted_id')<=0) {
+                        if(get_array_value($result,[0,'inserted_id'],0,'is_integer')<=0) {
                             throw new AppException('Database error on instance value insert!');
                         }
                     }//END foreach
@@ -868,7 +869,7 @@ class Instances extends Module {
                         'in_name'=>NULL,
                         'in_index'=>NULL,
                     ],['transaction'=>$transaction]);
-                    if(get_array_value($result,0,0,'is_integer','inserted_id')<=0) {
+                    if(get_array_value($result,[0,'inserted_id'],0,'is_integer')<=0) {
                         throw new AppException('Database error on instance value insert!');
                     }
                 }//if($field['itype']==2 || $field['parent_itype']==2 && is_array($field['value']))
@@ -900,7 +901,8 @@ class Instances extends Module {
         $cModule=$params->safeGet('cmodule',get_called_class(),'is_notempty_string');
         $cMethod=$params->safeGet('cmethod','Listing','is_notempty_string');
         $cTarget=$params->safeGet('ctarget','main-content','is_notempty_string');
-        NApp::Ajax()->Execute("{ 'module': '{$cModule}', 'method': '{$cMethod}', 'params': { 'id_template': {$idTemplate}, 'target': '{$cTarget}' } }",$cTarget);
+        ModulesProvider::Exec($cModule,$cMethod,['id_template'=>$idTemplate,'target'=>$cTarget],$cTarget);
+        //NApp::Ajax()->Execute("{ 'module': '{$cModule}', 'method': '{$cMethod}', 'params': { 'id_template': {$idTemplate}, 'target': '{$cTarget}' } }",$cTarget);
     }//END public function SaveRecord
 
     /**
