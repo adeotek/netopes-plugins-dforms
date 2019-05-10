@@ -441,6 +441,10 @@ class Instances extends Module {
         $isModal=$params->safeGet('is_modal',$this->isModal,'is_integer');
         $tName=get_array_value($ctrl_params,'tname',microtime(),'is_string');
         $fTagId=get_array_value($ctrl_params,'tag_id','','is_string');
+        $actionsLocation=$params->safeGet('actions_location','form','is_notempty_string');
+        if($controlClass!='BasicForm' && $actionsLocation=='form') {
+            $actionsLocation='container';
+        }
         if($isModal) {
             $containerType='modal';
             $view=new AppView(get_defined_vars(),$this,$containerType);
@@ -450,24 +454,32 @@ class Instances extends Module {
         } else {
             $containerType=$params->safeGet('container_type',($cTarget=='main-content' ? 'main' : NULL),'?is_string');
             $view=new AppView(get_defined_vars(),$this,$containerType);
+            $view->SetTitle($template->getProperty('name','','is_string'));
         }//if($isModal)
-        // if($controlClass!='BasicForm' && strlen($fTagId)) {
-        if(strlen($fTagId)) {
+        $formActions=[];
             $fResponseTarget=get_array_value($ctrl_params,'response_target','df_'.$tName.'_errors','is_notempty_string');
-            $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="'.$fResponseTarget.'">&nbsp;</div></div>');
+        if(strlen($fTagId)) {
             $btnSave=new Button(['value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','class'=>NApp::$theme->GetBtnPrimaryClass(),'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'SaveInstance', 'params': { 'id_template': {$idTemplate}, 'id': {$idInstance}, 'data': '{nGet|df_{$tName}_form:form}', 'is_modal': '{$isModal}', 'cmodule': '{$cModule}', 'cmethod': '{$cMethod}', 'ctarget': '{$cTarget}', 'target': '{$fTagId}' } }",$fResponseTarget)]);
-            $view->AddAction($btnSave->Show());
+            $formActions[]=$btnSave->Show();
             if($params->safeGet('back_action',TRUE,'bool')) {
                 if($isModal) {
                     $btnBack=new Button(['tag_id'=>'df_'.$tName.'_cancel','value'=>Translate::GetButton('cancel'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-ban','onclick'=>"CloseModalForm()",]);
                 } else {
                     $btnBack=new Button(['tag_id'=>'df_'.$tName.'_back','value'=>Translate::GetButton('back'),'icon'=>'fa fa-chevron-left','class'=>NApp::$theme->GetBtnDefaultClass(),'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$cModule}', 'method': '{$cMethod}', 'params': { 'id_template': {$idTemplate}, 'id': {$idInstance}, 'target': '{$cTarget}' } }",$cTarget)]);
                 }//if($isModal)
-                $view->AddAction($btnBack->Show());
+                $formActions[]=$btnBack->Show();
             }//if($params->safeGet('back_action',TRUE,'bool'))
         }//if(strlen($fTagId))
+        if($actionsLocation=='container') {
+            $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="'.$fResponseTarget.'">&nbsp;</div></div>');
+            $view->SetActions($formActions);
+        }//if($actionsLocation=='container')
         $addContentMethod='Add'.$controlClass;
         $view->$addContentMethod($this->GetViewFile('AddEditInstanceForm'));
+        if($actionsLocation=='after') {
+            $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="'.$fResponseTarget.'">&nbsp;</div></div>');
+            $view->AddHtmlContent('<div class="row"><div class="col-md-12 actions-group">'.implode('',$formActions).'</div></div>');
+        }//if($actionsLocation=='after')
         $view->Render();
     }//END public function ShowAddEditForm
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @var string      $controlClass
+ * @var string      $actionsLocation
  * @var string      $tName
  * @var string      $fTagId
  * @var int         $idTemplate
@@ -10,12 +10,12 @@
  * @var string|null $cTarget
  */
 
-if($controlClass=='BasicForm' && isset($ctrl_params) && is_array($ctrl_params)) {
+if($actionsLocation=='form' && isset($ctrl_params) && is_array($ctrl_params)) {
     $fResponseTarget=get_array_value($ctrl_params,'response_target','','is_string');
     if(strlen($fTagId) && strlen($fResponseTarget)) {
         $ctrl_params['actions']=[
             [
-                'params'=>['tag_id'=>'df_'.$tName.'_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','class'=>NApp::$theme->GetBtnPrimaryClass(),'onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','SaveRecord','id_template'|{$idTemplate}~'id'|{$idInstance}~'data'|df_{$tName}_form:form~'is_modal'|'{$isModal}'~'cmodule'|'{$cModule}'~'cmethod'|'{$cMethod}'~'ctarget'|'{$cTarget}','{$fTagId}')->{$fResponseTarget}")],
+                'params'=>['tag_id'=>'df_'.$tName.'_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','class'=>NApp::$theme->GetBtnPrimaryClass(),'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'SaveRecord', 'params': { 'id_template': {$idTemplate}, 'id': {$idInstance}, 'data': '{nGet|df_{$tName}_form:form}', 'is_modal':'{$isModal}', 'cmodule': '{$cModule}', 'cmethod': '{$cMethod}', 'ctarget': '{$cTarget}', 'target': '{$fTagId}' } }",$fResponseTarget)],
             ],
         ];
         if($params->safeGet('back_action',TRUE,'bool')) {
@@ -26,9 +26,9 @@ if($controlClass=='BasicForm' && isset($ctrl_params) && is_array($ctrl_params)) 
                 ];
             } else {
                 $ctrl_params['actions'][]=[
-                    'params'=>['tag_id'=>'df_'.$tName.'_back','value'=>Translate::GetButton('back'),'icon'=>'fa fa-chevron-left','class'=>NApp::$theme->GetBtnDefaultClass(),'onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$cModule}','{$cMethod}','id_template'|{$idTemplate}~'id'|{$idInstance},'{$cTarget}')->{$cTarget}")],
+                    'params'=>['tag_id'=>'df_'.$tName.'_back','value'=>Translate::GetButton('back'),'icon'=>'fa fa-chevron-left','class'=>NApp::$theme->GetBtnDefaultClass(),'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$cModule}', 'method': '{$cMethod}', 'params': { 'id_template': {$idTemplate}, 'id': {$idInstance}, 'target': '{$cTarget}' } }",$cTarget)],
                 ];
             }//if($isModal)
         }//if($params->safeGet('back_action',TRUE,'bool'))
     }//if(strlen($fTagId) && strlen($fResponseTarget))
-}//if($controlClass=='BasicForm' && isset($ctrl_params) && is_array($ctrl_params))
+}//if($actionsLocation=='form' && isset($ctrl_params) && is_array($ctrl_params))
