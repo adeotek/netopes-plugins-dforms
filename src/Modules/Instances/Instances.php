@@ -14,16 +14,14 @@ use NETopes\Core\App\AppView;
 use NETopes\Core\App\Module;
 use NETopes\Core\App\ModulesProvider;
 use NETopes\Core\App\Params;
-use NETopes\Core\App\Validator;
 use NETopes\Core\AppSession;
-use NETopes\Core\Controls\BasicForm;
 use NETopes\Core\Controls\Button;
-use NETopes\Core\Controls\Control;
 use NETopes\Core\Controls\ControlsHelpers;
-use NETopes\Core\Controls\TabControl;
+use NETopes\Core\Controls\HiddenInput;
 use NETopes\Core\Data\DataProvider;
 use NETopes\Core\Data\DataSet;
 use NETopes\Core\Data\VirtualEntity;
+use NETopes\Core\Validators\Validator;
 use NETopes\Plugins\DForms\Instances\PdfTemplates\InstancesPdf;
 use NETopes\Core\AppException;
 use NApp;
@@ -232,7 +230,6 @@ class Instances extends Module {
      *
      * @param \NETopes\Core\App\Params|null    $params Parameters object
      * @param \NETopes\Core\Data\VirtualEntity $template
-     * @param \NETopes\Core\Data\DataSet       $relations
      * @param \NETopes\Core\Data\VirtualEntity $page
      * @param bool                             $multiPage
      * @param string                           $tName
@@ -244,8 +241,8 @@ class Instances extends Module {
      * @throws \NETopes\Core\AppException
      * @access protected
      */
-    protected function PrepareFormPage(?Params $params,VirtualEntity $template,?DataSet $relations,VirtualEntity $page,string $tName,bool $multiPage=FALSE,?int $idInstance=NULL,?int $idSubForm=NULL,?int $idItem=NULL,?int $index=NULL): ?array {
-        // NApp::Dlog(['$template'=>$template,'$relations'=>$relations,'$page'=>$page,'$tName'=>$tName,'$multiPage'=>$multiPage,'$idInstance'=>$idInstance,'$idSubForm'=>$idSubForm,'$idItem'=>$idItem,'$index'=>$index],'PrepareFormPage');
+    protected function PrepareFormPage(?Params $params,VirtualEntity $template,VirtualEntity $page,string $tName,bool $multiPage=FALSE,?int $idInstance=NULL,?int $idSubForm=NULL,?int $idItem=NULL,?int $index=NULL): ?array {
+        // NApp::Dlog(['$template'=>$template,'$page'=>$page,'$tName'=>$tName,'$multiPage'=>$multiPage,'$idInstance'=>$idInstance,'$idSubForm'=>$idSubForm,'$idItem'=>$idItem,'$index'=>$index],'PrepareFormPage');
         if($idSubForm) {
             $fields=DataProvider::Get('Plugins\DForms\Instances','GetStructure',[
                 'template_id'=>$template->getProperty('id'),
@@ -303,7 +300,6 @@ class Instances extends Module {
             if(!$idSubForm || !$idItem) {
                 return NULL;
             }
-            $relations=NULL;
             $pages=DataProvider::Get('Plugins\DForms\Instances','GetPages',[
                 'for_id'=>NULL,
                 'instance_id'=>($idInstance ? $idInstance : NULL),
@@ -313,11 +309,6 @@ class Instances extends Module {
             ]);
         } else {
             $template=$mTemplate;
-            if($idInstance) {
-                $relations=DataProvider::Get('Plugins\DForms\Instances','GetRelations',['instance_id'=>$idInstance]);
-            } else {
-                $relations=DataProvider::Get('Plugins\DForms\Templates','GetRelations',['template_id'=>$idTemplate]);
-            }//if($idInstance)
             $pages=DataProvider::Get('Plugins\DForms\Instances','GetPages',[
                 'for_id'=>NULL,
                 'instance_id'=>($idInstance ? $idInstance : NULL),
@@ -343,13 +334,45 @@ class Instances extends Module {
                 'tabs'=>[],
             ];
             foreach($pages as $page) {
-                $ctrl_params['tabs'][]=$this->PrepareFormPage($params,$template,$relations,$page,$tName,TRUE,$idInstance,$idSubForm,$idItem,$index);
+                $ctrl_params['tabs'][]=$this->PrepareFormPage($params,$template,$page,$tName,TRUE,$idInstance,$idSubForm,$idItem,$index);
             }//END foreach
         } else {
-            $ctrl_params=$this->PrepareFormPage($params,$template,$relations,$pages->first(),$tName,FALSE,$idInstance,$idSubForm,$idItem,$index);
+            $ctrl_params=$this->PrepareFormPage($params,$template,$pages->first(),$tName,FALSE,$idInstance,$idSubForm,$idItem,$index);
         }//if(in_array($renderType,[21,22]))
         return $ctrl_params;
     }//END protected function PrepareForm
+
+    /**
+     * @param int                      $idTemplate
+     * @param int|null                 $idInstance
+     * @param \NETopes\Core\App\Params $inputParams
+     * @return string|null
+     * @throws \NETopes\Core\AppException
+     */
+    protected function PrepareRelationsFormPart(int $idTemplate,?int $idInstance,Params $inputParams): ?string {
+        if($idInstance) {
+            $relations=DataProvider::Get('Plugins\DForms\Instances','GetRelations',['instance_id'=>$idInstance]);
+        } else {
+            $relations=DataProvider::Get('Plugins\DForms\Templates','GetRelations',['template_id'=>$idTemplate]);
+        }//if($idInstance)
+        $result=NULL;
+        if(is_iterable($relations) && count($relations)) {
+            /** @var VirtualEntity $rel */
+            foreach($relations as $rel) {
+                if($rel->getProperty('rtype')!=30) {
+                    continue;
+                }
+                //Programatically (input parameter)
+                $rValue=$inputParams->safeGet($rel->getProperty('key'),NULL,'?isset');
+                if(is_null($rValue)) {
+                    continue;
+                }
+                $rctrl=new HiddenInput(['tag_id'=>$rel->getProperty('key'),'postable'=>TRUE,'value'=>$rValue]);
+                $result.=$rctrl->Show();
+            }//END foreach
+        }//if(is_iterable($relations) && count($relations))
+        return $result;
+    }//END protected function PrepareRelationsFormPart
 
     /**
      * description
@@ -430,6 +453,7 @@ class Instances extends Module {
         if(!$idTemplate) {
             throw new AppException('Invalid DynamicForm template!');
         }
+
         $ctrl_params=$this->PrepareForm($params,$template,$idInstance);
         if(!$ctrl_params) {
             throw new AppException('Invalid DynamicForm configuration!');
@@ -439,6 +463,7 @@ class Instances extends Module {
         $cMethod=$params->safeGet('cmethod','Listing','is_notempty_string');
         $cTarget=$params->safeGet('ctarget','main-content','is_notempty_string');
         $isModal=$params->safeGet('is_modal',$this->isModal,'is_integer');
+        $aeSaveInstanceMethod='SaveInstance';
         $tName=get_array_value($ctrl_params,'tname',microtime(),'is_string');
         $fTagId=get_array_value($ctrl_params,'tag_id','','is_string');
         $actionsLocation=$params->safeGet('actions_location','form','is_notempty_string');
@@ -459,7 +484,7 @@ class Instances extends Module {
         $formActions=[];
             $fResponseTarget=get_array_value($ctrl_params,'response_target','df_'.$tName.'_errors','is_notempty_string');
         if(strlen($fTagId)) {
-            $btnSave=new Button(['value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','class'=>NApp::$theme->GetBtnPrimaryClass(),'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'SaveInstance', 'params': { 'id_template': '{$idTemplate}', 'id': '{$idInstance}', 'data': '{nGet|df_{$tName}_form:form}', 'is_modal': '{$isModal}', 'cmodule': '{$cModule}', 'cmethod': '{$cMethod}', 'ctarget': '{$cTarget}', 'target': '{$fTagId}' } }",$fResponseTarget)]);
+            $btnSave=new Button(['value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','class'=>NApp::$theme->GetBtnPrimaryClass(),'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': '{$aeSaveInstanceMethod}', 'params': { 'id_template': '{$idTemplate}', 'id': '{$idInstance}', 'relations': '{nGet|df_{$tName}_relations:form}', 'data': '{nGet|df_{$tName}_form:form}', 'is_modal': '{$isModal}', 'cmodule': '{$cModule}', 'cmethod': '{$cMethod}', 'ctarget': '{$cTarget}', 'target': '{$fTagId}' } }",$fResponseTarget)]);
             $formActions[]=$btnSave->Show();
             if($params->safeGet('back_action',TRUE,'bool')) {
                 if($isModal) {
@@ -476,12 +501,79 @@ class Instances extends Module {
         }//if($actionsLocation=='container')
         $addContentMethod='Add'.$controlClass;
         $view->$addContentMethod($this->GetViewFile('AddEditInstanceForm'));
+        $relationsHtml=$this->PrepareRelationsFormPart($idTemplate,$idInstance,$params);
+        $view->AddHtmlContent('<div class="row"><div class="col-md-12 hidden" id="df_'.$tName.'_relations">'.$relationsHtml.'</div></div>');
         if($actionsLocation=='after') {
             $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="'.$fResponseTarget.'">&nbsp;</div></div>');
             $view->AddHtmlContent('<div class="row"><div class="col-md-12 actions-group">'.implode('',$formActions).'</div></div>');
         }//if($actionsLocation=='after')
         $view->Render();
     }//END public function ShowAddEditForm
+
+    /**
+     * @param \NETopes\Core\App\Params $params
+     * @return bool
+     * @throws \NETopes\Core\AppException
+     */
+    protected function ValidateSaveParams(Params &$params): bool {
+        $idTemplate=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
+
+        $idInstance=$params->safeGet('id',NULL,'?is_integer');
+        if($idInstance) {
+            $relations=DataProvider::Get('Plugins\DForms\Instances','GetRelations',['instance_id'=>$idInstance]);
+        } else {
+            $relations=DataProvider::Get('Plugins\DForms\Templates','GetRelations',['template_id'=>$idTemplate]);
+        }//if($idInstance)
+
+        $relationsData=$params->safeGet('relations',[],'is_array');
+        $relationsValidData=[];
+        $invalidRelations=[];
+        /** @var VirtualEntity $rel */
+        foreach($relations as $rel) {
+            $relValue=get_array_param($relationsData,$rel->getProperty('key',NULL,'is_string'),NULL,'isset');
+            if($rel->getProperty('required',0,'is_integer')==1 && !$relValue) {
+                $invalidRelations[]=$rel->getProperty('name',NULL,'is_string').' ['.$rel->getProperty('key',NULL,'is_string').']';
+                continue;
+            }
+            $relationsValidData[]=[
+                'id'=>$rel->getProperty('id',NULL,'is_integer'),
+                'value'=>$relValue,
+            ];
+        }//END foreach
+        if(count($invalidRelations)) {
+            throw new AppException('Invalid form relations: <br>'.implode('<br>',$invalidRelations));
+        }
+        $params->set('relations',$relationsValidData);
+
+        $fieldsData=$params->safeGet('data',[],'is_array');
+
+        return TRUE;
+    }//END protected function ValidateSaveParams
+
+    /**
+     * description
+     *
+     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @return void
+     * @access public
+     * @throws \NETopes\Core\AppException
+     */
+    public function SaveInstance($params=NULL) {
+        NApp::Dlog($params,'SaveInstance');
+        $target=$params->safeGet('target','','is_string');
+        $ckeck=$this->ValidateSaveParams($params);
+        if(!$ckeck) {
+            NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
+            echo Translate::GetMessage('required_fields');
+            return;
+        }//if(!$ckeck)
+        $idInstance=$params->safeGet('id_instance');
+        // if($idInstance>0) {
+        //     $this->Exec('SaveRecord',$params);
+        // } else {
+        //     $this->Exec('SaveNewRecord',$params);
+        // }//if($idInstance>0)
+    }//END public function SaveInstance
 
     /**
      * description
@@ -640,7 +732,7 @@ class Instances extends Module {
                 'template_id'=>$idTemplate,
                 'user_id'=>NApp::GetCurrentUserId(),
             ],['transaction'=>$transaction]);
-            $idInstance=get_array_value($result,0,0,'is_numeric','inserted_id');
+            $idInstance=get_array_value($result,[0,'inserted_id'],0,'is_numeric');
             if($idInstance<=0) {
                 throw new AppException('Database error on instance insert!');
             }
@@ -655,7 +747,7 @@ class Instances extends Module {
                             'in_name'=>NULL,
                             'in_index'=>$index,
                         ],['transaction'=>$transaction]);
-                        if(get_array_value($result,0,0,'is_integer','inserted_id')<=0) {
+                        if(get_array_value($result,[0,'inserted_id'],0,'is_integer')<=0) {
                             throw new AppException('Database error on instance value insert!');
                         }
                     }//END foreach
@@ -916,23 +1008,6 @@ class Instances extends Module {
         ModulesProvider::Exec($cModule,$cMethod,['id_template'=>$idTemplate,'target'=>$cTarget],$cTarget);
         //NApp::Ajax()->Execute("{ 'module': '{$cModule}', 'method': '{$cMethod}', 'params': { 'id_template': {$idTemplate}, 'target': '{$cTarget}' } }",$cTarget);
     }//END public function SaveRecord
-
-    /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
-     * @return void
-     * @access public
-     * @throws \NETopes\Core\AppException
-     */
-    public function SaveInstance($params=NULL) {
-        $idInstance=$params->safeGet('id',0,'is_integer');
-        if($idInstance>0) {
-            $this->Exec('SaveRecord',$params);
-        } else {
-            $this->Exec('SaveNewRecord',$params);
-        }//if($idInstance>0)
-    }//END public function SaveInstance
 
     /**
      * description

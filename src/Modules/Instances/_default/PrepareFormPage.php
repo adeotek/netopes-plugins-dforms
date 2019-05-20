@@ -6,7 +6,6 @@ use NETopes\Core\AppException;
 
 /** @var \NETopes\Core\App\Params $params */
 /** @var \NETopes\Core\Data\VirtualEntity $template */
-/** @var \NETopes\Core\Data\DataSet $relations */
 /** @var \NETopes\Core\Data\VirtualEntity $page */
 /** @var \NETopes\Core\Data\DataSet $fields */
 /** @var bool $multiPage */
@@ -65,7 +64,7 @@ foreach($fields as $field) {
             $fParams=['value'=>''];
             $tagId=$iPrefix.$field->getProperty('cell','','is_string').'_'.$field->getProperty('name','','is_string').($index ? '_'.$index : '');
             $fIType=$field->getProperty('itype',1,'is_not0_numeric');
-            $idSubForm=$field->getProperty('id_sub_form',-1,'is_not0_numeric');
+            $fIdSubForm=$field->getProperty('id_sub_form',-1,'is_not0_numeric');
             $idItem=$field->getProperty('id',NULL,'is_not0_numeric');
             if($fIType==2 && $idInstance) {
                 $fICount=$field->getProperty('icount',1,'is_not0_numeric');
@@ -75,7 +74,7 @@ foreach($fields as $field) {
                 // $fValue = NULL;
             }//if($fIType==2 && $idInstance)
             for($i=0; $i<$fICount; $i++) {
-                $ctrl_params=$this->PrepareForm($params,$template,$idInstance,$idSubForm,$idItem,$i);
+                $ctrl_params=$this->PrepareForm($params,$template,$idInstance,$fIdSubForm,$idItem,$i);
                 if(!$ctrl_params) {
                     throw new AppException('Invalid DynamicForm sub-form configuration!');
                 }
@@ -139,29 +138,6 @@ foreach($fields as $field) {
     }//END switch
 }//END foreach
 
-if(is_iterable($relations) && count($relations)) {
-    $fParams=['value'=>''];
-    foreach($relations as $rel) {
-        if($rel->getProperty('rtype')!=30) {
-            continue;
-        }
-        //Programatically (input parameter)
-        $rValue=$params->safeGet($rel->getProperty('key'),NULL,'?isset');
-        if(is_null($rValue)) {
-            continue;
-        }
-        $rctrl=new HiddenInput(['tag_id'=>'relation-'.$rel->getProperty('key'),'postable'=>TRUE,'value'=>$rValue]);
-        $fParams['value'].=$rctrl->Show();
-    }//END foreach
-    if(strlen($fParams['value'])) {
-        $formContent[]=[[
-            'hidden_row'=>TRUE,
-            'control_type'=>'CustomControl',
-            'control_params'=>$fParams,
-        ]];
-    }//if(strlen($rel_content))
-}//if(is_iterable($relations) && count($relations))
-
 if($multiPage) {
     $ctrl_params=[
         'type'=>'fixed',
@@ -193,9 +169,11 @@ if($multiPage) {
         'control_class'=>'BasicForm',
         'tname'=>$tName,
         'tag_id'=>$formId,
-        'response_target'=>'df_'.$tName.'_errors',
         'cols_no'=>$colsNo,
     ];
+    if(!$idSubForm) {
+        $ctrl_params['response_target']='df_'.$tName.'_errors';
+    }
     if(strlen($themeType)) {
         $ctrl_params['theme_type']=$themeType;
     }

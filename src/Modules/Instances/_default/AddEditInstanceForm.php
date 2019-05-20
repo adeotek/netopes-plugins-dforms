@@ -8,6 +8,7 @@
  * @var string|null $cModule
  * @var string|null $cMethod
  * @var string|null $cTarget
+ * @var string      $aeSaveInstanceMethod
  */
 
 if($actionsLocation=='form' && isset($ctrl_params) && is_array($ctrl_params)) {
@@ -15,7 +16,7 @@ if($actionsLocation=='form' && isset($ctrl_params) && is_array($ctrl_params)) {
     if(strlen($fTagId) && strlen($fResponseTarget)) {
         $ctrl_params['actions']=[
             [
-                'params'=>['tag_id'=>'df_'.$tName.'_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','class'=>NApp::$theme->GetBtnPrimaryClass(),'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'SaveRecord', 'params': { 'id_template': {$idTemplate}, 'id': {$idInstance}, 'data': '{nGet|df_{$tName}_form:form}', 'is_modal':'{$isModal}', 'cmodule': '{$cModule}', 'cmethod': '{$cMethod}', 'ctarget': '{$cTarget}', 'target': '{$fTagId}' } }",$fResponseTarget)],
+                'params'=>['tag_id'=>'df_'.$tName.'_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','class'=>NApp::$theme->GetBtnPrimaryClass(),'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': '{$aeSaveInstanceMethod}', 'params': { 'id_template': '{$idTemplate}', 'id': '{$idInstance}', 'relations': '{nGet|df_{$tName}_relations:form}', 'data': '{nGet|df_{$tName}_form:form}', 'is_modal': '{$isModal}', 'cmodule': '{$cModule}', 'cmethod': '{$cMethod}', 'ctarget': '{$cTarget}', 'target': '{$fTagId}' } }",$fResponseTarget)],
             ],
         ];
         if($params->safeGet('back_action',TRUE,'bool')) {
