@@ -207,7 +207,7 @@ class InstancesHelpers {
         // NApp::Dlog($fields,'$fields');
         $themeType=$template->getProperty('theme_type','','is_string');
         $controlsSize=$template->getProperty('controls_size','','is_string');
-        $separatorWidth=$template->getProperty('separator_width','','is_string');
+        // $separatorWidth=$template->getProperty('separator_width','','is_string');
         $labelCols=$template->getProperty('label_cols',NULL,'is_not0_integer');
 
         $ctrl_params=NULL;
@@ -490,6 +490,34 @@ class InstancesHelpers {
     }//END public static function PrepareRelationsFormPart
 
     /**
+     * @param mixed       $value
+     * @param mixed|null  $returnValue
+     * @param string|null $dataType
+     * @param string|null $key
+     * @return bool
+     * @throws \NETopes\Core\AppException
+     */
+    public static function GetValidatedValue($value,&$returnValue=NULL,?string $dataType=NULL,string $key=NULL): bool {
+        if(is_array($value) && strlen($key)) {
+            $lValue=get_array_param($value,$key,NULL,'isset');
+        } else {
+            $lValue=$value;
+        }//if(is_array($value) && strlen($key))
+        switch($dataType) {
+            case 'integer':
+                $returnValue=Validator::ValidateValue($lValue,NULL,'?is_integer');
+                return !is_integer($returnValue);
+            case 'numeric':
+                $returnValue=Validator::ValidateValue($lValue,NULL,'?is_numeric');
+                return !is_numeric($returnValue);
+            case 'string':
+            default:
+                $returnValue=Validator::ValidateValue($lValue,NULL,'?is_string');
+                return !strlen($returnValue);
+        }//END switch
+    }//END public static function GetValidatedValue
+
+    /**
      * @param int                      $idTemplate
      * @param int|null                 $idInstance
      * @param \NETopes\Core\App\Params $params
@@ -502,104 +530,44 @@ class InstancesHelpers {
         } else {
             $relations=DataProvider::Get('Plugins\DForms\Templates','GetRelations',['template_id'=>$idTemplate]);
         }//if($idInstance)
-
+        // NApp::Dlog($relations,'$relations');
         $relationsData=$params->safeGet('relations',[],'is_array');
-        $relationsValidData=[];
-        $invalidRelations=[];
+        $fieldsData=$params->safeGet('data',[],'is_array');
+        $errors=[];
         /** @var VirtualEntity $rel */
-        foreach($relations as $rel) {
+        foreach($relations as $k=>$rel) {
             $relKey=$rel->getProperty('key',NULL,'is_string');
             $dType=$rel->getProperty('dtype','','is_string');
-
+            $relValue=NULL;
             switch($rel->getProperty('rtype',0,'is_integer')) {
                 case 10: // USER INPUT (AS FORM ELEMENT)
+                    static::GetValidatedValue($fieldsData,$relValue,$dType,$relKey);
                     break;
                 case 20: // AUTO(FROM SESSION)
-                    $relValue=get_array_param($relationsData,$relKey,NULL,'isset');
+                    static::GetValidatedValue(NApp::GetParam($relKey),$relValue,$dType);
                     break;
                 case 21: // AUTO(FROM PAGE SESSION)
+                    static::GetValidatedValue(NApp::GetPageParam($relKey),$relValue,$dType);
                     break;
                 case 30: // PROGRAMMATICALLY (METHOD INPUT PARAMETER)
+                    static::GetValidatedValue($relationsData,$relValue,$dType,$relKey);
                     break;
-                default:
-                    break;
-
-                // case 1:
-                //     $r_val=NApp::GetParam($rel['key']);
-                //     if($dtype=='integer') {
-                //         if(is_numeric($r_val) && $r_val>0) {
-                //             $relations[$k]['ivalue']=$r_val;
-                //             $relations[$k]['svalue']='';
-                //         }//if(is_numeric($r_val) && $r_val>0)
-                //     } else {
-                //         if(is_string($r_val) && strlen($r_val)) {
-                //             $relations[$k]['ivalue']=0;
-                //             $relations[$k]['svalue']=$r_val;
-                //         }//if(is_string($r_val) && strlen($r_val))
-                //     }//if($dtype=='integer')
-                //     break;
-                // case 3:
-                //     if($dtype=='integer') {
-                //         $relations[$k]['ivalue']=get_array_value($data,'relation-'.$rel['key'],0,'is_integer');
-                //         $relations[$k]['svalue']='';
-                //     } else {
-                //         $relations[$k]['ivalue']=0;
-                //         $relations[$k]['svalue']=get_array_value($data,'relation-'.$rel['key'],'','is_string');
-                //     }//if($dtype=='integer')
-                //     break;
             }//END switch
-
-            $relValue=get_array_param($relationsData,$relKey,NULL,'isset');
-            if($rel->getProperty('required',0,'is_integer')==1 && !$relValue) {
-                $invalidRelations[]=$rel->getProperty('name',NULL,'is_string').' ['.$rel->getProperty('key',NULL,'is_string').']';
+            if($rel->getProperty('required',FALSE,'bool') && !$relValue) {
+                $errors[]=[
+                    'id'=>$rel->getProperty('id',NULL,'is_integer'),
+                    'key'=>$relKey,
+                    'name'=>$rel->getProperty('name','','is_string'),
+                    'type'=>'required_relation',
+                ];
                 continue;
             }
-            $relationsValidData[]=[
-                'id'=>($idInstance ? $rel->getProperty('id',NULL,'is_integer') : NULL),
-                'id_relation'=>$rel->getProperty($idInstance ? 'id_template_relation' : 'id',NULL,'is_integer'),
-                'value'=>$relValue,
-            ];
+            $relations->set($k,$rel->set('ivalue',($dType=='integer' ? $relValue : NULL)));
+            $relations->set($k,$rel->set('svalue',($dType!='integer' ? $relValue : NULL)));
         }//END foreach
-        if(count($invalidRelations)) {
-            throw new AppException('Invalid form relations: <br>'.implode('<br>',$invalidRelations));
-        }
-        $params->set('relations',$relationsValidData);
-
-        $relations=DataProvider::Get('Plugins\DForms\Templates','GetRelations',['template_id'=>$idTemplate]);
-        foreach($relations as $k=>$rel) {
-            $dtype=get_array_value($rel,'dtype','','is_string');
-            $relations[$k]['ivalue']=0;
-            $relations[$k]['svalue']='';
-            switch($rel['rtype']) {
-                case 1:
-                    $r_val=NApp::GetParam($rel['key']);
-                    if($dtype=='integer') {
-                        if(is_numeric($r_val) && $r_val>0) {
-                            $relations[$k]['ivalue']=$r_val;
-                            $relations[$k]['svalue']='';
-                        }//if(is_numeric($r_val) && $r_val>0)
-                    } else {
-                        if(is_string($r_val) && strlen($r_val)) {
-                            $relations[$k]['ivalue']=0;
-                            $relations[$k]['svalue']=$r_val;
-                        }//if(is_string($r_val) && strlen($r_val))
-                    }//if($dtype=='integer')
-                    break;
-                case 3:
-                    if($dtype=='integer') {
-                        $relations[$k]['ivalue']=get_array_value($data,'relation-'.$rel['key'],0,'is_integer');
-                        $relations[$k]['svalue']='';
-                    } else {
-                        $relations[$k]['ivalue']=0;
-                        $relations[$k]['svalue']=get_array_value($data,'relation-'.$rel['key'],'','is_string');
-                    }//if($dtype=='integer')
-                    break;
-            }//END switch
-            if($rel['required']==1 && !$relations[$k]['ivalue'] && !$relations[$k]['svalue']) {
-                throw new AppException('Invalid relation value: ['.$rel['name'].']');
-            }//if($rel['required']==1 && !$relations[$k]['ivalue'] && !$relations[$k]['svalue'])
-        }//END foreach
-
+        $params->set('df_relations_values',$relations);
+        $params->set('df_relations_errors',$errors);
+        return !count($errors);
     }//END public static function ValidateRelations
 
     /**
@@ -610,51 +578,109 @@ class InstancesHelpers {
      * @throws \NETopes\Core\AppException
      */
     public static function ValidateFields(int $idTemplate,?int $idInstance,Params &$params): bool {
+        $fieldsData=$params->safeGet('data',[],'is_array');
         $fields=DataProvider::Get('Plugins\DForms\Instances','GetFields',['template_id'=>$idTemplate]);
+        // NApp::Dlog($fields,'$fields');
+        $errors=[];
+        /** @var VirtualEntity $field */
         foreach($fields as $k=>$field) {
-            if($field['itype']==2 || $field['parent_itype']==2) {
-                $fvals=get_array_value($data,$field['id'],NULL,'is_array');
-                if(!is_array($fvals) || !count($fvals)) {
-                    $error=$field['required']==1;
-                    $fval=NULL;
+            $fieldId=$field->getProperty('id',NULL,'is_integer');
+            $fieldName=$field->getProperty('name','N/A','is_string');
+            if(!$fieldId) {
+                $errors[]=[
+                    'name'=>$fieldName,
+                    'label'=>$field->getProperty('label','','is_string'),
+                    'type'=>'invalid_id',
+                ];
+                continue;
+            }
+            if($field->getProperty('itype',0,'is_integer')==2 || $field->getProperty('parent_itype',0,'is_integer')==2) {
+                $fieldsValues=get_array_value($fieldsData,$fieldId,NULL,'is_array');
+                if(!is_array($fieldsValues) || !count($fieldsValues)) {
+                    if($field->getProperty('required',FALSE,'bool')) {
+                        $errors[]=[
+                            'id'=>$fieldId,
+                            'name'=>$fieldName,
+                            'label'=>$field->getProperty('label','','is_string'),
+                            'type'=>'required_field',
+                        ];
+                        continue;
+                    }
+                    $fields->set($k,$field->set('value',NULL));
                 } else {
-                    $fval=[];
-                    foreach($fvals as $i=>$fv) {
-                        switch($field['data_type']) {
+                    $fieldValue=[];
+                    foreach($fieldsValues as $i=>$fv) {
+                        switch($field->getProperty('data_type',NULL,'is_string')) {
                             case 'numeric':
-                                $fval[$i]=Validator::ValidateValue($fv,NULL,'is_numeric');
-                                $error=($field['required']==1 && !is_numeric($fval[$i]));
+                                $fieldItemValue=Validator::ValidateValue($fv,NULL,'is_numeric');
+                                if($field->getProperty('required',FALSE,'bool') && !is_numeric($fieldItemValue)) {
+                                    $errors[]=[
+                                        'id'=>$fieldId,
+                                        'name'=>$fieldName,
+                                        'label'=>$field->getProperty('label','','is_string'),
+                                        'type'=>'required_field',
+                                        'index'=>$i,
+                                    ];
+                                    continue 2;
+                                }
+                                $fieldValue[$i]=$fieldItemValue;
                                 break;
                             case 'string':
                             default:
-                                $fval[$i]=Validator::ValidateValue($fv,'','is_string');
-                                $error=($field['required']==1 && !strlen($fval[$i]));
+                                $fieldItemValue=Validator::ValidateValue($fv,NULL,'is_string');
+                                if($field->getProperty('required',FALSE,'bool') && !strlen($fieldItemValue)) {
+                                    $errors[]=[
+                                        'id'=>$fieldId,
+                                        'name'=>$fieldName,
+                                        'label'=>$field->getProperty('label','','is_string'),
+                                        'type'=>'required_field',
+                                        'index'=>$i,
+                                    ];
+                                    continue 2;
+                                }
+                                $fieldValue[$i]=$fieldItemValue;
                                 break;
                         }//END switch
-                        if($error) {
-                            break;
-                        }
                     }//END foreach
-                }//if(!is_array($fvals) || !count($fvals))
+                    if(!count($errors)) {
+                        $fields->set($k,$field->set('value',$fieldValue));
+                    }
+                }//if(!is_array($fieldsValues) || !count($fieldsValues))
             } else {
-                switch($field['data_type']) {
+                switch($field->getProperty('data_type',NULL,'is_string')) {
                     case 'numeric':
-                        $fval=get_array_value($data,$field['id'],NULL,'is_numeric');
-                        $error=($field['required']==1 && !is_numeric($fval));
+                        $fieldValue=get_array_value($fieldsData,$fieldId,NULL,'is_numeric');
+                        if($field->getProperty('required',FALSE,'bool') && !is_numeric($fieldValue)) {
+                            $errors[]=[
+                                'id'=>$fieldId,
+                                'name'=>$fieldName,
+                                'label'=>$field->getProperty('label','','is_string'),
+                                'type'=>'required_field',
+                            ];
+                            continue 2;
+                        }
+                        $fields->set($k,$field->set('value',$fieldValue));
                         break;
                     case 'string':
                     default:
-                        $fval=get_array_value($data,$field['id'],'','is_string');
-                        $error=($field['required']==1 && !strlen($fval));
+                        $fieldValue=get_array_value($fieldsData,$fieldId,NULL,'is_string');
+                        if($field->getProperty('required',FALSE,'bool') && !strlen($fieldValue)) {
+                            $errors[]=[
+                                'id'=>$fieldId,
+                                'name'=>$fieldName,
+                                'label'=>$field->getProperty('label','','is_string'),
+                                'type'=>'required_field',
+                            ];
+                            continue 2;
+                        }
+                        $fields->set($k,$field->set('value',$fieldValue));
                         break;
                 }//END switch
-            }//if($field['itype']==2 || $field['parent_itype']==2)
-            if($error) {
-                break;
-            }
-            $fields[$k]['value']=$fval;
+            }//if($field->getProperty('itype',0,'is_integer')==2 || $field->getProperty('parent_itype',0,'is_integer')==2)
         }//END foreach
-
+        $params->set('df_fields_values',$fields);
+        $params->set('df_fields_errors',$errors);
+        return !count($errors);
     }//END public static function ValidateFields
 
     /**
@@ -664,11 +690,13 @@ class InstancesHelpers {
      */
     public static function ValidateSaveParams(Params &$params): bool {
         $idTemplate=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
-
         $idInstance=$params->safeGet('id',NULL,'?is_integer');
-
-        $fieldsData=$params->safeGet('data',[],'is_array');
-
+        if(!static::ValidateRelations($idTemplate,$idInstance,$params)) {
+            return FALSE;
+        }
+        if(!static::ValidateFields($idTemplate,$idInstance,$params)) {
+            return FALSE;
+        }
         return TRUE;
     }//END public static function ValidateSaveParams
 }//END class InstancesHelpers

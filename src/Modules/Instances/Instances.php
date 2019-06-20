@@ -224,13 +224,13 @@ class Instances extends Module {
     public function SaveInstance($params=NULL) {
         NApp::Dlog($params,'SaveInstance');
         $target=$params->safeGet('target','','is_string');
-        $ckeck=$this->ValidateSaveParams($params);
+        $ckeck=InstancesHelpers::ValidateSaveParams($params);
         if(!$ckeck) {
             NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
             echo Translate::GetMessage('required_fields');
             return;
         }//if(!$ckeck)
-        $idInstance=$params->safeGet('id_instance');
+        // $idInstance=$params->safeGet('id_instance');
         // if($idInstance>0) {
         //     $this->Exec('SaveRecord',$params);
         // } else {
@@ -301,85 +301,8 @@ class Instances extends Module {
         }//if(!count($data))
         $error=FALSE;
 
-        $fields=DataProvider::Get('Plugins\DForms\Instances','GetFields',['template_id'=>$idTemplate]);
-        foreach($fields as $k=>$field) {
-            if($field['itype']==2 || $field['parent_itype']==2) {
-                $fvals=get_array_value($data,$field['id'],NULL,'is_array');
-                if(!is_array($fvals) || !count($fvals)) {
-                    $error=$field['required']==1;
-                    $fval=NULL;
-                } else {
-                    $fval=[];
-                    foreach($fvals as $i=>$fv) {
-                        switch($field['data_type']) {
-                            case 'numeric':
-                                $fval[$i]=Validator::ValidateValue($fv,NULL,'is_numeric');
-                                $error=($field['required']==1 && !is_numeric($fval[$i]));
-                                break;
-                            case 'string':
-                            default:
-                                $fval[$i]=Validator::ValidateValue($fv,'','is_string');
-                                $error=($field['required']==1 && !strlen($fval[$i]));
-                                break;
-                        }//END switch
-                        if($error) {
-                            break;
-                        }
-                    }//END foreach
-                }//if(!is_array($fvals) || !count($fvals))
-            } else {
-                switch($field['data_type']) {
-                    case 'numeric':
-                        $fval=get_array_value($data,$field['id'],NULL,'is_numeric');
-                        $error=($field['required']==1 && !is_numeric($fval));
-                        break;
-                    case 'string':
-                    default:
-                        $fval=get_array_value($data,$field['id'],'','is_string');
-                        $error=($field['required']==1 && !strlen($fval));
-                        break;
-                }//END switch
-            }//if($field['itype']==2 || $field['parent_itype']==2)
-            if($error) {
-                break;
-            }
-            $fields[$k]['value']=$fval;
-        }//END foreach
 
-        $relations=DataProvider::Get('Plugins\DForms\Templates','GetRelations',['template_id'=>$idTemplate]);
-        foreach($relations as $k=>$rel) {
-            $dtype=get_array_value($rel,'dtype','','is_string');
-            $relations[$k]['ivalue']=0;
-            $relations[$k]['svalue']='';
-            switch($rel['rtype']) {
-                case 1:
-                    $r_val=NApp::GetParam($rel['key']);
-                    if($dtype=='integer') {
-                        if(is_numeric($r_val) && $r_val>0) {
-                            $relations[$k]['ivalue']=$r_val;
-                            $relations[$k]['svalue']='';
-                        }//if(is_numeric($r_val) && $r_val>0)
-                    } else {
-                        if(is_string($r_val) && strlen($r_val)) {
-                            $relations[$k]['ivalue']=0;
-                            $relations[$k]['svalue']=$r_val;
-                        }//if(is_string($r_val) && strlen($r_val))
-                    }//if($dtype=='integer')
-                    break;
-                case 3:
-                    if($dtype=='integer') {
-                        $relations[$k]['ivalue']=get_array_value($data,'relation-'.$rel['key'],0,'is_integer');
-                        $relations[$k]['svalue']='';
-                    } else {
-                        $relations[$k]['ivalue']=0;
-                        $relations[$k]['svalue']=get_array_value($data,'relation-'.$rel['key'],'','is_string');
-                    }//if($dtype=='integer')
-                    break;
-            }//END switch
-            if($rel['required']==1 && !$relations[$k]['ivalue'] && !$relations[$k]['svalue']) {
-                throw new AppException('Invalid relation value: ['.$rel['name'].']');
-            }//if($rel['required']==1 && !$relations[$k]['ivalue'] && !$relations[$k]['svalue'])
-        }//END foreach
+
 
         if($error) {
             NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
@@ -387,65 +310,68 @@ class Instances extends Module {
             return;
         }//if($error)
 
-        $template=DataProvider::Get('Plugins\DForms\Instances','GetTemplate',['for_id'=>$idTemplate]);
-        $transaction=AppSession::GetNewUID(get_array_value($template,'code','N/A','is_notempty_string'));
-        DataProvider::StartTransaction('Plugins\DForms\Instances',$transaction);
-        try {
-            $result=DataProvider::Get('Plugins\DForms\Instances','SetNewInstance',[
-                'template_id'=>$idTemplate,
-                'user_id'=>NApp::GetCurrentUserId(),
-            ],['transaction'=>$transaction]);
-            $idInstance=get_array_value($result,[0,'inserted_id'],0,'is_numeric');
-            if($idInstance<=0) {
-                throw new AppException('Database error on instance insert!');
-            }
+        return;
 
-            foreach($fields as $f) {
-                if(($f['itype']==2 || $f['parent_itype']==2) && is_array($f['value'])) {
-                    foreach($f['value'] as $index=>$fValue) {
-                        $result=DataProvider::Get('Plugins\DForms\Instances','SetNewInstanceValue',[
-                            'instance_id'=>$idInstance,
-                            'item_id'=>$f['id'],
-                            'in_value'=>$fValue,
-                            'in_name'=>NULL,
-                            'in_index'=>$index,
-                        ],['transaction'=>$transaction]);
-                        if(get_array_value($result,[0,'inserted_id'],0,'is_integer')<=0) {
-                            throw new AppException('Database error on instance value insert!');
-                        }
-                    }//END foreach
-                } else {
-                    $result=DataProvider::Get('Plugins\DForms\Instances','SetNewInstanceValue',[
-                        'instance_id'=>$idInstance,
-                        'item_id'=>$f['id'],
-                        'in_value'=>(isset($f['value']) ? $f['value'] : NULL),
-                        'in_name'=>NULL,
-                        'in_index'=>NULL,
-                    ],['transaction'=>$transaction]);
-                    if(get_array_value($result,[0,'inserted_id'],0,'is_integer')<=0) {
-                        throw new AppException('Database error on instance value insert!');
-                    }
-                }//if($field['itype']==2 || $field['parent_itype']==2 && is_array($field['value']))
-            }//END foreach
+        // $template=DataProvider::Get('Plugins\DForms\Instances','GetTemplate',['for_id'=>$idTemplate]);
+        // $transaction=AppSession::GetNewUID(get_array_value($template,'code','N/A','is_notempty_string'));
+        // DataProvider::StartTransaction('Plugins\DForms\Instances',$transaction);
+        // try {
+        //     $result=DataProvider::Get('Plugins\DForms\Instances','SetNewInstance',[
+        //         'template_id'=>$idTemplate,
+        //         'user_id'=>NApp::GetCurrentUserId(),
+        //     ],['transaction'=>$transaction]);
+        //     $idInstance=get_array_value($result,[0,'inserted_id'],0,'is_numeric');
+        //     if($idInstance<=0) {
+        //         throw new AppException('Database error on instance insert!');
+        //     }
+        //
+        //     foreach($fields as $f) {
+        //         if(($f['itype']==2 || $f['parent_itype']==2) && is_array($f['value'])) {
+        //             foreach($f['value'] as $index=>$fValue) {
+        //                 $result=DataProvider::Get('Plugins\DForms\Instances','SetNewInstanceValue',[
+        //                     'instance_id'=>$idInstance,
+        //                     'item_id'=>$f['id'],
+        //                     'in_value'=>$fValue,
+        //                     'in_name'=>NULL,
+        //                     'in_index'=>$index,
+        //                 ],['transaction'=>$transaction]);
+        //                 if(get_array_value($result,[0,'inserted_id'],0,'is_integer')<=0) {
+        //                     throw new AppException('Database error on instance value insert!');
+        //                 }
+        //             }//END foreach
+        //         } else {
+        //             $result=DataProvider::Get('Plugins\DForms\Instances','SetNewInstanceValue',[
+        //                 'instance_id'=>$idInstance,
+        //                 'item_id'=>$f['id'],
+        //                 'in_value'=>(isset($f['value']) ? $f['value'] : NULL),
+        //                 'in_name'=>NULL,
+        //                 'in_index'=>NULL,
+        //             ],['transaction'=>$transaction]);
+        //             if(get_array_value($result,[0,'inserted_id'],0,'is_integer')<=0) {
+        //                 throw new AppException('Database error on instance value insert!');
+        //             }
+        //         }//if($field['itype']==2 || $field['parent_itype']==2 && is_array($field['value']))
+        //     }//END foreach
+        //
+        //     foreach($relations as $r) {
+        //         $result=DataProvider::Get('Plugins\DForms\Instances','SetNewInstanceRelation',[
+        //             'instance_id'=>$idInstance,
+        //             'relation_id'=>$r['id'],
+        //             'in_ivalue'=>$r['ivalue'],
+        //             'in_svalue'=>$r['svalue'],
+        //         ],['transaction'=>$transaction]);
+        //         if(get_array_value($result,[0,'inserted_id'],0,'is_integer')<=0) {
+        //             throw new AppException('Database error on instance value insert!');
+        //         }
+        //     }//END foreach
+        //
+        //     DataProvider::CloseTransaction('Plugins\DForms\Instances',$transaction,FALSE);
+        // } catch(AppException $e) {
+        //     DataProvider::CloseTransaction('Plugins\DForms\Instances',$transaction,TRUE);
+        //     NApp::Elog($e->getMessage());
+        //     throw $e;
+        // }//END try
 
-            foreach($relations as $r) {
-                $result=DataProvider::Get('Plugins\DForms\Instances','SetNewInstanceRelation',[
-                    'instance_id'=>$idInstance,
-                    'relation_id'=>$r['id'],
-                    'in_ivalue'=>$r['ivalue'],
-                    'in_svalue'=>$r['svalue'],
-                ],['transaction'=>$transaction]);
-                if(get_array_value($result,[0,'inserted_id'],0,'is_integer')<=0) {
-                    throw new AppException('Database error on instance value insert!');
-                }
-            }//END foreach
-
-            DataProvider::CloseTransaction('Plugins\DForms\Instances',$transaction,FALSE);
-        } catch(AppException $e) {
-            DataProvider::CloseTransaction('Plugins\DForms\Instances',$transaction,TRUE);
-            NApp::Elog($e->getMessage());
-            throw $e;
-        }//END try
         if($params->safeGet('is_modal',$this->isModal,'is_numeric')==1) {
             $this->CloseForm();
         }
