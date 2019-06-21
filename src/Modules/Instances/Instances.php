@@ -10,18 +10,15 @@
  * @filesource
  */
 namespace NETopes\Plugins\DForms\Modules\Instances;
+use NApp;
 use NETopes\Core\App\AppView;
 use NETopes\Core\App\Module;
 use NETopes\Core\App\ModulesProvider;
-use NETopes\Core\App\Params;
+use NETopes\Core\AppException;
 use NETopes\Core\AppSession;
 use NETopes\Core\Controls\Button;
-use NETopes\Core\Controls\HiddenInput;
 use NETopes\Core\Data\DataProvider;
-use NETopes\Core\Data\VirtualEntity;
 use NETopes\Core\Validators\Validator;
-use NETopes\Core\AppException;
-use NApp;
 use Translate;
 
 /**
@@ -162,6 +159,7 @@ class Instances extends Module {
             throw new AppException('Invalid DynamicForm configuration!');
         }
         $controlClass=get_array_value($ctrl_params,'control_class','','is_string');
+        $noRedirect=$params->safeGet('no_redirect',FALSE,'bool');
         $cModule=$params->safeGet('cmodule',$this->class,'is_notempty_string');
         $cMethod=$params->safeGet('cmethod','Listing','is_notempty_string');
         $cTarget=$params->safeGet('ctarget','main-content','is_notempty_string');
@@ -185,7 +183,7 @@ class Instances extends Module {
             $view->SetTitle($template->getProperty('name','','is_string'));
         }//if($isModal)
         $formActions=[];
-            $fResponseTarget=get_array_value($ctrl_params,'response_target','df_'.$tName.'_errors','is_notempty_string');
+        $fResponseTarget=get_array_value($ctrl_params,'response_target','df_'.$tName.'_errors','is_notempty_string');
         if(strlen($fTagId)) {
             $btnSave=new Button(['value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','class'=>NApp::$theme->GetBtnPrimaryClass(),'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': '{$aeSaveInstanceMethod}', 'params': { 'id_template': '{$idTemplate}', 'id': '{$idInstance}', 'relations': '{nGet|df_{$tName}_relations:form}', 'data': '{nGet|df_{$tName}_form:form}', 'is_modal': '{$isModal}', 'cmodule': '{$cModule}', 'cmethod': '{$cMethod}', 'ctarget': '{$cTarget}', 'target': '{$fTagId}' } }",$fResponseTarget)]);
             $formActions[]=$btnSave->Show();
@@ -212,31 +210,6 @@ class Instances extends Module {
         }//if($actionsLocation=='after')
         $view->Render();
     }//END public function ShowAddEditForm
-
-    /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
-     * @return void
-     * @access public
-     * @throws \NETopes\Core\AppException
-     */
-    public function SaveInstance($params=NULL) {
-        NApp::Dlog($params,'SaveInstance');
-        $target=$params->safeGet('target','','is_string');
-        $ckeck=InstancesHelpers::ValidateSaveParams($params);
-        if(!$ckeck) {
-            NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
-            echo Translate::GetMessage('required_fields');
-            return;
-        }//if(!$ckeck)
-        // $idInstance=$params->safeGet('id_instance');
-        // if($idInstance>0) {
-        //     $this->Exec('SaveRecord',$params);
-        // } else {
-        //     $this->Exec('SaveNewRecord',$params);
-        // }//if($idInstance>0)
-    }//END public function SaveInstance
 
     /**
      * description
@@ -286,110 +259,6 @@ class Instances extends Module {
      * @access public
      * @throws \NETopes\Core\AppException
      */
-    public function SaveNewRecord($params=NULL) {
-        // NApp::Dlog($params,'SaveNewRecord');
-        $idTemplate=$params->safeGet('id_template',$this->idTemplate,'is_not0_integer');
-        if(!$idTemplate) {
-            throw new AppException('Invalid DynamicForm template identifier!');
-        }
-        $target=$params->safeGet('target','','is_string');
-        $data=$params->safeGet('data',[],'is_array');
-        if(!count($data)) {
-            NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
-            echo Translate::GetMessage('required_fields');
-            return;
-        }//if(!count($data))
-        $error=FALSE;
-
-
-
-
-        if($error) {
-            NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
-            echo Translate::GetMessage('required_fields');
-            return;
-        }//if($error)
-
-        return;
-
-        // $template=DataProvider::Get('Plugins\DForms\Instances','GetTemplate',['for_id'=>$idTemplate]);
-        // $transaction=AppSession::GetNewUID(get_array_value($template,'code','N/A','is_notempty_string'));
-        // DataProvider::StartTransaction('Plugins\DForms\Instances',$transaction);
-        // try {
-        //     $result=DataProvider::Get('Plugins\DForms\Instances','SetNewInstance',[
-        //         'template_id'=>$idTemplate,
-        //         'user_id'=>NApp::GetCurrentUserId(),
-        //     ],['transaction'=>$transaction]);
-        //     $idInstance=get_array_value($result,[0,'inserted_id'],0,'is_numeric');
-        //     if($idInstance<=0) {
-        //         throw new AppException('Database error on instance insert!');
-        //     }
-        //
-        //     foreach($fields as $f) {
-        //         if(($f['itype']==2 || $f['parent_itype']==2) && is_array($f['value'])) {
-        //             foreach($f['value'] as $index=>$fValue) {
-        //                 $result=DataProvider::Get('Plugins\DForms\Instances','SetNewInstanceValue',[
-        //                     'instance_id'=>$idInstance,
-        //                     'item_id'=>$f['id'],
-        //                     'in_value'=>$fValue,
-        //                     'in_name'=>NULL,
-        //                     'in_index'=>$index,
-        //                 ],['transaction'=>$transaction]);
-        //                 if(get_array_value($result,[0,'inserted_id'],0,'is_integer')<=0) {
-        //                     throw new AppException('Database error on instance value insert!');
-        //                 }
-        //             }//END foreach
-        //         } else {
-        //             $result=DataProvider::Get('Plugins\DForms\Instances','SetNewInstanceValue',[
-        //                 'instance_id'=>$idInstance,
-        //                 'item_id'=>$f['id'],
-        //                 'in_value'=>(isset($f['value']) ? $f['value'] : NULL),
-        //                 'in_name'=>NULL,
-        //                 'in_index'=>NULL,
-        //             ],['transaction'=>$transaction]);
-        //             if(get_array_value($result,[0,'inserted_id'],0,'is_integer')<=0) {
-        //                 throw new AppException('Database error on instance value insert!');
-        //             }
-        //         }//if($field['itype']==2 || $field['parent_itype']==2 && is_array($field['value']))
-        //     }//END foreach
-        //
-        //     foreach($relations as $r) {
-        //         $result=DataProvider::Get('Plugins\DForms\Instances','SetNewInstanceRelation',[
-        //             'instance_id'=>$idInstance,
-        //             'relation_id'=>$r['id'],
-        //             'in_ivalue'=>$r['ivalue'],
-        //             'in_svalue'=>$r['svalue'],
-        //         ],['transaction'=>$transaction]);
-        //         if(get_array_value($result,[0,'inserted_id'],0,'is_integer')<=0) {
-        //             throw new AppException('Database error on instance value insert!');
-        //         }
-        //     }//END foreach
-        //
-        //     DataProvider::CloseTransaction('Plugins\DForms\Instances',$transaction,FALSE);
-        // } catch(AppException $e) {
-        //     DataProvider::CloseTransaction('Plugins\DForms\Instances',$transaction,TRUE);
-        //     NApp::Elog($e->getMessage());
-        //     throw $e;
-        // }//END try
-
-        if($params->safeGet('is_modal',$this->isModal,'is_numeric')==1) {
-            $this->CloseForm();
-        }
-        $cModule=$params->safeGet('cmodule',get_called_class(),'is_notempty_string');
-        $cMethod=$params->safeGet('cmethod','Listing','is_notempty_string');
-        $cTarget=$params->safeGet('ctarget','main-content','is_notempty_string');
-        ModulesProvider::Exec($cModule,$cMethod,['id_template'=>$idTemplate,'target'=>$cTarget],$cTarget);
-        // NApp::Ajax()->Execute("{ 'module': '{$cModule}', 'method': '{$cMethod}', 'params': { 'id_template': {$idTemplate}, 'target': '{$cTarget}' } }",$cTarget);
-    }//END public function SaveNewRecord
-
-    /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
-     * @return void
-     * @access public
-     * @throws \NETopes\Core\AppException
-     */
     public function ShowEditForm($params=NULL) {
         // NApp::Dlog($params,'ShowEditForm');
         $idInstance=$params->safeGet('id',NULL,'is_not0_integer');
@@ -420,6 +289,147 @@ class Instances extends Module {
             NApp::Ajax()->ExecuteJs("ShowModalForm('90%',($('#page-title').html()+' - ".Translate::GetButton('edit')."'))");
         }//if($isModal)
     }//END public function ShowEditForm
+
+    /**
+     * description
+     *
+     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @return void
+     * @access public
+     * @throws \NETopes\Core\AppException
+     */
+    public function SaveInstance($params=NULL) {
+        // NApp::Dlog($params,'SaveInstance');
+        $target=$params->safeGet('target','','is_string');
+        $check=InstancesHelpers::ValidateSaveParams($params);
+        if(!$check) {
+            $message=NULL;
+            $relationsErrors=$params->safeGet('df_relations_errors',[],'is_array');
+            foreach($relationsErrors as $error) {
+                $type=get_array_param($error,'type','','is_string');
+                $name=get_array_param($error,'name','','is_string');
+                $message.='<li>'.$name.': '.Translate::GetError('required_field').'</li>';
+                if(strlen($type)=='required_field') {
+                    NApp::Ajax()->ExecuteJs("AddClassOnErrorByName('{$target}','".get_array_param($error,'key','','is_string')."')");
+                }//if(strlen($type)=='required_field')
+            }//END foreach
+            $fieldsErrors=$params->safeGet('df_fields_errors',[],'is_array');
+            foreach($fieldsErrors as $error) {
+                $type=get_array_param($error,'type','','is_string');
+                $name=get_array_param($error,'label','','is_string');
+                $fieldId=get_array_param($error,'id',NULL,'is_integer');
+                $message.='<li>'.$name.': '.Translate::GetError('required_field').'</li>';
+                if($fieldId) {
+                    NApp::Ajax()->ExecuteJs("AddClassOnErrorByName('{$target}','{$fieldId}')");
+                }
+            }//END foreach
+            if(strlen($message)) {
+                echo '<ul>'.$message.'</ul>';
+            } else {
+                NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
+                echo Translate::GetMessage('required_fields');
+            }//if(strlen($message))
+            return;
+        }//if(!$check)
+        $idInstance=$params->safeGet('id_instance',NULL,'is_integer');
+        $params->set('save_only',TRUE);
+        if($idInstance>0) {
+            $this->Exec('SaveRecord',$params);
+        } else {
+            $this->Exec('SaveNewRecord',$params);
+        }//if($idInstance>0)
+        InstancesHelpers::RedirectAfterAction($params->safeGet('id_template',$this->idTemplate,'is_not0_integer'),$params,$this);
+    }//END public function SaveInstance
+
+    /**
+     * description
+     *
+     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @return void
+     * @access public
+     * @throws \NETopes\Core\AppException
+     */
+    public function SaveNewRecord($params=NULL) {
+        NApp::Dlog($params,'SaveNewRecord');
+        $idTemplate=$params->safeGet('id_template',$this->idTemplate,'is_not0_integer');
+        if(!$idTemplate) {
+            throw new AppException('Invalid DynamicForm template identifier!');
+        }
+        $template=DataProvider::Get('Plugins\DForms\Instances','GetTemplate',['for_id'=>$idTemplate]);
+        if(!is_object($template)) {
+            throw new AppException('Invalid DynamicForm template!');
+        }
+        $fieldsData=$params->safeGet('df_fields_values');
+        if(!count($fieldsData)) {
+            throw new AppException('Invalid DynamicForm fields data!');
+        }
+        $relationsData=$params->safeGet('df_relations_values');
+
+        $transaction=AppSession::GetNewUID($template->getProperty('code',$idTemplate,'is_notempty_string'));
+        DataProvider::StartTransaction('Plugins\DForms\Instances',$transaction);
+        try {
+            $dbResult=DataProvider::GetArray('Plugins\DForms\Instances','SetNewInstance',[
+                'template_id'=>$idTemplate,
+                'user_id'=>NApp::GetCurrentUserId(),
+            ],['transaction'=>$transaction]);
+            $idInstance=get_array_value($dbResult,[0,'inserted_id'],0,'is_integer');
+            if($idInstance<=0) {
+                NApp::Dlog($dbResult,'SetNewInstance>>$dbResult');
+                throw new AppException('Database error on instance insert!');
+            }
+            /** @var \NETopes\Core\Data\VirtualEntity $f */
+            foreach($fieldsData as $f) {
+                $fieldValue=$f->getProperty('value');
+                if(($f->getProperty('itype',0,'is_integer')==2 || $f->getProperty('parent_itype',0,'is_integer')==2) && is_array($fieldValue)) {
+                    foreach($fieldValue as $index=>$fValue) {
+                        $dbResult=DataProvider::GetArray('Plugins\DForms\Instances','SetNewInstanceValue',[
+                            'instance_id'=>$idInstance,
+                            'item_id'=>$f->getProperty('id',NULL,'is_integer'),
+                            'in_value'=>$fValue,
+                            'in_name'=>NULL,
+                            'in_index'=>$index,
+                        ],['transaction'=>$transaction]);
+                        if(get_array_value($dbResult,[0,'inserted_id'],0,'is_integer')<=0) {
+                            NApp::Dlog($dbResult,'SetNewInstanceValue>>$dbResult');
+                            throw new AppException('Database error on instance value insert!');
+                        }
+                    }//END foreach
+                } else {
+                    $dbResult=DataProvider::GetArray('Plugins\DForms\Instances','SetNewInstanceValue',[
+                        'instance_id'=>$idInstance,
+                        'item_id'=>$f->getProperty('id',NULL,'is_integer'),
+                        'in_value'=>$fieldValue,
+                        'in_name'=>NULL,
+                        'in_index'=>NULL,
+                    ],['transaction'=>$transaction]);
+                    if(get_array_value($dbResult,[0,'inserted_id'],0,'is_integer')<=0) {
+                        NApp::Dlog($dbResult,'SetNewInstanceValue>>$dbResult');
+                        throw new AppException('Database error on instance value insert!');
+                    }
+                }//if($field['itype']==2 || $field['parent_itype']==2 && is_array($field['value']))
+            }//END foreach
+            /** @var \NETopes\Core\Data\VirtualEntity $r */
+            foreach($relationsData as $r) {
+                $dbResult=DataProvider::GetArray('Plugins\DForms\Instances','SetNewInstanceRelation',[
+                    'instance_id'=>$idInstance,
+                    'relation_id'=>$r->getProperty('id',NULL,'is_integer'),
+                    'in_ivalue'=>$r->getProperty('ivalue',NULL,'?is_integer'),
+                    'in_svalue'=>$r->getProperty('svalue',NULL,'?is_string'),
+                ],['transaction'=>$transaction]);
+                if(get_array_value($dbResult,[0,'inserted_id'],0,'is_integer')<=0) {
+                    NApp::Dlog($dbResult,'SetNewInstanceRelation>>$dbResult');
+                    throw new AppException('Database error on instance value insert!');
+                }
+            }//END foreach
+
+            DataProvider::CloseTransaction('Plugins\DForms\Instances',$transaction,FALSE);
+        } catch(AppException $e) {
+            DataProvider::CloseTransaction('Plugins\DForms\Instances',$transaction,TRUE);
+            NApp::Elog($e->getMessage());
+            throw $e;
+        }//END try
+        InstancesHelpers::RedirectAfterAction($idTemplate,$params,$this);
+    }//END public function SaveNewRecord
 
     /**
      * description

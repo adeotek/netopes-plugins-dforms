@@ -11,6 +11,7 @@
  */
 namespace NETopes\Plugins\DForms\Modules\Instances;
 use NApp;
+use NETopes\Core\App\ModulesProvider;
 use NETopes\Core\App\Params;
 use NETopes\Core\AppException;
 use NETopes\Core\Controls\BasicForm;
@@ -43,10 +44,15 @@ class InstancesHelpers {
     public static function PrepareRepeatableField(VirtualEntity $field,array $fParams,$fValue=NULL,?string $themeType=NULL,int $iCount=0): array {
         // NApp::Dlog(['$field'=>$field,'$fParams'=>$fParams,'$fValue'=>$fValue,'$themeType'=>$themeType,'$iCount'=>$iCount],'PrepareField');
         $idInstance=$field->getProperty('id_instance',NULL,'is_integer');
-        $tagId=($idInstance ? $idInstance.'_' : '').$field->getProperty('uid','','is_string').'_'.$field->getProperty('name','','is_string');
+        $idField=$field->getProperty('id',NULL,'is_integer');
+        if(!$idField) {
+            throw new AppException('Invalid ID for field ['.$field->getProperty('name','','is_string').']!');
+        }
+        // $tagId=($idInstance ? $idInstance.'_' : '').$field->getProperty('uid','','is_string').'_'.$field->getProperty('name','','is_string');
+        $tagId=($idInstance ?? 0).'_'.$idField;
         $fValuesArray=explode('|::|',$fValue);
         $field->set('tag_id',$tagId.'-0');
-        $field->set('tag_name',$field->getProperty('id',NULL,'is_numeric').'[]');
+        $field->set('tag_name',$idField.'[]');
         $field->set('value',get_array_value($fValuesArray,0,NULL,'isset'));
         $fClass=$field->getProperty('class','','is_string');
         $idValuesList=$field->getProperty('id_values_list',0,'is_numeric');
@@ -137,9 +143,13 @@ class InstancesHelpers {
             return static::PrepareRepeatableField($field,$fParams,$fValue,$themeType,$iCount);
         }
         $idInstance=$field->getProperty('id_instance',NULL,'is_integer');
-        $tagId=($idInstance ? $idInstance.'_' : '').$field->getProperty('uid','','is_string').'_'.$field->getProperty('name','','is_string');
-        $field->set('tag_id',$tagId);
-        $field->set('tag_name',$field->getProperty('id',NULL,'is_numeric'));
+        $idField=$field->getProperty('id',NULL,'is_integer');
+        if(!$idField) {
+            throw new AppException('Invalid ID for field ['.$field->getProperty('name','','is_string').']!');
+        }
+        // $tagId=($idInstance ? $idInstance.'_' : '').$field->getProperty('uid','','is_string').'_'.$field->getProperty('name','','is_string');
+        $field->set('tag_id',($idInstance ?? 0).'_'.$idField);
+        $field->set('tag_name',$idField);
         $field->set('value',$fValue);
         // if(strlen($themeType)) { $fParams['theme_type'] = $themeType; }
         $fClass=$field->getProperty('class','','is_string');
@@ -530,12 +540,13 @@ class InstancesHelpers {
         } else {
             $relations=DataProvider::Get('Plugins\DForms\Templates','GetRelations',['template_id'=>$idTemplate]);
         }//if($idInstance)
-        // NApp::Dlog($relations,'$relations');
         $relationsData=$params->safeGet('relations',[],'is_array');
         $fieldsData=$params->safeGet('data',[],'is_array');
+        // NApp::Dlog($relations,'$relations');
+        // NApp::Dlog($relationsData,'$relationsData');
         $errors=[];
         /** @var VirtualEntity $rel */
-        foreach($relations as $k=>$rel) {
+        foreach($relations as $rel) {
             $relKey=$rel->getProperty('key',NULL,'is_string');
             $dType=$rel->getProperty('dtype','','is_string');
             $relValue=NULL;
@@ -562,9 +573,10 @@ class InstancesHelpers {
                 ];
                 continue;
             }
-            $relations->set($k,$rel->set('ivalue',($dType=='integer' ? $relValue : NULL)));
-            $relations->set($k,$rel->set('svalue',($dType!='integer' ? $relValue : NULL)));
+            $rel->set('ivalue',($dType=='integer' ? $relValue : NULL));
+            $rel->set('svalue',($dType!='integer' ? $relValue : NULL));
         }//END foreach
+        // NApp::Dlog($relations,'$relations');
         $params->set('df_relations_values',$relations);
         $params->set('df_relations_errors',$errors);
         return !count($errors);
@@ -643,7 +655,7 @@ class InstancesHelpers {
                         }//END switch
                     }//END foreach
                     if(!count($errors)) {
-                        $fields->set($k,$field->set('value',$fieldValue));
+                        $field->set('value',$fieldValue);
                     }
                 }//if(!is_array($fieldsValues) || !count($fieldsValues))
             } else {
@@ -659,7 +671,6 @@ class InstancesHelpers {
                             ];
                             continue 2;
                         }
-                        $fields->set($k,$field->set('value',$fieldValue));
                         break;
                     case 'string':
                     default:
@@ -673,9 +684,9 @@ class InstancesHelpers {
                             ];
                             continue 2;
                         }
-                        $fields->set($k,$field->set('value',$fieldValue));
                         break;
                 }//END switch
+                $field->set('value',$fieldValue);
             }//if($field->getProperty('itype',0,'is_integer')==2 || $field->getProperty('parent_itype',0,'is_integer')==2)
         }//END foreach
         $params->set('df_fields_values',$fields);
@@ -699,4 +710,25 @@ class InstancesHelpers {
         }
         return TRUE;
     }//END public static function ValidateSaveParams
+
+    /**
+     * @param int                      $idTemplate
+     * @param \NETopes\Core\App\Params $params
+     * @param                          $module
+     * @return void
+     * @throws \NETopes\Core\AppException
+     */
+    public static function RedirectAfterAction(int $idTemplate,Params $params,$module): void {
+        if($params->safeGet('no_redirect',FALSE,'bool')) {
+            return;
+        }
+        if($params->safeGet('is_modal',$module->isModal,'is_numeric')==1) {
+            /** @var \NETopes\Core\App\Module $module */
+            $module->CloseForm();
+        }
+        $cModule=$params->safeGet('cmodule',$module->name,'is_notempty_string');
+        $cMethod=$params->safeGet('cmethod','Listing','is_notempty_string');
+        $cTarget=$params->safeGet('ctarget','main-content','is_notempty_string');
+        ModulesProvider::Exec($cModule,$cMethod,['id_template'=>$idTemplate,'target'=>$cTarget],$cTarget);
+    }//END public static function RedirectAfterAction
 }//END class InstancesHelpers
