@@ -14,6 +14,7 @@ use NApp;
 use NETopes\Core\App\AppView;
 use NETopes\Core\App\Module;
 use NETopes\Core\App\ModulesProvider;
+use NETopes\Core\App\Params;
 use NETopes\Core\AppException;
 use NETopes\Core\AppSession;
 use NETopes\Core\Controls\Button;
@@ -139,6 +140,7 @@ class Instances extends Module {
         // NApp::Dlog($params,'ShowAddEditForm');
         $this->templateCode=$params->safeGet('template_code',$this->templateCode,'is_not0_integer');
         $idInstance=$params->safeGet('id',NULL,'is_not0_integer');
+        /** @var \NETopes\Core\Data\VirtualEntity $template */
         $template=DataProvider::Get('Plugins\DForms\Instances','GetTemplate',[
             'for_id'=>NULL,
             'for_code'=>$this->templateCode,
@@ -153,6 +155,10 @@ class Instances extends Module {
         if(!$idTemplate) {
             throw new AppException('Invalid DynamicForm template!');
         }
+        if(!$idInstance && $template->getProperty('ftype',0,'is_integer')==2 && $params instanceof Params) {
+            $instance=InstancesHelpers::GetSingletonInstance($idTemplate,$params);
+            $idInstance=$instance->getProperty('id',NULL,'is_integer');
+        }//if(!$idInstance && $template->getProperty('ftype',0,'is_integer')==2 && $params instanceof Params)
 
         $ctrl_params=InstancesHelpers::PrepareForm($params,$template,$idInstance);
         if(!$ctrl_params) {
@@ -300,6 +306,7 @@ class Instances extends Module {
      */
     public function SaveInstance($params=NULL) {
         // NApp::Dlog($params,'SaveInstance');
+        $idInstance=$params->safeGet('id_instance',NULL,'is_integer');
         $target=$params->safeGet('target','','is_string');
         $check=InstancesHelpers::ValidateSaveParams($params);
         if(!$check) {
@@ -317,21 +324,20 @@ class Instances extends Module {
             foreach($fieldsErrors as $error) {
                 $type=get_array_param($error,'type','','is_string');
                 $name=get_array_param($error,'label','','is_string');
-                $fieldId=get_array_param($error,'id',NULL,'is_integer');
+                $fieldUid=get_array_param($error,'uid',NULL,'is_string');
                 $message.='<li>'.$name.': '.Translate::GetError('required_field').'</li>';
-                if($fieldId) {
-                    NApp::Ajax()->ExecuteJs("AddClassOnErrorByName('{$target}','{$fieldId}')");
-                }
+                if(strlen($fieldUid)) {
+                    NApp::Ajax()->ExecuteJs("AddClassOnErrorByName('{$target}','{$fieldUid}')");
+                }//if(strlen($fieldUid))
             }//END foreach
             if(strlen($message)) {
-                echo '<ul>'.$message.'</ul>';
+                echo '<ul class="errors-list">'.$message.'</ul>';
             } else {
                 NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
                 echo Translate::GetMessage('required_fields');
             }//if(strlen($message))
             return;
         }//if(!$check)
-        $idInstance=$params->safeGet('id_instance',NULL,'is_integer');
         $params->set('save_only',TRUE);
         if($idInstance>0) {
             $this->Exec('SaveRecord',$params);
@@ -350,7 +356,7 @@ class Instances extends Module {
      * @throws \NETopes\Core\AppException
      */
     public function SaveNewRecord($params=NULL) {
-        NApp::Dlog($params,'SaveNewRecord');
+        // NApp::Dlog($params,'SaveNewRecord');
         $idTemplate=$params->safeGet('id_template',$this->idTemplate,'is_not0_integer');
         if(!$idTemplate) {
             throw new AppException('Invalid DynamicForm template identifier!');
@@ -384,7 +390,7 @@ class Instances extends Module {
                     foreach($fieldValue as $index=>$fValue) {
                         $dbResult=DataProvider::GetArray('Plugins\DForms\Instances','SetNewInstanceValue',[
                             'instance_id'=>$idInstance,
-                            'item_id'=>$f->getProperty('id',NULL,'is_integer'),
+                            'item_uid'=>$f->getProperty('uid',NULL,'is_notempty_string'),
                             'in_value'=>$fValue,
                             'in_name'=>NULL,
                             'in_index'=>$index,
@@ -397,7 +403,7 @@ class Instances extends Module {
                 } else {
                     $dbResult=DataProvider::GetArray('Plugins\DForms\Instances','SetNewInstanceValue',[
                         'instance_id'=>$idInstance,
-                        'item_id'=>$f->getProperty('id',NULL,'is_integer'),
+                        'item_uid'=>$f->getProperty('uid',NULL,'is_notempty_string'),
                         'in_value'=>$fieldValue,
                         'in_name'=>NULL,
                         'in_index'=>NULL,
@@ -457,7 +463,7 @@ class Instances extends Module {
         $fields=DataProvider::Get('Plugins\DForms\Instances','GetFields',['template_id'=>$idTemplate,'instance_id'=>$idInstance]);
         foreach($fields as $k=>$field) {
             if($field['itype']==2 || $field['parent_itype']==2) {
-                $fvals=get_array_value($data,$field['id'],NULL,'is_array');
+                $fvals=get_array_value($data,$field['uid'],NULL,'is_array');
                 if(!is_array($fvals) || !count($fvals)) {
                     $error=$field['required']==1;
                     $fval=NULL;

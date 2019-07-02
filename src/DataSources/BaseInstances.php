@@ -63,12 +63,12 @@ abstract class BaseInstances extends DataSource {
     /**
      * GetFields default parameters
      */
-    public const GET_FIELDS=['template_id'=>NULL,'for_template_code'=>NULL,'instance_id'=>NULL,'for_listing'=>NULL];
+    public const GET_FIELDS=['template_id'=>NULL,'for_template_code'=>NULL,'instance_id'=>NULL,'for_listing'=>NULL,'for_pindex'=>NULL];
 
     /**
      * Gets DynamicForm fields
      *
-     * @param array $params ['template_id'=>NULL,'for_template_code'=>NULL,'instance_id'=>NULL,'for_listing'=>NULL]
+     * @param array $params ['template_id'=>NULL,'for_template_code'=>NULL,'instance_id'=>NULL,'for_listing'=>NULL,'for_pindex'=>NULL]
      * @param array $extra_params
      * @return mixed
      */
@@ -189,12 +189,12 @@ abstract class BaseInstances extends DataSource {
     /**
      * SetNewInstanceValue default parameters
      */
-    public const SET_NEW_INSTANCE_VALUE=['instance_id'=>NULL,'item_id'=>NULL,'in_value'=>NULL,'in_name'=>NULL,'in_index'=>NULL];
+    public const SET_NEW_INSTANCE_VALUE=['instance_id'=>NULL,'item_uid'=>NULL,'in_value'=>NULL,'in_name'=>NULL,'in_index'=>NULL];
 
     /**
      * Sets a new DynamicForm instance field value
      *
-     * @param array $params ['instance_id'=>NULL,'item_id'=>NULL,'in_value'=>NULL,'in_name'=>NULL,'in_index'=>NULL]
+     * @param array $params ['instance_id'=>NULL,'item_uid'=>NULL,'in_value'=>NULL,'in_name'=>NULL,'in_index'=>NULL]
      * @param array $extra_params
      * @return mixed
      */

@@ -44,15 +44,15 @@ class InstancesHelpers {
     public static function PrepareRepeatableField(VirtualEntity $field,array $fParams,$fValue=NULL,?string $themeType=NULL,int $iCount=0): array {
         // NApp::Dlog(['$field'=>$field,'$fParams'=>$fParams,'$fValue'=>$fValue,'$themeType'=>$themeType,'$iCount'=>$iCount],'PrepareField');
         $idInstance=$field->getProperty('id_instance',NULL,'is_integer');
-        $idField=$field->getProperty('id',NULL,'is_integer');
-        if(!$idField) {
-            throw new AppException('Invalid ID for field ['.$field->getProperty('name','','is_string').']!');
-        }
+        $fieldUid=$field->getProperty('uid',NULL,'is_string');
+        if(!strlen($fieldUid)) {
+            throw new AppException('Invalid UID for field ['.$field->getProperty('name','','is_string').']!');
+        }//if(!strlen($fieldUid))
         // $tagId=($idInstance ? $idInstance.'_' : '').$field->getProperty('uid','','is_string').'_'.$field->getProperty('name','','is_string');
-        $tagId=($idInstance ?? 0).'_'.$idField;
+        $tagId=($idInstance ?? 0).'_'.$fieldUid;
         $fValuesArray=explode('|::|',$fValue);
         $field->set('tag_id',$tagId.'-0');
-        $field->set('tag_name',$idField.'[]');
+        $field->set('tag_name',$fieldUid.'[]');
         $field->set('value',get_array_value($fValuesArray,0,NULL,'isset'));
         $fClass=$field->getProperty('class','','is_string');
         $idValuesList=$field->getProperty('id_values_list',0,'is_numeric');
@@ -143,13 +143,13 @@ class InstancesHelpers {
             return static::PrepareRepeatableField($field,$fParams,$fValue,$themeType,$iCount);
         }
         $idInstance=$field->getProperty('id_instance',NULL,'is_integer');
-        $idField=$field->getProperty('id',NULL,'is_integer');
-        if(!$idField) {
-            throw new AppException('Invalid ID for field ['.$field->getProperty('name','','is_string').']!');
-        }
+        $fieldUid=$field->getProperty('uid',NULL,'is_string');
+        if(!strlen($fieldUid)) {
+            throw new AppException('Invalid UID for field ['.$field->getProperty('name','','is_string').']!');
+        }//if(!strlen($fieldUid))
         // $tagId=($idInstance ? $idInstance.'_' : '').$field->getProperty('uid','','is_string').'_'.$field->getProperty('name','','is_string');
-        $field->set('tag_id',($idInstance ?? 0).'_'.$idField);
-        $field->set('tag_name',$idField);
+        $field->set('tag_id',($idInstance ?? 0).'_'.$fieldUid);
+        $field->set('tag_name',$fieldUid);
         $field->set('value',$fValue);
         // if(strlen($themeType)) { $fParams['theme_type'] = $themeType; }
         $fClass=$field->getProperty('class','','is_string');
@@ -500,6 +500,20 @@ class InstancesHelpers {
     }//END public static function PrepareRelationsFormPart
 
     /**
+     * @param int                      $idTemplate
+     * @param \NETopes\Core\App\Params $params
+     * @return \NETopes\Core\Data\VirtualEntity
+     */
+    public static function GetSingletonInstance(int $idTemplate,Params $params): VirtualEntity {
+        // NApp::Dlog($template->toArray(),'$template');
+        // $instance=DataProvider::Get('Plugins\DForms\Instances','GetSingletonInstance',[
+        //     'template_id'=>$idTemplate,
+        // ]);
+
+        return new VirtualEntity();
+    }//END public static function GetSingletonInstance
+
+    /**
      * @param mixed       $value
      * @param mixed|null  $returnValue
      * @param string|null $dataType
@@ -596,22 +610,22 @@ class InstancesHelpers {
         $errors=[];
         /** @var VirtualEntity $field */
         foreach($fields as $k=>$field) {
-            $fieldId=$field->getProperty('id',NULL,'is_integer');
+            $fieldUid=$field->getProperty('uid',NULL,'is_string');
             $fieldName=$field->getProperty('name','N/A','is_string');
-            if(!$fieldId) {
+            if(!strlen($fieldUid)) {
                 $errors[]=[
                     'name'=>$fieldName,
                     'label'=>$field->getProperty('label','','is_string'),
-                    'type'=>'invalid_id',
+                    'type'=>'invalid_uid',
                 ];
                 continue;
-            }
+            }//if(!strlen($fieldUid))
             if($field->getProperty('itype',0,'is_integer')==2 || $field->getProperty('parent_itype',0,'is_integer')==2) {
-                $fieldsValues=get_array_value($fieldsData,$fieldId,NULL,'is_array');
+                $fieldsValues=get_array_value($fieldsData,$fieldUid,NULL,'is_array');
                 if(!is_array($fieldsValues) || !count($fieldsValues)) {
                     if($field->getProperty('required',FALSE,'bool')) {
                         $errors[]=[
-                            'id'=>$fieldId,
+                            'uid'=>$fieldUid,
                             'name'=>$fieldName,
                             'label'=>$field->getProperty('label','','is_string'),
                             'type'=>'required_field',
@@ -627,7 +641,7 @@ class InstancesHelpers {
                                 $fieldItemValue=Validator::ValidateValue($fv,NULL,'is_numeric');
                                 if($field->getProperty('required',FALSE,'bool') && !is_numeric($fieldItemValue)) {
                                     $errors[]=[
-                                        'id'=>$fieldId,
+                                        'uid'=>$fieldUid,
                                         'name'=>$fieldName,
                                         'label'=>$field->getProperty('label','','is_string'),
                                         'type'=>'required_field',
@@ -642,7 +656,7 @@ class InstancesHelpers {
                                 $fieldItemValue=Validator::ValidateValue($fv,NULL,'is_string');
                                 if($field->getProperty('required',FALSE,'bool') && !strlen($fieldItemValue)) {
                                     $errors[]=[
-                                        'id'=>$fieldId,
+                                        'uid'=>$fieldUid,
                                         'name'=>$fieldName,
                                         'label'=>$field->getProperty('label','','is_string'),
                                         'type'=>'required_field',
@@ -661,10 +675,10 @@ class InstancesHelpers {
             } else {
                 switch($field->getProperty('data_type',NULL,'is_string')) {
                     case 'numeric':
-                        $fieldValue=get_array_value($fieldsData,$fieldId,NULL,'is_numeric');
+                        $fieldValue=get_array_value($fieldsData,$fieldUid,NULL,'is_numeric');
                         if($field->getProperty('required',FALSE,'bool') && !is_numeric($fieldValue)) {
                             $errors[]=[
-                                'id'=>$fieldId,
+                                'uid'=>$fieldUid,
                                 'name'=>$fieldName,
                                 'label'=>$field->getProperty('label','','is_string'),
                                 'type'=>'required_field',
@@ -674,10 +688,10 @@ class InstancesHelpers {
                         break;
                     case 'string':
                     default:
-                        $fieldValue=get_array_value($fieldsData,$fieldId,NULL,'is_string');
+                        $fieldValue=get_array_value($fieldsData,$fieldUid,NULL,'is_string');
                         if($field->getProperty('required',FALSE,'bool') && !strlen($fieldValue)) {
                             $errors[]=[
-                                'id'=>$fieldId,
+                                'uid'=>$fieldUid,
                                 'name'=>$fieldName,
                                 'label'=>$field->getProperty('label','','is_string'),
                                 'type'=>'required_field',
