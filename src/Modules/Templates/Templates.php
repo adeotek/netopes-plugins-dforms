@@ -30,6 +30,19 @@ use Translate;
  */
 class Templates extends Module {
     /**
+     * int Relation UTYPE standard
+     */
+    public const RELATION_UTYPE_STANDARD=10;
+    /**
+     * int Relation UTYPE category
+     */
+    public const RELATION_UTYPE_CATEGORY=1;
+    /**
+     * int Relation UTYPE UID
+     */
+    public const RELATION_UTYPE_UID=10;
+
+    /**
      * Module class initializer
      *
      * @return void

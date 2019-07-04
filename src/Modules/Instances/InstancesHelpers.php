@@ -19,8 +19,10 @@ use NETopes\Core\Controls\Button;
 use NETopes\Core\Controls\ControlsHelpers;
 use NETopes\Core\Controls\HiddenInput;
 use NETopes\Core\Data\DataProvider;
+use NETopes\Core\Data\DataSet;
 use NETopes\Core\Data\VirtualEntity;
 use NETopes\Core\Validators\Validator;
+use NETopes\Plugins\DForms\Modules\Templates\Templates;
 use Translate;
 
 /**
@@ -478,7 +480,7 @@ class InstancesHelpers {
         if($idInstance) {
             $relations=DataProvider::Get('Plugins\DForms\Instances','GetRelations',['instance_id'=>$idInstance]);
         } else {
-            $relations=DataProvider::Get('Plugins\DForms\Templates','GetRelations',['template_id'=>$idTemplate]);
+            $relations=DataProvider::Get('Plugins\DForms\Templates','GetRelations',['template_id'=>$idTemplate,'validated'=>1]);
         }//if($idInstance)
         $result=NULL;
         if(is_iterable($relations) && count($relations)) {
@@ -498,20 +500,6 @@ class InstancesHelpers {
         }//if(is_iterable($relations) && count($relations))
         return $result;
     }//END public static function PrepareRelationsFormPart
-
-    /**
-     * @param int                      $idTemplate
-     * @param \NETopes\Core\App\Params $params
-     * @return \NETopes\Core\Data\VirtualEntity
-     */
-    public static function GetSingletonInstance(int $idTemplate,Params $params): VirtualEntity {
-        // NApp::Dlog($template->toArray(),'$template');
-        // $instance=DataProvider::Get('Plugins\DForms\Instances','GetSingletonInstance',[
-        //     'template_id'=>$idTemplate,
-        // ]);
-
-        return new VirtualEntity();
-    }//END public static function GetSingletonInstance
 
     /**
      * @param mixed       $value
@@ -543,6 +531,36 @@ class InstancesHelpers {
 
     /**
      * @param int                      $idTemplate
+     * @param \NETopes\Core\App\Params $params
+     * @return \NETopes\Core\Data\VirtualEntity
+     * @throws \NETopes\Core\AppException
+     */
+    public static function GetSingletonInstance(int $idTemplate,Params $params): VirtualEntity {
+        // NApp::Dlog($params->toArray(),'GetSingletonInstance::$params');
+        $relations=DataProvider::Get('Plugins\DForms\Templates','GetRelations',['template_id'=>$idTemplate,'validated'=>1,'for_utype'=>Templates::RELATION_UTYPE_UID]);
+        if(!($relations instanceof DataSet) || !count($relations) || !($relations->first() instanceof VirtualEntity)) {
+            return new VirtualEntity();
+        }
+        $dataType=$relations->first()->getProperty('dtype',NULL,'is_string');
+        $key=$relations->first()->getProperty('key',NULL,'is_string');
+        $instanceUid=NULL;
+        static::GetValidatedValue($params->safeGet($key,NULL,'isset'),$instanceUid,$dataType);
+        if(!strlen($instanceUid)) {
+            return new VirtualEntity();
+        }
+        $instance=DataProvider::Get('Plugins\DForms\Instances','GetSingletonInstance',[
+            'for_uid'=>$instanceUid,
+            'template_id'=>$idTemplate,
+        ]);
+        NApp::Dlog($instance,'$instance');
+        if($instance instanceof VirtualEntity) {
+            return $instance;
+        }
+        return new VirtualEntity();
+    }//END public static function GetSingletonInstance
+
+    /**
+     * @param int                      $idTemplate
      * @param int|null                 $idInstance
      * @param \NETopes\Core\App\Params $params
      * @return bool
@@ -552,7 +570,7 @@ class InstancesHelpers {
         if($idInstance) {
             $relations=DataProvider::Get('Plugins\DForms\Instances','GetRelations',['instance_id'=>$idInstance]);
         } else {
-            $relations=DataProvider::Get('Plugins\DForms\Templates','GetRelations',['template_id'=>$idTemplate]);
+            $relations=DataProvider::Get('Plugins\DForms\Templates','GetRelations',['template_id'=>$idTemplate,'validated'=>1]);
         }//if($idInstance)
         $relationsData=$params->safeGet('relations',[],'is_array');
         $fieldsData=$params->safeGet('data',[],'is_array');

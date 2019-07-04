@@ -286,12 +286,12 @@ abstract class BaseTemplates extends DataSource {
     /**
      * GetRelations default parameters
      */
-    const GET_RELATIONS_ITEMS=['for_id'=>NULL,'template_id'=>NULL,'for_version'=>NULL,'for_text'=>NULL];
+    const GET_RELATIONS_ITEMS=['for_id'=>NULL,'template_id'=>NULL,'for_version'=>NULL,'validated'=>NULL,'for_utype'=>NULL,'for_text'=>NULL];
 
     /**
      * Gets templates relations
      *
-     * @param array $params ['for_id'=>NULL,'template_id'=>NULL,'for_version'=>NULL,'for_text'=>NULL]
+     * @param array $params ['for_id'=>NULL,'template_id'=>NULL,'for_version'=>NULL,'validated'=>NULL,'for_utype'=>NULL,'for_text'=>NULL]
      * @param array $extra_params
      * @return mixed
      */
@@ -300,7 +300,7 @@ abstract class BaseTemplates extends DataSource {
     /**
      * Gets templates relations
      *
-     * @param array $params ['for_id'=>NULL,'template_id'=>NULL,'for_version'=>NULL,'for_text'=>NULL]
+     * @param array $params ['for_id'=>NULL,'template_id'=>NULL,'for_version'=>NULL,'validated'=>NULL,'for_utype'=>NULL,'for_text'=>NULL]
      * @param array $extra_params
      * @return array|mixed
      */

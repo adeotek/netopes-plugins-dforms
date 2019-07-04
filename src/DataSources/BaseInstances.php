@@ -145,6 +145,20 @@ abstract class BaseInstances extends DataSource {
     abstract public function GetInstanceItem($params=[],$extra_params=[]);
 
     /**
+     * GetSingletonInstance default parameters
+     */
+    public const GET_SINGLETON_INSTANCE_ITEM=['for_uid'=>NULL,'template_id'=>NULL,'for_template_code'=>NULL];
+
+    /**
+     * Gets DynamicForm instance for single instance templates
+     *
+     * @param array $params ['for_uid'=>NULL,'template_id'=>NULL,'for_template_code'=>NULL]
+     * @param array $extra_params
+     * @return mixed
+     */
+    abstract public function GetSingletonInstance($params=[],$extra_params=[]);
+
+    /**
      * SetNewInstance default parameters
      */
     public const SET_NEW_INSTANCE=['template_id'=>NULL,'in_state'=>NULL,'user_id'=>NULL];
