@@ -35,12 +35,12 @@ abstract class BaseInstances extends DataSource {
     /**
      * GetTemplate default parameters
      */
-    public const GET_TEMPLATE=['for_id'=>NULL,'for_code'=>NULL,'instance_id'=>NULL,'for_state'=>NULL];
+    public const GET_TEMPLATE=['for_id'=>NULL,'for_code'=>NULL,'instance_id'=>NULL,'item_id'=>NULL,'for_state'=>NULL];
 
     /**
      * Gets a DynamicForm template
      *
-     * @param array $params ['for_id'=>NULL,'for_code'=>NULL,'instance_id'=>NULL,'for_state'=>NULL]
+     * @param array $params ['for_id'=>NULL,'for_code'=>NULL,'instance_id'=>NULL,'item_id'=>NULL,'for_state'=>NULL]
      * @param array $extra_params
      * @return mixed
      */

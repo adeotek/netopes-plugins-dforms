@@ -273,6 +273,7 @@ class InstancesHelpers {
                     $fIType=$field->getProperty('itype',1,'is_not0_numeric');
                     $fIdSubForm=$field->getProperty('id_sub_form',-1,'is_not0_numeric');
                     $idItem=$field->getProperty('id',NULL,'is_not0_numeric');
+
                     if($fIType==2 && $idInstance) {
                         $fICount=$field->getProperty('icount',1,'is_not0_numeric');
                         // $fValue = $field->getProperty('ivalues',NULL,'is_string');
@@ -280,8 +281,10 @@ class InstancesHelpers {
                         $fICount=1;
                         // $fValue = NULL;
                     }//if($fIType==2 && $idInstance)
+
+                    $fSubFormVersion=NULL;
                     for($i=0; $i<$fICount; $i++) {
-                        $ctrl_params=static::PrepareForm($params,$template,$idInstance,$fIdSubForm,$idItem,$i);
+                        $ctrl_params=static::PrepareForm($params,$template,$idInstance,$fIdSubForm,$idItem,$i,$fSubFormVersion);
                         if(!$ctrl_params) {
                             throw new AppException('Invalid DynamicForm sub-form configuration!');
                         }
@@ -305,6 +308,10 @@ class InstancesHelpers {
                         $ctrl_ract=new Button(['value'=>Translate::GetButton('add_element'),'icon'=>'fa fa-plus-circle','class'=>NApp::$theme->GetBtnDefaultClass('clsRepeatCtrlBtn'),'onclick'=>"RepeatForm(this,'{$tagId}')",'extra_tag_params'=>'data-ract="'.Translate::GetButton('remove_element').'" data-ract-class="'.NApp::$theme->GetBtnWarningClass('clsRepeatableCtrlBtn').'"']);
                         $fParams['value'].=$ctrl_ract->Show();
                     }//if($fIType==2)
+                    $itemUid=$field->getProperty('uid',NULL,'is_string');
+                    $fParams['value'].=<<<HTML
+                        <input type="hidden" id="{$idInstance}_{$itemUid}_version" name="{$itemUid}" class="postable" value="{$fSubFormVersion}">
+HTML;
                     $formContent[$row][]=[
                         'width'=>$field->getProperty('width','','is_string'),
                         'control_type'=>'CustomControl',
@@ -404,26 +411,29 @@ class InstancesHelpers {
      * @param int|null                      $idSubForm
      * @param int|null                      $idItem
      * @param int|null                      $index
+     * @param int|null                      $formVersion
      * @return array Returns BasicForm configuration array
      * @throws \NETopes\Core\AppException
      */
-    public static function PrepareForm(?Params $params,?VirtualEntity $mTemplate,?int $idInstance=NULL,?int $idSubForm=NULL,?int $idItem=NULL,?int $index=NULL): ?array {
+    public static function PrepareForm(?Params $params,?VirtualEntity $mTemplate,?int $idInstance=NULL,?int $idSubForm=NULL,?int $idItem=NULL,?int $index=NULL,?int &$formVersion=NULL): ?array {
         // NApp::Dlog(['$mTemplate'=>$mTemplate,'$idInstance'=>$idInstance,'$idSubForm'=>$idSubForm,'$idItem'=>$idItem,'$index'=>$index],'PrepareForm');
         $idTemplate=$mTemplate->getProperty('id',NULL,'is_integer');
         if(!$idTemplate) {
             return NULL;
         }
+        // NApp::Dlog($idSubForm,'$idSubForm');
         if($idSubForm) {
             $template=DataProvider::Get('Plugins\DForms\Instances','GetTemplate',[
-                'for_id'=>$idSubForm,
+                'for_id'=>($idInstance ? NULL : $idSubForm),
                 'for_code'=>NULL,
                 'instance_id'=>($idInstance ? $idInstance : NULL),
+                'item_id'=>$idItem,
                 'for_state'=>1,
             ]);
+            // NApp::Dlog($template,'$template');
             $idSubForm=$template->getProperty('id',NULL,'is_integer');
             // NApp::Dlog($idItem,'$idItem');
             // NApp::Dlog($idSubForm,'$idSubForm');
-            // NApp::Dlog($template,'$template');
             if(!$idSubForm || !$idItem) {
                 return NULL;
             }
@@ -449,6 +459,7 @@ class InstancesHelpers {
         if(!is_iterable($pages) || !count($pages)) {
             return NULL;
         }
+        $formVersion=$template->getProperty('version',NULL,'is_integer');
         $iPrefix=($idInstance ? $idInstance.'_' : '');
         $tName=$iPrefix.$idTemplate.'_'.$idSubForm;
         $renderType=get_array_value($template,'render_type',1,'is_integer');
@@ -552,7 +563,6 @@ class InstancesHelpers {
             'for_uid'=>$instanceUid,
             'template_id'=>$idTemplate,
         ]);
-        NApp::Dlog($instance,'$instance');
         if($instance instanceof VirtualEntity) {
             return $instance;
         }

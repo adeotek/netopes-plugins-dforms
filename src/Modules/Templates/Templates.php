@@ -41,7 +41,6 @@ class Templates extends Module {
      * int Relation UTYPE UID
      */
     public const RELATION_UTYPE_UID=10;
-
     /**
      * Module class initializer
      *

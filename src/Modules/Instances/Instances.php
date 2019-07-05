@@ -164,6 +164,7 @@ class Instances extends Module {
         if(!$ctrl_params) {
             throw new AppException('Invalid DynamicForm configuration!');
         }
+
         $controlClass=get_array_value($ctrl_params,'control_class','','is_string');
         $noRedirect=$params->safeGet('no_redirect',FALSE,'bool');
         $cModule=$params->safeGet('cmodule',$this->class,'is_notempty_string');
@@ -701,9 +702,10 @@ class Instances extends Module {
         $output=$params->safeGet('output',FALSE,'bool');
         if($idSubForm) {
             $instance=DataProvider::Get('Plugins\DForms\Instances','GetTemplate',[
-                'for_id'=>$idSubForm,
+                'for_id'=>NULL,
                 'for_code'=>NULL,
                 'instance_id'=>$idInstance,
+                'item_id'=>$idItem,
                 'for_state'=>1,
             ]);
             $idSubForm=get_array_value($instance,'id',NULL,'is_integer');
