@@ -686,60 +686,6 @@ class Instances extends Module {
      * description
      *
      * @param \NETopes\Core\App\Params|array|null $params Parameters
-     * @return void
-     * @access public
-     * @throws \NETopes\Core\AppException
-     */
-    public function PrepareFormHtml($params=NULL) {
-        // NApp::Dlog($params,'PrepareFormHtml');
-        $idInstance=$params->safeGet('id',NULL,'is_integer');
-        if(!$idInstance) {
-            throw new AppException('Invalid DynamicForm instance identifier!');
-        }
-        $idSubForm=$params->safeGet('id_sub_form',0,'is_integer');
-        $idItem=$params->safeGet('id_item',0,'is_integer');
-        $index=$params->safeGet('index',0,'is_integer');
-        $output=$params->safeGet('output',FALSE,'bool');
-        if($idSubForm) {
-            $instance=DataProvider::Get('Plugins\DForms\Instances','GetTemplate',[
-                'for_id'=>NULL,
-                'for_code'=>NULL,
-                'instance_id'=>$idInstance,
-                'item_id'=>$idItem,
-                'for_state'=>1,
-            ]);
-            $idSubForm=get_array_value($instance,'id',NULL,'is_integer');
-            // NApp::Dlog($idItem,'$idItem');
-            // NApp::Dlog($idSubForm,'$idSubForm');
-            // NApp::Dlog($template,'$template');
-            if(!$idSubForm || !$idItem) {
-                return NULL;
-            }
-            $relations=NULL;
-            $fields=DataProvider::Get('Plugins\DForms\Instances','GetStructure',[
-                'instance_id'=>$idInstance,
-                'item_id'=>$idItem,
-                'for_index'=>(is_numeric($index) ? $index : NULL),
-            ]);
-            // NApp::Dlog($fields,'$fields');
-        } else {
-            $instance=DataProvider::Get('Plugins\DForms\Instances','GetInstanceItem',['for_id'=>$idInstance]);
-            $relations=DataProvider::Get('Plugins\DForms\Instances','GetRelations',['instance_id'=>$idInstance]);
-            $fields=DataProvider::Get('Plugins\DForms\Instances','GetStructure',['instance_id'=>$idInstance]);
-        }
-        $themeType=get_array_value($instance,'theme_type','','is_string');
-        $controlsSize=get_array_value($instance,'controls_size','','is_string');
-        $separatorWidth=get_array_value($instance,'separator_width','','is_string');
-        $labelCols=get_array_value($instance,'label_cols','','is_string');
-        $html=NULL;
-        require($this->GetViewFile('PrepareFormHtml'));
-        return $html;
-    }//END public function PrepareFormHtml
-
-    /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
      * @return mixed return description
      * @access public
      * @throws \NETopes\Core\AppException
