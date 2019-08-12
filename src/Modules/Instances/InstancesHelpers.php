@@ -152,7 +152,6 @@ class InstancesHelpers {
         // $tagId=($idInstance ? $idInstance.'_' : '').$field->getProperty('uid','','is_string').'_'.$field->getProperty('name','','is_string');
         $field->set('tag_id',($idInstance ?? 0).'_'.$fieldUid);
         $field->set('tag_name',$fieldUid);
-        $field->set('value',$fValue);
         // if(strlen($themeType)) { $fParams['theme_type'] = $themeType; }
         $fClass=$field->getProperty('class','','is_string');
         if($fClass=='Message') {
@@ -169,6 +168,11 @@ class InstancesHelpers {
                 'ds_params'=>['list_id'=>$idValuesList,'for_state'=>1],
             ];
         }//if(in_array($fClass,['SmartComboBox','GroupCheckBox']) && $idValuesList>0)
+        if(in_array($fClass,['SmartComboBox'])) {
+            $field->set('selected_value',$fValue);
+        } else {
+            $field->set('value',$fValue);
+        }//if(in_array($fClass,['SmartComboBox']))
         $fParams=ControlsHelpers::ReplaceDynamicParams($fParams,$field,TRUE,'_dfp_');
         $colSpan=$field->getProperty('colspan',0,'is_integer');
         if($colSpan>1) {
