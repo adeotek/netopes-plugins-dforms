@@ -18,6 +18,7 @@ use NETopes\Core\App\Params;
 use NETopes\Core\AppException;
 use NETopes\Core\AppSession;
 use NETopes\Core\Controls\Button;
+use NETopes\Core\Controls\IControlBuilder;
 use NETopes\Core\Data\DataProvider;
 use NETopes\Core\Validators\Validator;
 use Translate;
@@ -95,8 +96,8 @@ class Instances extends Module {
             'for_listing'=>1,
         ]);
         $fTypes=DataProvider::GetKeyValue('_Custom\Offline','GetDynamicFormsTemplatesFTypes');
-        $cModule=$params->safeGet('cmodule',$this->class,'is_notempty_string');
-        $cMethod=$params->safeGet('cmethod',call_back_trace(0),'is_notempty_string');
+        $cModule=$params->safeGet('c_module',$this->class,'is_notempty_string');
+        $cMethod=$params->safeGet('c_method',call_back_trace(0),'is_notempty_string');
         $cTarget=$params->safeGet('ctarget','main-content','is_notempty_string');
         $target=$params->safeGet('target','main-content','is_notempty_string');
         $listingTarget=$target.'_listing';
@@ -160,15 +161,16 @@ class Instances extends Module {
             $idInstance=$instance->getProperty('id',NULL,'is_integer');
         }//if(!$idInstance && $template->getProperty('ftype',0,'is_integer')==2 && $params instanceof Params)
 
-        $ctrl_params=InstancesHelpers::PrepareForm($params,$template,$idInstance);
-        if(!$ctrl_params) {
+        $builder=InstancesHelpers::PrepareForm($params,$template,$idInstance);
+        if(!$builder instanceof IControlBuilder) {
             throw new AppException('Invalid DynamicForm configuration!');
         }
+        $ctrl_params=$builder->GetConfig();
 
         $controlClass=get_array_value($ctrl_params,'control_class','','is_string');
         $noRedirect=$params->safeGet('no_redirect',FALSE,'bool');
-        $cModule=$params->safeGet('cmodule',$this->class,'is_notempty_string');
-        $cMethod=$params->safeGet('cmethod','Listing','is_notempty_string');
+        $cModule=$params->safeGet('c_module',$this->class,'is_notempty_string');
+        $cMethod=$params->safeGet('c_method','Listing','is_notempty_string');
         $cTarget=$params->safeGet('ctarget','main-content','is_notempty_string');
         $isModal=$params->safeGet('is_modal',$this->isModal,'is_integer');
         $aeSaveInstanceMethod='SaveInstance';
@@ -192,7 +194,7 @@ class Instances extends Module {
         $formActions=[];
         $fResponseTarget=get_array_value($ctrl_params,'response_target','df_'.$tName.'_errors','is_notempty_string');
         if(strlen($fTagId)) {
-            $btnSave=new Button(['value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','class'=>NApp::$theme->GetBtnPrimaryClass(),'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': '{$aeSaveInstanceMethod}', 'params': { 'id_template': '{$idTemplate}', 'id': '{$idInstance}', 'relations': '{nGet|df_{$tName}_relations:form}', 'data': '{nGet|df_{$tName}_form:form}', 'is_modal': '{$isModal}', 'cmodule': '{$cModule}', 'cmethod': '{$cMethod}', 'ctarget': '{$cTarget}', 'target': '{$fTagId}' } }",$fResponseTarget)]);
+            $btnSave=new Button(['value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','class'=>NApp::$theme->GetBtnPrimaryClass(),'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': '{$aeSaveInstanceMethod}', 'params': { 'id_template': '{$idTemplate}', 'id': '{$idInstance}', 'relations': '{nGet|df_{$tName}_relations:form}', 'data': '{nGet|df_{$tName}_form:form}', 'is_modal': '{$isModal}', 'c_module': '{$cModule}', 'c_method': '{$cMethod}', 'c_target': '{$cTarget}', 'form_id': '{$fTagId}' } }",$fResponseTarget)]);
             $formActions[]=$btnSave->Show();
             if($params->safeGet('back_action',TRUE,'bool')) {
                 if($isModal) {
@@ -243,9 +245,9 @@ class Instances extends Module {
         if(!$idTemplate) {
             throw new AppException('Invalid DynamicForm template!');
         }
-        $cModule=$params->safeGet('cmodule',get_called_class(),'is_notempty_string');
-        $cMethod=$params->safeGet('cmethod',call_back_trace(0),'is_notempty_string');
-        $cTarget=$params->safeGet('ctarget','main-content','is_notempty_string');
+        $cModule=$params->safeGet('c_module',get_called_class(),'is_notempty_string');
+        $cMethod=$params->safeGet('c_method',call_back_trace(0),'is_notempty_string');
+        $cTarget=$params->safeGet('c_target','main-content','is_notempty_string');
         $ctrl_params=$this->PrepareForm($params,$template);
         if(!$ctrl_params) {
             throw new AppException('Invalid DynamicForm configuration!');
@@ -283,9 +285,9 @@ class Instances extends Module {
         if(!$idTemplate) {
             throw new AppException('Invalid DynamicForm template!');
         }
-        $cModule=$params->safeGet('cmodule',get_called_class(),'is_notempty_string');
-        $cMethod=$params->safeGet('cmethod','Listing','is_notempty_string');
-        $cTarget=$params->safeGet('ctarget','main-content','is_notempty_string');
+        $cModule=$params->safeGet('c_module',get_called_class(),'is_notempty_string');
+        $cMethod=$params->safeGet('c_method','Listing','is_notempty_string');
+        $cTarget=$params->safeGet('c_target','main-content','is_notempty_string');
         $ctrl_params=$this->PrepareForm($params,$template,$idInstance);
         if(!$ctrl_params) {
             throw new AppException('Invalid DynamicForm configuration!');
@@ -544,9 +546,9 @@ class Instances extends Module {
         if($result===FALSE) {
             throw new AppException('Unknown database error!');
         }
-        $cModule=$params->safeGet('cmodule',get_called_class(),'is_notempty_string');
-        $cMethod=$params->safeGet('cmethod','Listing','is_notempty_string');
-        $cTarget=$params->safeGet('ctarget','main-content','is_notempty_string');
+        $cModule=$params->safeGet('c_module',get_called_class(),'is_notempty_string');
+        $cMethod=$params->safeGet('c_method','Listing','is_notempty_string');
+        $cTarget=$params->safeGet('c_target','main-content','is_notempty_string');
         ModulesProvider::Exec($cModule,$cMethod,['id_template'=>$idTemplate,'target'=>$cTarget],$cTarget);
     }//END public function DeleteRecord
 

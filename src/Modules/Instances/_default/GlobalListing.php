@@ -21,7 +21,7 @@ $ctrl_params=[
             'actions'=>[
                 [
                     'type'=>'DivButton',
-                    'ajax_command'=>"{ 'module': '{$this->class}', 'method': 'ShowEditForm', 'params': { 'id': {!id!}, 'id_template': '{!id_template!}', 'cmodule': '{$this->class}', 'cmethod': 'GlobalListing' } }",
+                    'ajax_command'=>"{ 'module': '{$this->class}', 'method': 'ShowEditForm', 'params': { 'id': {!id!}, 'id_template': '{!id_template!}', 'c_module': '{$this->class}', 'c_method': 'GlobalListing' } }",
                     'ajax_target_id'=>'main-content',
                     'params'=>['tag_id'=>'df_instance_edit_btn','tooltip'=>Translate::GetButton('edit'),'class'=>'btn btn-primary btn-xxs','icon'=>'fa fa-pencil-square-o'],
                 ],
@@ -145,7 +145,7 @@ $ctrl_params=[
             'actions'=>[
                 [
                     'type'=>'DivButton',
-                    'ajax_command'=>"{ 'module': '{$this->class}', 'method': 'DeleteRecord', 'params': { 'id': {!id!}, 'id_template': '{!id_template!}', 'cmodule': '{$this->class}', 'cmethod': 'GlobalListing' } }",
+                    'ajax_command'=>"{ 'module': '{$this->class}', 'method': 'DeleteRecord', 'params': { 'id': {!id!}, 'id_template': '{!id_template!}', 'c_module': '{$this->class}', 'c_method': 'GlobalListing' } }",
                     'ajax_target_id'=>'errors',
                     'params'=>['tag_id'=>'df_instance_delete_btn','tooltip'=>Translate::GetButton('delete'),'class'=>'btn btn-danger btn-xxs','icon'=>'fa fa-times','confirm_text'=>Translate::GetMessage('confirm_delete'),'conditions'=>[['field'=>'ftype','type'=>'!=','value'=>2]]],
                 ],

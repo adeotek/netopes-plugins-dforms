@@ -7,7 +7,7 @@ if(isset($ctrl_params) && is_array($ctrl_params)) {
     if(strlen($fTagId) && strlen($fResponseTarget)) {
         $ctrl_params['actions']=[
             [
-                'params'=>['tag_id'=>'df_'.$tName.'_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','class'=>'btn btn-primary','clear_base_class'=>TRUE,'onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','SaveNewRecord','id_template'|{$idTemplate}~'data'|df_{$tName}_form:form~'is_modal'|'{$is_modal}'~'cmodule'|'{$cModule}'~'cmethod'|'{$cMethod}'~'ctarget'|'{$cTarget}','{$fTagId}')->{$fResponseTarget}")],
+                'params'=>['tag_id'=>'df_'.$tName.'_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','class'=>'btn btn-primary','clear_base_class'=>TRUE,'onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','SaveNewRecord','id_template'|{$idTemplate}~'data'|df_{$tName}_form:form~'is_modal'|'{$is_modal}'~'c_module'|'{$cModule}'~'c_method'|'{$cMethod}'~'c_target'|'{$cTarget}','{$fTagId}')->{$fResponseTarget}")],
             ],
         ];
         if($is_modal) {

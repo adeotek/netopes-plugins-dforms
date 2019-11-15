@@ -42,7 +42,7 @@ $ctrl_params=[
                 [
                     'dright'=>'edit',
                     'type'=>'DivButton',
-                    'ajax_command'=>"{ 'module': '{$this->class}', 'method': 'ShowEditForm', 'params': { 'id': {!id!}, 'id_template': '{!id_template!}', 'cmodule': '{$cModule}', 'cmethod': '{$cMethod}', 'ctarget': '{$cTarget}' } }",
+                    'ajax_command'=>"{ 'module': '{$this->class}', 'method': 'ShowEditForm', 'params': { 'id': {!id!}, 'id_template': '{!id_template!}', 'c_module': '{$cModule}', 'c_method': '{$cMethod}', 'c_target': '{$cTarget}' } }",
                     'ajax_target_id'=>'main-content',
                     'params'=>['tag_id'=>'df_instance_edit_btn','tooltip'=>Translate::GetButton('edit'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-xxs'),'icon'=>'fa fa-pencil-square-o'],
                 ],
@@ -242,7 +242,7 @@ $ctrl_params['columns']['end_actions']=[
         [
             'dright'=>'delete',
             'type'=>'DivButton',
-            'ajax_command'=>"{ 'module': '{$this->class}', 'method': 'DeleteRecord', 'params': { 'id': {!id!}, 'id_template': '{!id_template!}', 'cmodule': '{$cModule}', 'cmethod': '{$cMethod}', 'ctarget': '{$cTarget}' } }",
+            'ajax_command'=>"{ 'module': '{$this->class}', 'method': 'DeleteRecord', 'params': { 'id': {!id!}, 'id_template': '{!id_template!}', 'c_module': '{$cModule}', 'c_method': '{$cMethod}', 'c_target': '{$cTarget}' } }",
             'ajax_target_id'=>'errors',
             'params'=>['tooltip'=>Translate::GetButton('delete'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs'),'icon'=>'fa fa-times','confirm_text'=>Translate::GetMessage('confirm_delete'),'conditions'=>[['field'=>'ftype','type'=>'!=','value'=>2]]],
         ],
