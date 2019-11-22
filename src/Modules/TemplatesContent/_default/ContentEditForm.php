@@ -48,7 +48,7 @@ use NETopes\Core\App\ModulesProvider; ?>
                         $pageTargetId='df_template_fields_p'.$pageIndex;
                         ?>
 						<div class="dft-content-page clearfix" id="<?= $pageTargetId ?>">
-                            <?php ModulesProvider::Exec($this->class,'ShowContentTable',['id_template'=>$idTemplate,'pindex'=>$pageIndex,'target'=>$pageTargetId,'ctarget'=>$target]); ?>
+                            <?php ModulesProvider::Exec($this->class,'ShowContentTable',['id_template'=>$idTemplate,'pindex'=>$pageIndex,'target'=>$pageTargetId,'c_target'=>$target]); ?>
 						</div>
                         <?php
                     }//END foreach

@@ -319,7 +319,7 @@ class Templates extends Module {
         if($result===FALSE) {
             throw new AppException('Unknown database error!');
         }
-        $cTarget=$params->safeGet('ctarget','','is_string');
+        $cTarget=$params->safeGet('c_target','','is_string');
         if(!strlen($cTarget)) {
             echo Translate::GetMessage('save_done').' ('.date('Y-m-d H:i:s').')';
             return;
@@ -421,7 +421,7 @@ class Templates extends Module {
             }
         }//if($id)
         $this->CloseForm();
-        $cTarget=$params->safeGet('ctarget','','is_string');
+        $cTarget=$params->safeGet('c_target','','is_string');
         $this->Exec('ShowRelationsEditForm',['id_template'=>$idTemplate,'target'=>$cTarget],$cTarget);
     }//END public function AddEditRelationRecord
 

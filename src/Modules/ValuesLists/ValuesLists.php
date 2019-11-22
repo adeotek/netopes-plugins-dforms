@@ -264,7 +264,7 @@ class ValuesLists extends Module {
             }
         }//if($id)
         $this->CloseForm();
-        $cTarget=$params->safeGet('ctarget','','is_string');
+        $cTarget=$params->safeGet('c_target','','is_string');
         $this->Exec('ValuesListing',['id_list'=>$idList,'edit'=>1,'target'=>$cTarget],$cTarget);
     }//END public function AddEditValueRecord
 

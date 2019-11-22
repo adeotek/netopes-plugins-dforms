@@ -96,7 +96,7 @@ class TemplatesContent extends Module {
         $templatePage=DataProvider::Get('Plugins\DForms\Templates','GetItemPage',['template_id'=>$idTemplate,'for_pindex'=>$pIndex]);
         $fields=DataProvider::GetKeyValue('Plugins\DForms\Templates','GetFields',['template_id'=>$idTemplate,'for_pindex'=>$pIndex],['keyfield'=>'cell']);
         $target=$params->safeGet('target','','is_string');
-        $cTarget=$params->safeGet('ctarget','','is_string');
+        $cTarget=$params->safeGet('c_target','','is_string');
         $view=new AppView(get_defined_vars(),$this,NULL);
         $view->AddFileContent($this->GetViewFile('ContentTable'));
         $view->Render();
@@ -199,7 +199,7 @@ class TemplatesContent extends Module {
         }
         $maxPos=$lastPos + 1;
         $target=$params->safeGet('target','','is_string');
-        $cTarget=$params->safeGet('ctarget','','is_string');
+        $cTarget=$params->safeGet('c_target','','is_string');
         $view=new AppView(get_defined_vars(),$this,'modal');
         $view->SetIsModalView(TRUE);
         $view->SetModalWidth(250);
@@ -254,8 +254,8 @@ class TemplatesContent extends Module {
             $this->CloseForm();
         }
         $target=$params->safeGet('target','','is_string');
-        $cTarget=$params->safeGet('ctarget','','is_string');
-        $this->Exec('ShowContentTable',['id_template'=>$idTemplate,'pindex'=>$pIndex,'target'=>$target,'ctarget'=>$cTarget],$target);
+        $cTarget=$params->safeGet('c_target','','is_string');
+        $this->Exec('ShowContentTable',['id_template'=>$idTemplate,'pindex'=>$pIndex,'target'=>$target,'c_target'=>$cTarget],$target);
     }//END public function UpdateContentTable
 
     /**
@@ -290,7 +290,7 @@ class TemplatesContent extends Module {
             $item=new VirtualEntity();
         }//if(!$id)
         $target=$params->safeGet('target','','is_string');
-        $cTarget=$params->safeGet('ctarget','','is_string');
+        $cTarget=$params->safeGet('c_target','','is_string');
         $cClass=$fieldType->getProperty('class','','is_string');
         $cDataType=$fieldType->getProperty('data_type','','is_string');
 
@@ -311,7 +311,7 @@ class TemplatesContent extends Module {
             ]);
         }//if(is_object($tabCtrl))
         $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="dft_fp_form_errors"></div></div>');
-        $btnSave=new Button(['value'=>Translate::GetButton('save'),'class'=>NApp::$theme->GetBtnPrimaryClass(),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'AddEditContentElementRecord', 'params': { 'id_template': {$idTemplate}, 'pindex': '{$pIndex}', 'id_item': '{$id}', 'class': '{$cClass}', 'data_type': '{$cDataType}', 'frow': '{$fRow}', 'fcol': '{$fCol}', 'id_control': '{$idControl}', 'ptarget': '{$target}', 'ctarget': '{$cTarget}', 'properties': '{nGet|dft_fp_properties_tab:form}', 'target': 'dft_fp_form' }, 'arrayParams': [ '{nGet|dft_fp_form:form}' ] }",'dft_fp_form_errors')]);
+        $btnSave=new Button(['value'=>Translate::GetButton('save'),'class'=>NApp::$theme->GetBtnPrimaryClass(),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'AddEditContentElementRecord', 'params': { 'id_template': {$idTemplate}, 'pindex': '{$pIndex}', 'id_item': '{$id}', 'class': '{$cClass}', 'data_type': '{$cDataType}', 'frow': '{$fRow}', 'fcol': '{$fCol}', 'id_control': '{$idControl}', 'ptarget': '{$target}', 'c_target': '{$cTarget}', 'properties': '{nGet|dft_fp_properties_tab:form}', 'target': 'dft_fp_form' }, 'arrayParams': [ '{nGet|dft_fp_form:form}' ] }",'dft_fp_form_errors')]);
         $view->AddAction($btnSave->Show());
         $btnCancel=new Button(['value'=>Translate::GetButton('cancel'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-ban','onclick'=>$customClose]);
         $view->AddAction($btnCancel->Show());
@@ -330,8 +330,8 @@ class TemplatesContent extends Module {
         $pIndex=$params->getOrFail('pindex','is_integer','Invalid page position!');
         $this->CloseForm();
         $target=$params->safeGet('target','','is_string');
-        $cTarget=$params->safeGet('ctarget','','is_string');
-        $this->Exec('ShowContentTable',['id_template'=>$idTemplate,'pindex'=>$pIndex,'target'=>$target,'ctarget'=>$cTarget],$target);
+        $cTarget=$params->safeGet('c_target','','is_string');
+        $this->Exec('ShowContentTable',['id_template'=>$idTemplate,'pindex'=>$pIndex,'target'=>$target,'c_target'=>$cTarget],$target);
     }//END public function CancelAddEditContentElement
 
     /**
@@ -428,8 +428,8 @@ class TemplatesContent extends Module {
         }//if($id)
         $this->CloseForm();
         $pTarget=$params->safeGet('ptarget','','is_string');
-        $cTarget=$params->safeGet('ctarget','','is_string');
-        $this->Exec('ShowContentTable',['id_template'=>$idTemplate,'pindex'=>$pIndex,'target'=>$pTarget,'ctarget'=>$cTarget],$pTarget);
+        $cTarget=$params->safeGet('c_target','','is_string');
+        $this->Exec('ShowContentTable',['id_template'=>$idTemplate,'pindex'=>$pIndex,'target'=>$pTarget,'c_target'=>$cTarget],$pTarget);
     }//END public function AddEditContentElementRecord
 
     /**
@@ -488,7 +488,7 @@ class TemplatesContent extends Module {
             throw new AppException('Unknown database error!');
         }
         $target=$params->safeGet('target','','is_string');
-        $cTarget=$params->safeGet('ctarget','','is_string');
-        $this->Exec('ShowContentTable',['id_template'=>$idTemplate,'pindex'=>$pIndex,'target'=>$target,'ctarget'=>$cTarget],$target);
+        $cTarget=$params->safeGet('c_target','','is_string');
+        $this->Exec('ShowContentTable',['id_template'=>$idTemplate,'pindex'=>$pIndex,'target'=>$target,'c_target'=>$cTarget],$target);
     }//END public function DeleteContentElementRecord
 }//END class TemplatesContent extends Module

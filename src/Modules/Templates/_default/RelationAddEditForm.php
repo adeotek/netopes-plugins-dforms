@@ -83,7 +83,7 @@ $ctrl_params=[
                 ~'name'|df_template_rel_ae_name:value
                 ~'key'|df_template_rel_ae_key:value
                 ~'required'|df_template_rel_ae_required:value
-                ~'ctarget'|'{$target}'
+                ~'c_target'|'{$target}'
             ,'df_template_rel_ae_form')->df_template_rel_ae_errors")],
         ],
         [

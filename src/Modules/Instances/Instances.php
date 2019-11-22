@@ -19,6 +19,7 @@ use NETopes\Core\AppException;
 use NETopes\Core\AppSession;
 use NETopes\Core\Controls\Button;
 use NETopes\Core\Controls\IControlBuilder;
+use NETopes\Core\Controls\TableView;
 use NETopes\Core\Data\DataProvider;
 use NETopes\Core\Validators\Validator;
 use Translate;
@@ -86,26 +87,49 @@ class Instances extends Module {
      */
     public function Listing($params=NULL) {
         $idTemplate=$params->safeGet('id_template',$this->idTemplate,'is_not0_integer');
-        $templateCode=$params->safeGet('templateCode',$this->templateCode,'is_not0_integer');
+        $templateCode=$params->safeGet('template_code',$this->templateCode,'is_not0_integer');
         if(!$idTemplate && !$templateCode) {
             throw new AppException('Invalid DynamicForm template identifier!');
         }
+        $template=DataProvider::Get('Plugins\DForms\Instances','GetTemplate',[
+            'for_id'=>(is_numeric($idTemplate) ? $idTemplate : NULL),
+            'for_code'=>(is_numeric($templateCode) ? $templateCode : NULL),
+            'instance_id'=>NULL,
+            'for_state'=>1,
+        ]);
+        $this->idTemplate=$idTemplate=$template->getProperty('id',NULL,'is_integer');
+        if(!$idTemplate) {
+            throw new AppException('Invalid DynamicForm template!');
+        }
         $fields=DataProvider::Get('Plugins\DForms\Instances','GetFields',[
-            'template_id'=>($idTemplate ? $idTemplate : NULL),
-            'for_template_code'=>$templateCode,
+            'template_id'=>$idTemplate,
+            'for_template_code'=>NULL,
             'for_listing'=>1,
         ]);
         $fTypes=DataProvider::GetKeyValue('_Custom\Offline','GetDynamicFormsTemplatesFTypes');
         $cModule=$params->safeGet('c_module',$this->class,'is_notempty_string');
         $cMethod=$params->safeGet('c_method',call_back_trace(0),'is_notempty_string');
-        $cTarget=$params->safeGet('ctarget','main-content','is_notempty_string');
+        $cTarget=$params->safeGet('c_target','main-content','is_notempty_string');
         $target=$params->safeGet('target','main-content','is_notempty_string');
+        $inListingActions=$params->safeGet('in_listing_actions',FALSE,'bool');
         $listingTarget=$target.'_listing';
+        $listingAddAction=[
+            'value'=>Translate::GetButton('add'),
+            'class'=>NApp::$theme->GetBtnPrimaryClass(),
+            'icon'=>'fa fa-plus',
+            'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->name}', 'method': 'ShowAddForm',{ 'id_template': '{!id_template!}', 'c_module': '{$cModule}', 'c_method': '{$cMethod}', 'c_target': '{$cTarget}' } }",$target),
+        ];
 
         $view=new AppView(get_defined_vars(),$this,($target=='main-content' ? 'main' : 'default'));
-        $view->SetTitle('');
+        $view->SetTitle($params->safeGet('title',$template->getProperty('name','','is_string'),'is_string'));
         $view->SetTargetId($listingTarget);
-        $view->AddTableView($this->GetViewFile('Listing'));
+        $view->AddControlBuilderContent($this->GetViewFile('Listing'),TableView::class);
+        if(!$inListingActions) {
+            if(!$this->AddDRights()) {
+                $btnAdd=new Button($listingAddAction);
+                $view->AddAction($btnAdd->Show());
+            }
+        }
         $view->Render();
     }//END public function Listing
 
@@ -161,6 +185,7 @@ class Instances extends Module {
             $idInstance=$instance->getProperty('id',NULL,'is_integer');
         }//if(!$idInstance && $template->getProperty('ftype',0,'is_integer')==2 && $params instanceof Params)
 
+
         $builder=InstancesHelpers::PrepareForm($params,$template,$idInstance);
         if(!$builder instanceof IControlBuilder) {
             throw new AppException('Invalid DynamicForm configuration!');
@@ -171,7 +196,7 @@ class Instances extends Module {
         $noRedirect=$params->safeGet('no_redirect',FALSE,'bool');
         $cModule=$params->safeGet('c_module',$this->class,'is_notempty_string');
         $cMethod=$params->safeGet('c_method','Listing','is_notempty_string');
-        $cTarget=$params->safeGet('ctarget','main-content','is_notempty_string');
+        $cTarget=$params->safeGet('c_target','main-content','is_notempty_string');
         $isModal=$params->safeGet('is_modal',$this->isModal,'is_integer');
         $aeSaveInstanceMethod='SaveInstance';
         $tName=get_array_value($ctrl_params,'tname',microtime(),'is_string');
