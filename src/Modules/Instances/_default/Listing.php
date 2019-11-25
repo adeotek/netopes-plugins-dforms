@@ -7,7 +7,6 @@ use NETopes\Core\Controls\TableViewBuilder;
 /** @var string $cMethod */
 /** @var string $cTarget */
 /** @var string $listingTarget */
-/** @var bool $inListingActions */
 /** @var array $listingAddAction */
 /** @var \NETopes\Core\Data\DataSet $fields */
 /** @var \NETopes\Core\Data\DataSet|null $fTypes */
@@ -24,10 +23,10 @@ $ctrl_builder=new TableViewBuilder([
     'qsearch'=>'for_text',
     'ds_class'=>'Plugins\DForms\Instances',
     'ds_method'=>'GetInstances',
-    'ds_params'=>['for_id'=>NULL,'template_id'=>$this->idTemplate,'for_template_code'=>NULL,'for_state'=>NULL,'for_text'=>NULL],
+    'ds_params'=>['for_id'=>NULL,'template_id'=>$this->templateId,'for_template_code'=>NULL,'for_state'=>NULL,'for_text'=>NULL],
     'auto_load_data'=>TRUE,
 ]);
-if($inListingActions) {
+if($this->inListingActions) {
     $ctrl_builder->AddCustomAction([
         'control_type'=>'Button',
         'dright'=>Module::DRIGHT_ADD,
@@ -48,7 +47,7 @@ $ctrl_builder->AddAction('actions',[
             // 'dbg'=>1,
         ],
         'session_params'=>[
-            'module'=>$this->class,
+            'module'=>$this->name,
             'method'=>'GetInstancePdf',
             'params'=>['id'=>'{!id!}','result_type'=>1,'cache'=>TRUE],
         ],
@@ -57,16 +56,16 @@ $ctrl_builder->AddAction('actions',[
 $ctrl_builder->AddAction('actions',[
     'dright'=>Module::DRIGHT_EDIT,
     'type'=>'DivButton',
-    'ajax_command'=>"{ 'module': '{$this->class}', 'method': 'ShowEditForm', 'params': { 'id': {!id!}, 'id_template': '{!id_template!}', 'c_module': '{$cModule}', 'c_method': '{$cMethod}', 'c_target': '{$cTarget}' } }",
+    'ajax_command'=>"{ 'module': '{$this->name}', 'method': 'ShowEditForm', 'params': { 'id': {!id!}, 'id_template': '{!id_template!}', 'c_module': '{$cModule}', 'c_method': '{$cMethod}', 'c_target': '{$cTarget}' } }",
     'ajax_target_id'=>$target,
-    'params'=>['tag_id'=>'df_instance_edit_btn','tooltip'=>Translate::GetButton('edit'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-xxs'),'icon'=>'fa fa-pencil-square-o'],
+    'params'=>['tooltip'=>Translate::GetButton('edit'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-xxs'),'icon'=>'fa fa-pencil-square-o'],
 ]);
 $ctrl_builder->AddAction('actions',[
     'dright'=>Module::DRIGHT_VIEW,
     'type'=>'DivButton',
-    'ajax_command'=>"{ 'module': '{$this->class}', 'method': 'ShowViewForm', 'params': { 'id': {!id!}, 'id_template': '{!id_template!}', 'is_modal': 1 } }",
+    'ajax_command'=>"{ 'module': '{$this->name}', 'method': 'ShowViewForm', 'params': { 'id': {!id!}, 'id_template': '{!id_template!}' } }",
     'ajax_target_id'=>'modal',
-    'params'=>['tag_id'=>'df_template_view_btn','tooltip'=>Translate::GetButton('view'),'class'=>NApp::$theme->GetBtnInfoClass('btn-xxs pull-right'),'icon'=>'fa fa-eye'],
+    'params'=>['tooltip'=>Translate::GetButton('view'),'class'=>NApp::$theme->GetBtnInfoClass('btn-xxs pull-right'),'icon'=>'fa fa-eye'],
 ]);
 
 if(is_iterable($fields) && count($fields)) {
@@ -246,7 +245,7 @@ if(is_array($this->showInListing)) {
 $ctrl_builder->AddAction('end_actions',[
     'dright'=>Module::DRIGHT_DELETE,
     'type'=>'DivButton',
-    'ajax_command'=>"{ 'module': '{$this->class}', 'method': 'DeleteRecord', 'params': { 'id': {!id!}, 'id_template': '{!id_template!}', 'c_module': '{$cModule}', 'c_method': '{$cMethod}', 'c_target': '{$cTarget}' } }",
+    'ajax_command'=>"{ 'module': '{$this->name}', 'method': 'DeleteRecord', 'params': { 'id': {!id!}, 'id_template': '{!id_template!}', 'c_module': '{$cModule}', 'c_method': '{$cMethod}', 'c_target': '{$cTarget}' } }",
     'ajax_target_id'=>'errors',
     'params'=>['tooltip'=>Translate::GetButton('delete'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs'),'icon'=>'fa fa-times','confirm_text'=>Translate::GetMessage('confirm_delete'),'conditions'=>[['field'=>'ftype','type'=>'!=','value'=>2]]],
 ]);

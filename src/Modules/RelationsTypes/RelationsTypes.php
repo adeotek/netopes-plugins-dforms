@@ -39,7 +39,6 @@ class RelationsTypes extends Module {
      *
      * @param \NETopes\Core\App\Params|array|null $params Parameters
      * @return void
-     * @access public
      * @throws \NETopes\Core\AppException
      */
     public function Listing($params=NULL) {
@@ -59,7 +58,6 @@ class RelationsTypes extends Module {
      *
      * @param \NETopes\Core\App\Params|array|null $params Parameters
      * @return void
-     * @access public
      * @throws \NETopes\Core\AppException
      */
     public function ShowAddForm($params=NULL) {
@@ -79,7 +77,6 @@ class RelationsTypes extends Module {
      *
      * @param \NETopes\Core\App\Params|array|null $params Parameters
      * @return void
-     * @access public
      * @throws \NETopes\Core\AppException
      */
     public function ShowEditForm($params=NULL) {
@@ -100,7 +97,6 @@ class RelationsTypes extends Module {
      *
      * @param \NETopes\Core\App\Params|array|null $params Parameters
      * @return void
-     * @access public
      * @throws \NETopes\Core\AppException
      */
     public function AddEditRecord($params=NULL) {
@@ -154,7 +150,6 @@ class RelationsTypes extends Module {
      *
      * @param \NETopes\Core\App\Params|array|null $params Parameters
      * @return void
-     * @access public
      * @throws \NETopes\Core\AppException
      */
     public function DeleteRecord($params=NULL) {

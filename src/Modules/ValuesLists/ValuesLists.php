@@ -39,7 +39,6 @@ class ValuesLists extends Module {
      *
      * @param \NETopes\Core\App\Params|array|null $params Parameters
      * @return void
-     * @access public
      * @throws \NETopes\Core\AppException
      */
     public function Listing($params=NULL) {
@@ -59,7 +58,6 @@ class ValuesLists extends Module {
      *
      * @param \NETopes\Core\App\Params|array|null $params Parameters
      * @return void
-     * @access public
      * @throws \NETopes\Core\AppException
      */
     public function ShowAddForm($params=NULL) {
@@ -77,7 +75,6 @@ class ValuesLists extends Module {
      *
      * @param \NETopes\Core\App\Params|array|null $params Parameters
      * @return void
-     * @access public
      * @throws \NETopes\Core\AppException
      */
     public function ShowEditForm($params=NULL) {
@@ -98,7 +95,6 @@ class ValuesLists extends Module {
      *
      * @param \NETopes\Core\App\Params|array|null $params Parameters
      * @return void
-     * @access public
      * @throws \NETopes\Core\AppException
      */
     public function AddEditRecord($params=NULL) {
@@ -148,7 +144,6 @@ class ValuesLists extends Module {
      *
      * @param \NETopes\Core\App\Params|array|null $params Parameters
      * @return void
-     * @access public
      * @throws \NETopes\Core\AppException
      */
     public function DeleteRecord($params=NULL) {
@@ -165,7 +160,6 @@ class ValuesLists extends Module {
      *
      * @param \NETopes\Core\App\Params|array|null $params Parameters
      * @return void
-     * @access public
      * @throws \NETopes\Core\AppException
      */
     public function ValuesListing($params=NULL) {
@@ -200,7 +194,6 @@ class ValuesLists extends Module {
      *
      * @param \NETopes\Core\App\Params|array|null $params Parameters
      * @return void
-     * @access public
      * @throws \NETopes\Core\AppException
      */
     public function ShowValueAddEditForm($params=NULL) {
@@ -226,7 +219,6 @@ class ValuesLists extends Module {
      *
      * @param \NETopes\Core\App\Params|array|null $params Parameters
      * @return void
-     * @access public
      * @throws \NETopes\Core\AppException
      */
     public function AddEditValueRecord($params=NULL) {
@@ -273,7 +265,6 @@ class ValuesLists extends Module {
      *
      * @param \NETopes\Core\App\Params|array|null $params Parameters
      * @return void
-     * @access public
      * @throws \NETopes\Core\AppException
      */
     public function DeleteValueRecord($params=NULL) {

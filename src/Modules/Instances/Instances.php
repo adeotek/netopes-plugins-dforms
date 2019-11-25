@@ -1,6 +1,6 @@
 <?php
 /**
- * description
+ * Dynamic forms Instances class file
  *
  * @package    NETopes\Plugins\Modules\DForms
  * @author     George Benjamin-Schonberger
@@ -21,7 +21,6 @@ use NETopes\Core\Controls\Button;
 use NETopes\Core\Controls\IControlBuilder;
 use NETopes\Core\Controls\TableView;
 use NETopes\Core\Data\DataProvider;
-use NETopes\Core\Validators\Validator;
 use Translate;
 
 /**
@@ -32,27 +31,38 @@ use Translate;
 class Instances extends Module {
     /**
      * @var integer Dynamic form template ID
-     * @access protected
      */
-    public $idTemplate=NULL;
+    public $templateId=NULL;
     /**
      * @var integer Dynamic form template code (numeric)
-     * @access protected
      */
     public $templateCode=NULL;
     /**
-     * @var integer Flag for modal add/edit forms
-     * @access protected
+     * @var bool Flag for modal add/edit forms
      */
-    public $isModal=FALSE;
+    public $formsAsModal=FALSE;
+    /**
+     * @var bool Flag for modal add/edit forms
+     */
+    public $viewAsModal=FALSE;
+    /**
+     * @var string AppView container type
+     */
+    public $containerType='main';
+    /**
+     * @var bool Render actions in TableView control
+     */
+    public $inListingActions=TRUE;
+    /**
+     * @var string Forms actions location (form/container/after)
+     */
+    public $actionsLocation='form';
     /**
      * @var array List of header fields to be displayed in Listing
-     * @access protected
      */
     public $showInListing=['template_code','template_name','create_date','user_full_name','last_modified','last_user_full_name'];
     /**
      * @var array List CSS styles to be used for generating view HTML
-     * @access protected
      */
     protected $htmlStyles=[
         'table_attr'=>'border="0" ',
@@ -74,7 +84,6 @@ class Instances extends Module {
      */
     protected function _Init() {
         $this->viewsExtension='.php';
-        $this->templateCode=NULL;
     }//END protected function _Init
 
     /**
@@ -82,27 +91,26 @@ class Instances extends Module {
      *
      * @param \NETopes\Core\App\Params|array|null $params Parameters
      * @return void
-     * @access public
      * @throws \NETopes\Core\AppException
      */
     public function Listing($params=NULL) {
-        $idTemplate=$params->safeGet('id_template',$this->idTemplate,'is_not0_integer');
-        $templateCode=$params->safeGet('template_code',$this->templateCode,'is_not0_integer');
-        if(!$idTemplate && !$templateCode) {
+        $this->templateId=$params->safeGet('id_template',$this->templateId,'is_not0_integer');
+        $this->templateCode=$params->safeGet('template_code',$this->templateCode,'is_not0_integer');
+        if(!$this->templateId && !$this->templateCode) {
             throw new AppException('Invalid DynamicForm template identifier!');
         }
         $template=DataProvider::Get('Plugins\DForms\Instances','GetTemplate',[
-            'for_id'=>(is_numeric($idTemplate) ? $idTemplate : NULL),
-            'for_code'=>(is_numeric($templateCode) ? $templateCode : NULL),
+            'for_id'=>$this->templateId,
+            'for_code'=>$this->templateCode,
             'instance_id'=>NULL,
             'for_state'=>1,
         ]);
-        $this->idTemplate=$idTemplate=$template->getProperty('id',NULL,'is_integer');
-        if(!$idTemplate) {
+        $this->templateId=$template->getProperty('id',NULL,'is_integer');
+        if(!$this->templateId) {
             throw new AppException('Invalid DynamicForm template!');
         }
         $fields=DataProvider::Get('Plugins\DForms\Instances','GetFields',[
-            'template_id'=>$idTemplate,
+            'template_id'=>$this->templateId,
             'for_template_code'=>NULL,
             'for_listing'=>1,
         ]);
@@ -111,20 +119,21 @@ class Instances extends Module {
         $cMethod=$params->safeGet('c_method',call_back_trace(0),'is_notempty_string');
         $cTarget=$params->safeGet('c_target','main-content','is_notempty_string');
         $target=$params->safeGet('target','main-content','is_notempty_string');
-        $inListingActions=$params->safeGet('in_listing_actions',FALSE,'bool');
+        $this->inListingActions=$params->safeGet('in_listing_actions',$this->inListingActions,'bool');
+        $this->containerType=$params->safeGet('container_type',$this->containerType,'is_string');
         $listingTarget=$target.'_listing';
         $listingAddAction=[
             'value'=>Translate::GetButton('add'),
             'class'=>NApp::$theme->GetBtnPrimaryClass(),
             'icon'=>'fa fa-plus',
-            'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->name}', 'method': 'ShowAddForm',{ 'id_template': '{!id_template!}', 'c_module': '{$cModule}', 'c_method': '{$cMethod}', 'c_target': '{$cTarget}' } }",$target),
+            'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->name}', 'method': 'ShowAddForm', 'params': { 'id_template': '{$this->templateId}', 'c_module': '{$cModule}', 'c_method': '{$cMethod}', 'c_target': '{$cTarget}', 'target': '{$target}' } }",$target),
         ];
 
         $view=new AppView(get_defined_vars(),$this,($target=='main-content' ? 'main' : 'default'));
         $view->SetTitle($params->safeGet('title',$template->getProperty('name','','is_string'),'is_string'));
         $view->SetTargetId($listingTarget);
         $view->AddControlBuilderContent($this->GetViewFile('Listing'),TableView::class);
-        if(!$inListingActions) {
+        if(!$this->inListingActions) {
             if(!$this->AddDRights()) {
                 $btnAdd=new Button($listingAddAction);
                 $view->AddAction($btnAdd->Show());
@@ -134,17 +143,17 @@ class Instances extends Module {
     }//END public function Listing
 
     /**
-     * description
-     *
      * @param \NETopes\Core\App\Params|array|null $params Parameters
      * @return void
-     * @access public
      * @throws \NETopes\Core\AppException
      */
     public function GlobalListing($params=NULL) {
-        $idTemplate=$params->safeGet('for_id',$this->idTemplate,'is_not0_integer');
-        $templateCode=$params->safeGet('for_code',$this->templateCode,'is_not0_integer');
-        $fTypes=DataProvider::GetKeyValueArray('_Custom\Offline','GetDynamicFormsTemplatesFTypes');
+        $this->templateId=$params->safeGet('id_template',$this->templateId,'is_not0_integer');
+        $this->templateCode=$params->safeGet('template_code',$this->templateCode,'is_not0_integer');
+        if(!$this->templateId && !$this->templateCode) {
+            throw new AppException('Invalid DynamicForm template identifier!');
+        }
+        $fTypes=DataProvider::GetKeyValue('_Custom\Offline','GetDynamicFormsTemplatesFTypes');
         $listingTarget='listing-content';
         $view=new AppView(get_defined_vars(),$this,'main');
         $view->SetTitle('');
@@ -158,12 +167,15 @@ class Instances extends Module {
      *
      * @param \NETopes\Core\App\Params|array|null $params Parameters
      * @return void
-     * @access public
      * @throws \NETopes\Core\AppException
      */
     public function ShowAddEditForm($params=NULL) {
         // NApp::Dlog($params,'ShowAddEditForm');
+        $this->templateId=$params->safeGet('id_template',$this->templateId,'is_not0_integer');
         $this->templateCode=$params->safeGet('template_code',$this->templateCode,'is_not0_integer');
+        if(!$this->templateId && !$this->templateCode) {
+            throw new AppException('Invalid DynamicForm template identifier!');
+        }
         $idInstance=$params->safeGet('id',NULL,'is_not0_integer');
         /** @var \NETopes\Core\Data\VirtualEntity $template */
         $template=DataProvider::Get('Plugins\DForms\Instances','GetTemplate',[
@@ -175,13 +187,13 @@ class Instances extends Module {
         if(!is_object($template)) {
             throw new AppException('Invalid DynamicForm template!');
         }
-        $idTemplate=$template->getProperty('id',NULL,'is_integer');
-        $templateCode=$template->getProperty('code',NULL,'is_integer');
-        if(!$idTemplate) {
+        $this->templateId=$template->getProperty('id',NULL,'is_integer');
+        $this->templateCode=$template->getProperty('code',NULL,'is_integer');
+        if(!$this->templateId) {
             throw new AppException('Invalid DynamicForm template!');
         }
         if(!$idInstance && $template->getProperty('ftype',0,'is_integer')==2 && $params instanceof Params) {
-            $instance=InstancesHelpers::GetSingletonInstance($idTemplate,$params);
+            $instance=InstancesHelpers::GetSingletonInstance($this->templateId,$params);
             $idInstance=$instance->getProperty('id',NULL,'is_integer');
         }//if(!$idInstance && $template->getProperty('ftype',0,'is_integer')==2 && $params instanceof Params)
 
@@ -194,54 +206,54 @@ class Instances extends Module {
 
         $controlClass=get_array_value($ctrl_params,'control_class','','is_string');
         $noRedirect=$params->safeGet('no_redirect',FALSE,'bool');
-        $cModule=$params->safeGet('c_module',$this->class,'is_notempty_string');
+        $cModule=$params->safeGet('c_module',$this->name,'is_notempty_string');
         $cMethod=$params->safeGet('c_method','Listing','is_notempty_string');
         $cTarget=$params->safeGet('c_target','main-content','is_notempty_string');
-        $isModal=$params->safeGet('is_modal',$this->isModal,'is_integer');
+        $this->formsAsModal=$params->safeGet('is_modal',$this->formsAsModal,'is_integer');
+        $this->containerType=$params->safeGet('container_type',$this->containerType,'is_string');
+        $this->actionsLocation=$params->safeGet('actions_location','form','is_notempty_string');
         $aeSaveInstanceMethod='SaveInstance';
         $tName=get_array_value($ctrl_params,'tname',microtime(),'is_string');
         $fTagId=get_array_value($ctrl_params,'tag_id','','is_string');
-        $actionsLocation=$params->safeGet('actions_location','form','is_notempty_string');
-        if($controlClass!='BasicForm' && $actionsLocation=='form') {
-            $actionsLocation='container';
+
+        if($controlClass!='BasicForm' && $this->actionsLocation=='form') {
+            $this->actionsLocation='container';
         }
-        if($isModal) {
-            $containerType='modal';
-            $view=new AppView(get_defined_vars(),$this,$containerType);
+        if($this->formsAsModal) {
+            $view=new AppView(get_defined_vars(),$this,'modal');
             $view->SetIsModalView(TRUE);
             $view->SetModalWidth('80%');
             $view->SetTitle($template->getProperty('name','','is_string'));
         } else {
-            $containerType=$params->safeGet('container_type',($cTarget=='main-content' ? 'main' : NULL),'?is_string');
-            $view=new AppView(get_defined_vars(),$this,$containerType);
+            $view=new AppView(get_defined_vars(),$this,$this->containerType);
             $view->SetTitle($template->getProperty('name','','is_string'));
-        }//if($isModal)
+        }//if($this->formsAsModal)
         $formActions=[];
         $fResponseTarget=get_array_value($ctrl_params,'response_target','df_'.$tName.'_errors','is_notempty_string');
         if(strlen($fTagId)) {
-            $btnSave=new Button(['value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','class'=>NApp::$theme->GetBtnPrimaryClass(),'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': '{$aeSaveInstanceMethod}', 'params': { 'id_template': '{$idTemplate}', 'id': '{$idInstance}', 'relations': '{nGet|df_{$tName}_relations:form}', 'data': '{nGet|df_{$tName}_form:form}', 'is_modal': '{$isModal}', 'c_module': '{$cModule}', 'c_method': '{$cMethod}', 'c_target': '{$cTarget}', 'form_id': '{$fTagId}' } }",$fResponseTarget)]);
+            $btnSave=new Button(['value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','class'=>NApp::$theme->GetBtnPrimaryClass(),'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': '{$aeSaveInstanceMethod}', 'params': { 'id_template': '{$this->templateId}', 'id': '{$idInstance}', 'relations': '{nGet|df_{$tName}_relations:form}', 'data': '{nGet|{$fTagId}:form}', 'is_modal': '{$this->formsAsModal}', 'c_module': '{$cModule}', 'c_method': '{$cMethod}', 'c_target': '{$cTarget}', 'form_id': '{$fTagId}' } }",$fResponseTarget)]);
             $formActions[]=$btnSave->Show();
             if($params->safeGet('back_action',TRUE,'bool')) {
-                if($isModal) {
-                    $btnBack=new Button(['tag_id'=>'df_'.$tName.'_cancel','value'=>Translate::GetButton('cancel'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-ban','onclick'=>"CloseModalForm()",]);
+                if($this->formsAsModal) {
+                    $btnBack=new Button(['value'=>Translate::GetButton('cancel'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-ban','onclick'=>"CloseModalForm()",]);
                 } else {
-                    $btnBack=new Button(['tag_id'=>'df_'.$tName.'_back','value'=>Translate::GetButton('back'),'icon'=>'fa fa-chevron-left','class'=>NApp::$theme->GetBtnDefaultClass(),'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$cModule}', 'method': '{$cMethod}', 'params': { 'id_template': '{$idTemplate}', 'id': '{$idInstance}', 'target': '{$cTarget}' } }",$cTarget)]);
+                    $btnBack=new Button(['value'=>Translate::GetButton('back'),'icon'=>'fa fa-chevron-left','class'=>NApp::$theme->GetBtnDefaultClass(),'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$cModule}', 'method': '{$cMethod}', 'params': { 'id_template': '{$this->templateId}', 'id': '{$idInstance}', 'target': '{$cTarget}' } }",$cTarget)]);
                 }//if($isModal)
                 $formActions[]=$btnBack->Show();
             }//if($params->safeGet('back_action',TRUE,'bool'))
         }//if(strlen($fTagId))
-        if($actionsLocation=='container') {
+        if($this->actionsLocation=='container') {
             $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="'.$fResponseTarget.'">&nbsp;</div></div>');
             $view->SetActions($formActions);
-        }//if($actionsLocation=='container')
+        }//if($this->actionsLocation=='container')
         $addContentMethod='Add'.$controlClass;
         $view->$addContentMethod($this->GetViewFile('AddEditInstanceForm'));
-        $relationsHtml=InstancesHelpers::PrepareRelationsFormPart($idTemplate,$idInstance,$params);
+        $relationsHtml=InstancesHelpers::PrepareRelationsFormPart($this->templateId,$idInstance,$params);
         $view->AddHtmlContent('<div class="row"><div class="col-md-12 hidden" id="df_'.$tName.'_relations">'.$relationsHtml.'</div></div>');
-        if($actionsLocation=='after') {
+        if($this->actionsLocation=='after') {
             $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="'.$fResponseTarget.'">&nbsp;</div></div>');
             $view->AddHtmlContent('<div class="row"><div class="col-md-12 actions-group">'.implode('',$formActions).'</div></div>');
-        }//if($actionsLocation=='after')
+        }//if($this->actionsLocation=='after')
         $view->Render();
     }//END public function ShowAddEditForm
 
@@ -250,39 +262,84 @@ class Instances extends Module {
      *
      * @param \NETopes\Core\App\Params|array|null $params Parameters
      * @return void
-     * @access public
      * @throws \NETopes\Core\AppException
      */
     public function ShowAddForm($params=NULL) {
         // NApp::Dlog($params,'ShowAddForm');
-        $idTemplate=$params->safeGet('id_template',$this->idTemplate,'is_not0_integer');
-        $templateCode=$params->safeGet('template_code',$this->templateCode,'is_not0_integer');
-        if(!$idTemplate && !$templateCode) {
+        $this->templateId=$params->safeGet('id_template',$this->templateId,'is_not0_integer');
+        $this->templateCode=$params->safeGet('template_code',$this->templateCode,'is_not0_integer');
+        if(!$this->templateId && !$this->templateCode) {
             throw new AppException('Invalid DynamicForm template identifier!');
         }
         $template=DataProvider::Get('Plugins\DForms\Instances','GetTemplate',[
-            'for_id'=>(is_numeric($idTemplate) ? $idTemplate : NULL),
-            'for_code'=>(is_numeric($templateCode) ? $templateCode : NULL),
+            'for_id'=>$this->templateId,
+            'for_code'=>$this->templateCode,
             'instance_id'=>NULL,
             'for_state'=>1,
         ]);
-        $idTemplate=get_array_value($template,'id',NULL,'is_integer');
-        if(!$idTemplate) {
+        $this->templateId=get_array_value($template,'id',NULL,'is_integer');
+        if(!$this->templateId) {
             throw new AppException('Invalid DynamicForm template!');
         }
-        $cModule=$params->safeGet('c_module',get_called_class(),'is_notempty_string');
-        $cMethod=$params->safeGet('c_method',call_back_trace(0),'is_notempty_string');
-        $cTarget=$params->safeGet('c_target','main-content','is_notempty_string');
-        $ctrl_params=$this->PrepareForm($params,$template);
-        if(!$ctrl_params) {
+
+        $builder=InstancesHelpers::PrepareForm($params,$template);
+        if(!$builder instanceof IControlBuilder) {
             throw new AppException('Invalid DynamicForm configuration!');
         }
-        $isModal=$params->safeGet('is_modal',$this->isModal,'is_integer');
-        $ftitle=$params->safeGet('form_title','&nbsp;','is_string');
-        require($this->GetViewFile('AddInstanceForm'));
-        if($isModal) {
-            NApp::Ajax()->ExecuteJs("ShowModalForm('90%',($('#page-title').html()+' - ".$params->safeGet('nav_item_name','','is_string')."'))");
-        }//if($isModal)
+        $ctrl_params=$builder->GetConfig();
+
+        $controlClass=get_array_value($ctrl_params,'control_class','','is_string');
+        $noRedirect=$params->safeGet('no_redirect',FALSE,'bool');
+        $cModule=$params->safeGet('c_module',$this->name,'is_notempty_string');
+        $cMethod=$params->safeGet('c_method','Listing','is_notempty_string');
+        $cTarget=$params->safeGet('c_target','main-content','is_notempty_string');
+        $this->formsAsModal=$params->safeGet('is_modal',$this->formsAsModal,'is_integer');
+        $this->containerType=$params->safeGet('container_type',$this->containerType,'is_string');
+        $this->actionsLocation=$params->safeGet('actions_location','form','is_notempty_string');
+        $aeSaveInstanceMethod='SaveNewRecord';
+        $tName=get_array_value($ctrl_params,'tname',microtime(),'is_string');
+        $fTagId=get_array_value($ctrl_params,'tag_id','','is_string');
+
+        if($controlClass!='BasicForm' && $this->actionsLocation=='form') {
+            $this->actionsLocation='container';
+        }
+        if($this->formsAsModal) {
+            $view=new AppView(get_defined_vars(),$this,'modal');
+            $view->SetIsModalView(TRUE);
+            $view->SetModalWidth('80%');
+            $view->SetTitle($template->getProperty('name','','is_string'));
+        } else {
+            $view=new AppView(get_defined_vars(),$this,$this->containerType);
+            $view->SetTitle($template->getProperty('name','','is_string'));
+        }//if($this->formsAsModal)
+
+        $formActions=[];
+        $fResponseTarget=get_array_value($ctrl_params,'response_target','df_'.$tName.'_errors','is_notempty_string');
+        if(strlen($fTagId)) {
+            $btnSave=new Button(['value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','class'=>NApp::$theme->GetBtnPrimaryClass(),'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': '{$aeSaveInstanceMethod}', 'params': { 'id_template': '{$this->templateId}', 'relations': '{nGet|df_{$tName}_relations:form}', 'data': '{nGet|{$fTagId}:form}', 'is_modal': '{$this->formsAsModal}', 'c_module': '{$cModule}', 'c_method': '{$cMethod}', 'c_target': '{$cTarget}', 'form_id': '{$fTagId}' } }",$fResponseTarget)]);
+            $formActions[]=$btnSave->Show();
+            if($params->safeGet('back_action',TRUE,'bool')) {
+                if($this->formsAsModal) {
+                    $btnBack=new Button(['value'=>Translate::GetButton('cancel'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-ban','onclick'=>"CloseModalForm()",]);
+                } else {
+                    $btnBack=new Button(['value'=>Translate::GetButton('back'),'icon'=>'fa fa-chevron-left','class'=>NApp::$theme->GetBtnDefaultClass(),'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$cModule}', 'method': '{$cMethod}', 'params': { 'id_template': '{$this->templateId}', 'target': '{$cTarget}' } }",$cTarget)]);
+                }//if($isModal)
+                $formActions[]=$btnBack->Show();
+            }//if($params->safeGet('back_action',TRUE,'bool'))
+        }//if(strlen($fTagId))
+        if($this->actionsLocation=='container') {
+            $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="'.$fResponseTarget.'">&nbsp;</div></div>');
+            $view->SetActions($formActions);
+        }//if($this->actionsLocation=='container')
+        $addContentMethod='Add'.$controlClass;
+        $view->$addContentMethod($this->GetViewFile('AddInstanceForm'));
+        $relationsHtml=InstancesHelpers::PrepareRelationsFormPart($this->templateId,NULL,$params);
+        $view->AddHtmlContent('<div class="row"><div class="col-md-12 hidden" id="df_'.$tName.'_relations">'.$relationsHtml.'</div></div>');
+        if($this->actionsLocation=='after') {
+            $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="'.$fResponseTarget.'">&nbsp;</div></div>');
+            $view->AddHtmlContent('<div class="row"><div class="col-md-12 actions-group">'.implode('',$formActions).'</div></div>');
+        }//if($this->actionsLocation=='after')
+        $view->Render();
     }//END public function ShowAddForm
 
     /**
@@ -290,7 +347,6 @@ class Instances extends Module {
      *
      * @param \NETopes\Core\App\Params|array|null $params Parameters
      * @return void
-     * @access public
      * @throws \NETopes\Core\AppException
      */
     public function ShowEditForm($params=NULL) {
@@ -329,13 +385,12 @@ class Instances extends Module {
      *
      * @param \NETopes\Core\App\Params|array|null $params Parameters
      * @return void
-     * @access public
      * @throws \NETopes\Core\AppException
      */
     public function SaveInstance($params=NULL) {
-        // NApp::Dlog($params,'SaveInstance');
+        // NApp::Dlog($params->toArray(),'SaveInstance');
         $idInstance=$params->safeGet('id',NULL,'is_integer');
-        $target=$params->safeGet('target','','is_string');
+        $formId=$params->safeGet('form_id','','is_string');
         $check=InstancesHelpers::ValidateSaveParams($params);
         if(!$check) {
             $message=NULL;
@@ -345,7 +400,7 @@ class Instances extends Module {
                 $name=get_array_param($error,'name','','is_string');
                 $message.='<li>'.$name.': '.Translate::GetError('required_field').'</li>';
                 if(strlen($type)=='required_field') {
-                    NApp::Ajax()->ExecuteJs("AddClassOnErrorByName('{$target}','".get_array_param($error,'key','','is_string')."')");
+                    NApp::Ajax()->ExecuteJs("AddClassOnErrorByName('{$formId}','".get_array_param($error,'key','','is_string')."')");
                 }//if(strlen($type)=='required_field')
             }//END foreach
             $fieldsErrors=$params->safeGet('df_fields_errors',[],'is_array');
@@ -355,13 +410,13 @@ class Instances extends Module {
                 $fieldUid=get_array_param($error,'uid',NULL,'is_string');
                 $message.='<li>'.$name.': '.Translate::GetError('required_field').'</li>';
                 if(strlen($fieldUid)) {
-                    NApp::Ajax()->ExecuteJs("AddClassOnErrorByName('{$target}','{$fieldUid}')");
+                    NApp::Ajax()->ExecuteJs("AddClassOnErrorByName('{$formId}','{$fieldUid}')");
                 }//if(strlen($fieldUid))
             }//END foreach
             if(strlen($message)) {
                 echo '<ul class="errors-list">'.$message.'</ul>';
             } else {
-                NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
+                NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$formId}')");
                 echo Translate::GetMessage('required_fields');
             }//if(strlen($message))
             return;
@@ -372,7 +427,7 @@ class Instances extends Module {
         } else {
             $this->Exec('SaveNewRecord',$params);
         }//if($idInstance>0)
-        InstancesHelpers::RedirectAfterAction($params->safeGet('id_template',$this->idTemplate,'is_not0_integer'),$params,$this);
+        InstancesHelpers::RedirectAfterAction($params->safeGet('id_template',$this->templateId,'is_not0_integer'),$params,$this);
     }//END public function SaveInstance
 
     /**
@@ -380,12 +435,11 @@ class Instances extends Module {
      *
      * @param \NETopes\Core\App\Params|array|null $params Parameters
      * @return void
-     * @access public
      * @throws \NETopes\Core\AppException
      */
     public function SaveNewRecord($params=NULL) {
         // NApp::Dlog($params,'SaveNewRecord');
-        $idTemplate=$params->safeGet('id_template',$this->idTemplate,'is_not0_integer');
+        $idTemplate=$params->safeGet('id_template',$this->templateId,'is_not0_integer');
         if(!$idTemplate) {
             throw new AppException('Invalid DynamicForm template identifier!');
         }
@@ -470,12 +524,11 @@ class Instances extends Module {
      *
      * @param \NETopes\Core\App\Params|array|null $params Parameters
      * @return void
-     * @access public
      * @throws \NETopes\Core\AppException
      */
     public function SaveRecord($params=NULL) {
         // NApp::Dlog($params,'SaveRecord');
-        $idTemplate=$params->safeGet('id_template',$this->idTemplate,'is_not0_integer');
+        $idTemplate=$params->safeGet('id_template',$this->templateId,'is_not0_integer');
         $idInstance=$params->safeGet('id',NULL,'is_not0_integer');
         if(!$idTemplate || !$idInstance) {
             throw new AppException('Invalid DynamicForm instance identifier!');
@@ -493,7 +546,7 @@ class Instances extends Module {
         $transaction=AppSession::GetNewUID($template->getProperty('code',$idTemplate,'is_notempty_string'));
         DataProvider::StartTransaction('Plugins\DForms\Instances',$transaction);
         try {
-            $result=DataProvider::Get('Plugins\DForms\Instances','UnsetInstanceValues',['instance_id'=>$idInstance],['transaction'=>$transaction]);
+            $result=DataProvider::Get('Plugins\DForms\Instances','UnsetInstanceValues',['for_id'=>$idInstance],['transaction'=>$transaction]);
             if($result===FALSE) {
                 throw new AppException('Database error on instance update!');
             }
@@ -561,7 +614,6 @@ class Instances extends Module {
      *
      * @param \NETopes\Core\App\Params|array|null $params Parameters
      * @return void
-     * @access public
      * @throws \NETopes\Core\AppException
      */
     public function DeleteRecord($params=NULL) {
@@ -582,7 +634,6 @@ class Instances extends Module {
      *
      * @param \NETopes\Core\App\Params|array|null $params Parameters
      * @return void
-     * @access public
      * @throws \NETopes\Core\AppException
      */
     public function EditRecordState($params=NULL) {
@@ -605,14 +656,13 @@ class Instances extends Module {
      *
      * @param \NETopes\Core\App\Params|array|null $params Parameters
      * @return void
-     * @access public
      * @throws \NETopes\Core\AppException
      */
     public function ShowViewForm($params=NULL) {
         // NApp::Dlog($params,'ShowViewForm');
         $idInstance=$params->getOrFail('id','is_not0_integer','Invalid instance identifier!');
         $instance=DataProvider::Get('Plugins\DForms\Instances','GetInstanceItem',['for_id'=>$idInstance]);
-        $idTemplate=$instance->getProperty('id_template',$this->idTemplate,'is_integer');
+        $idTemplate=$instance->getProperty('id_template',$this->templateId,'is_integer');
         if(!$idTemplate) {
             throw new AppException('Invalid DynamicForm template!');
         }
@@ -628,7 +678,6 @@ class Instances extends Module {
      *
      * @param \NETopes\Core\App\Params|array|null $params Parameters
      * @return mixed return description
-     * @access public
      * @throws \NETopes\Core\AppException
      */
     public function GetInstancePdf($params=NULL) {
