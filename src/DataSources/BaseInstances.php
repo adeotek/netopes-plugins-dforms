@@ -241,4 +241,18 @@ abstract class BaseInstances extends DataSource {
      * @return mixed
      */
     abstract public function SetNewInstanceRelation($params=[],$extra_params=[]);
+
+    /**
+     * SetInstanceUid default parameters
+     */
+    public const SET_INSTANCE_UID=['for_id'=>NULL];
+
+    /**
+     * Sets a DynamicForm instance UID
+     *
+     * @param array $params ['for_id'=>NULL]
+     * @param array $extra_params
+     * @return mixed
+     */
+    abstract public function SetInstanceUid($params=[],$extra_params=[]);
 }//END abstract class BaseInstances extends DataSource

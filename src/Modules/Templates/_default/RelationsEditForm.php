@@ -1,4 +1,9 @@
 <?php
+use NETopes\Core\App\Module;
+use NETopes\Core\Data\DataProvider;
+
+/** @var string $dgtarget */
+/** @var int $idTemplate */
 $ctrl_params=[
     'module'=>$this->class,
     'method'=>$this->GetCurrentMethod(),
@@ -8,6 +13,11 @@ $ctrl_params=[
     'scrollable'=>FALSE,
     'with_filter'=>TRUE,
     'with_pagination'=>TRUE,
+    'custom_actions'=>[
+        'control_type'=>'Button',
+        'dright'=>Module::DRIGHT_EDIT,
+        'control_params'=>['value'=>Translate::GetButton('add'),'class'=>NApp::$theme->GetBtnPrimaryClass(),'icon'=>'fa fa-plus-circle','onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->class,'method'=>'ShowRelationAddEditForm','params'=>['id_template'=>$idTemplate,'target'=>$target]],['target_id'=>'modal'])],
+    ],
     'sortby'=>['column'=>'name','direction'=>'asc'],
     'qsearch'=>'for_text',
     'ds_class'=>'Plugins\DForms\Templates',
@@ -69,6 +79,23 @@ $ctrl_params=[
             'label'=>Translate::GetLabel('column'),
             'sortable'=>TRUE,
             'filterable'=>TRUE,
+        ],
+        'utype'=>[
+            'db_field'=>'utype',
+            'data_type'=>'numeric',
+            'type'=>'indexof',
+            'values_collection'=>DataProvider::GetKeyValue('_Custom\DFormsOffline','GetDynamicFormsRelationsUTypes'),
+            'halign'=>'center',
+            'label'=>Translate::GetLabel('usage_type'),
+            'sortable'=>TRUE,
+            'filterable'=>TRUE,
+            'filter_type'=>'combobox',
+            'show_filter_cond_type'=>FALSE,
+            'filter_params'=>['value_field'=>'id','display_field'=>'name','selected_value'=>NULL],
+            'filter_data_source'=>[
+                'ds_class'=>'_Custom\DFormsOffline',
+                'ds_method'=>'GetDynamicFormsRelationsUTypes',
+            ],
         ],
         'required'=>[
             'width'=>'80',

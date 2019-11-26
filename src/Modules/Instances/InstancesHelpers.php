@@ -37,6 +37,49 @@ use Translate;
 class InstancesHelpers {
 
     /**
+     * @param int                        $templateId
+     * @param \NETopes\Core\App\Params   $params
+     * @param \NETopes\Core\Data\DataSet $relations
+     * @return string|null
+     * @throws \NETopes\Core\AppException
+     */
+    public static function GetInstanceUid(int $templateId,Params $params,DataSet $relations): ?string {
+        $result=NULL;
+        /** @var IEntity $relation */
+        foreach($relations as $relation) {
+            if(!$relation instanceof IEntity) {
+                continue;
+            }
+            $dataType=$relation->getProperty('dtype',NULL,'is_string');
+            $key=$relation->getProperty('key',NULL,'is_string');
+            switch($relation->getProperty('rtype',NULL,'is_string')) {
+                case 20:
+                    $relRawValue=NApp::GetParam($key);
+                    break;
+                case 21:
+                    $relRawValue=NApp::GetPageParam($key);
+                    break;
+                case 30:
+                    $relRawValue=$params->safeGet($key,NULL,'isset');
+                    break;
+                case 10:
+                default:
+                    $relRawValue=NULL;
+                    break;
+            }//END switch
+            $relValue=NULL;
+            if(static::GetValidatedValue($relRawValue,$relValue,$dataType)) {
+                throw new AppException('Invalid DynamicForm relation value ['.$key.']!');
+            }
+            $result.=(strlen($result) ? '-' : '').$relValue;
+        }//END foreach
+        if(strlen($result)) {
+            $result=$templateId.'-'.$result;
+        }
+        return $result;
+    }//END public static function GetInstanceUid
+
+    /**
      * description
      *
      * @param \NETopes\Core\Data\VirtualEntity $field
@@ -49,13 +92,13 @@ class InstancesHelpers {
      */
     public static function PrepareRepeatableField(VirtualEntity $field,array $fParams,$fValue=NULL,?string $themeType=NULL,int $iCount=0): array {
         // NApp::Dlog(['$field'=>$field,'$fParams'=>$fParams,'$fValue'=>$fValue,'$themeType'=>$themeType,'$iCount'=>$iCount],'PrepareField');
-        $idInstance=$field->getProperty('id_instance',NULL,'is_integer');
+        $instanceId=$field->getProperty('id_instance',NULL,'is_integer');
         $fieldUid=$field->getProperty('uid',NULL,'is_string');
         if(!strlen($fieldUid)) {
             throw new AppException('Invalid UID for field ['.$field->getProperty('name','','is_string').']!');
         }//if(!strlen($fieldUid))
-        // $tagId=($idInstance ? $idInstance.'_' : '').$field->getProperty('uid','','is_string').'_'.$field->getProperty('name','','is_string');
-        $tagId=($idInstance ?? 0).'_'.$fieldUid;
+        // $tagId=($instanceId ? $instanceId.'_' : '').$field->getProperty('uid','','is_string').'_'.$field->getProperty('name','','is_string');
+        $tagId=($instanceId ?? 0).'_'.$fieldUid;
         $fValuesArray=explode('|::|',$fValue);
         $field->set('tag_id',$tagId.'-0');
         $field->set('tag_name',$fieldUid.'[]');
@@ -148,13 +191,13 @@ class InstancesHelpers {
         if($repeatable) {
             return static::PrepareRepeatableField($field,$fParams,$fValue,$themeType,$iCount);
         }
-        $idInstance=$field->getProperty('id_instance',NULL,'is_integer');
+        $instanceId=$field->getProperty('id_instance',NULL,'is_integer');
         $fieldUid=$field->getProperty('uid',NULL,'is_string');
         if(!strlen($fieldUid)) {
             throw new AppException('Invalid UID for field ['.$field->getProperty('name','','is_string').']!');
         }//if(!strlen($fieldUid))
-        // $tagId=($idInstance ? $idInstance.'_' : '').$field->getProperty('uid','','is_string').'_'.$field->getProperty('name','','is_string');
-        $field->set('tag_id',($idInstance ?? 0).'_'.$fieldUid);
+        // $tagId=($instanceId ? $instanceId.'_' : '').$field->getProperty('uid','','is_string').'_'.$field->getProperty('name','','is_string');
+        $field->set('tag_id',($instanceId ?? 0).'_'.$fieldUid);
         $field->set('tag_name',$fieldUid);
         // if(strlen($themeType)) { $fParams['theme_type'] = $themeType; }
         $fClass=$field->getProperty('class','','is_string');
@@ -199,19 +242,19 @@ class InstancesHelpers {
      * @param IEntity     $template
      * @param IEntity     $page
      * @param string      $tName
-     * @param int|null    $idInstance
+     * @param int|null    $instanceId
      * @param int|null    $idSubForm
      * @param int|null    $idItem
      * @param int|null    $index
      * @return IControlBuilder|null Returns BasicForm configuration array
      * @throws \NETopes\Core\AppException
      */
-    public static function PrepareFormBuilder(?Params $params,IEntity $template,IEntity $page,string $tName,?int $idInstance=NULL,?int $idSubForm=NULL,?int $idItem=NULL,?int $index=NULL): ?IControlBuilder {
-        // NApp::Dlog(['$template'=>$template,'$page'=>$page,'$tName'=>$tName,'$idInstance'=>$idInstance,'$idSubForm'=>$idSubForm,'$idItem'=>$idItem,'$index'=>$index],'PrepareFormPage');
+    public static function PrepareFormBuilder(?Params $params,IEntity $template,IEntity $page,string $tName,?int $instanceId=NULL,?int $idSubForm=NULL,?int $idItem=NULL,?int $index=NULL): ?IControlBuilder {
+        // NApp::Dlog(['$template'=>$template,'$page'=>$page,'$tName'=>$tName,'$instanceId'=>$instanceId,'$idSubForm'=>$idSubForm,'$idItem'=>$idItem,'$index'=>$index],'PrepareFormPage');
         if($idSubForm) {
             $fields=DataProvider::Get('Plugins\DForms\Instances','GetStructure',[
                 'template_id'=>$template->getProperty('id'),
-                'instance_id'=>($idInstance ? $idInstance : NULL),
+                'instance_id'=>($instanceId ? $instanceId : NULL),
                 'for_pindex'=>$page->getProperty('pindex',-1,'is_integer'),
                 'item_id'=>$idItem,
                 'for_index'=>(is_numeric($index) ? $index : NULL),
@@ -219,18 +262,19 @@ class InstancesHelpers {
         } else {
             $fields=DataProvider::Get('Plugins\DForms\Instances','GetStructure',[
                 'template_id'=>$template->getProperty('id'),
-                'instance_id'=>($idInstance ? $idInstance : NULL),
+                'instance_id'=>($instanceId ? $instanceId : NULL),
                 'for_pindex'=>$page->getProperty('pindex',-1,'is_integer'),
             ]);
         }//if($idSubForm)
         // NApp::Dlog($fields,'$fields');
+        $viewOnly=$params->safeGet('view_only',FALSE,'bool');
         $themeType=$template->getProperty('theme_type','','is_string');
         $controlsSize=$template->getProperty('controls_size','','is_string');
         $labelCols=$template->getProperty('label_cols',NULL,'is_not0_integer');
 
         $pIndex=$page->getProperty('pindex');
         $colsNo=$page->getProperty('colsno');
-        $iPrefix=($idInstance ? $idInstance.'_' : '');
+        $iPrefix=($instanceId ? $instanceId.'_' : '');
         $formIdPrefix='df_'.$tName.(is_integer($pIndex) ? '_'.$pIndex : '');
 
         $builder=new BasicFormBuilder([
@@ -251,6 +295,9 @@ class InstancesHelpers {
         if(strlen($controlsSize)) {
             $builder->SetParam('controls_size',$controlsSize);
         }
+        if($viewOnly) {
+            $builder->SetParam('disabled',TRUE);
+        }
 
         $columnsToSkip=0;
         /** @var VirtualEntity $field */
@@ -268,7 +315,7 @@ class InstancesHelpers {
             $fParams=strlen($fParamsStr) ? json_decode($fParamsStr,TRUE) : [];
             switch($fClass) {
                 case 'FormTitle':
-                    $builder->AddControl([
+                    $builder->SetRow([
                         'separator'=>'title',
                         'value'=>$field->getProperty('label','','is_string'),
                         'class'=>get_array_value($fParams,'class','','is_string'),
@@ -276,7 +323,7 @@ class InstancesHelpers {
                     $columnsToSkip=$colsNo - 1;
                     break;
                 case 'FormSubTitle':
-                    $builder->AddControl([
+                    $builder->SetRow([
                         'separator'=>'subtitle',
                         'value'=>$field->getProperty('label','','is_string'),
                         'class'=>get_array_value($fParams,'class','','is_string'),
@@ -284,7 +331,7 @@ class InstancesHelpers {
                     $columnsToSkip=$colsNo - 1;
                     break;
                 case 'FormSeparator':
-                    $builder->AddControl(['separator'=>'separator'],$row);
+                    $builder->SetRow(['separator'=>'separator'],$row);
                     $columnsToSkip=$colsNo - 1;
                     break;
                 case 'BasicForm':
@@ -298,17 +345,17 @@ class InstancesHelpers {
                     $fIdSubForm=$field->getProperty('id_sub_form',-1,'is_not0_numeric');
                     $idItem=$field->getProperty('id',NULL,'is_not0_numeric');
 
-                    if($fIType==2 && $idInstance) {
+                    if($fIType==2 && $instanceId) {
                         $fICount=$field->getProperty('icount',1,'is_not0_numeric');
                         // $fValue = $field->getProperty('ivalues',NULL,'is_string');
                     } else {
                         $fICount=1;
                         // $fValue = NULL;
-                    }//if($fIType==2 && $idInstance)
+                    }//if($fIType==2 && $instanceId)
 
                     $fSubFormVersion=NULL;
                     for($i=0; $i<$fICount; $i++) {
-                        $subFormBuilder=static::PrepareForm($params,$template,$idInstance,$fIdSubForm,$idItem,$i,$fSubFormVersion);
+                        $subFormBuilder=static::PrepareForm($params,$template,$instanceId,$fIdSubForm,$idItem,$i,$fSubFormVersion);
                         if(!$subFormBuilder instanceof IControlBuilder) {
                             throw new AppException('Invalid DynamicForm sub-form configuration!');
                         }
@@ -334,7 +381,7 @@ class InstancesHelpers {
                     }//if($fIType==2)
                     $itemUid=$field->getProperty('uid',NULL,'is_string');
                     $fParams['value'].=<<<HTML
-                        <input type="hidden" id="{$idInstance}_{$itemUid}_version" name="{$itemUid}" class="postable" value="{$fSubFormVersion}">
+                        <input type="hidden" id="{$instanceId}_{$itemUid}_version" name="{$itemUid}" class="postable" value="{$fSubFormVersion}">
 HTML;
                     $builder->AddControl([
                         'width'=>$field->getProperty('width','','is_string'),
@@ -356,17 +403,17 @@ HTML;
                         }
                         $fIType=$field->getProperty('itype',1,'is_not0_numeric');
                         if($fIType==2) {
-                            if($idInstance) {
+                            if($instanceId) {
                                 $fICount=$field->getProperty('icount',0,'is_numeric');
                                 $fValue=$field->getProperty('ivalues',NULL,'is_string');
                             } else {
                                 $fICount=0;
                                 $fValue=NULL;
-                            }//if($idInstance)
+                            }//if($instanceId)
                             $builder->AddControl(static::PrepareField($field,$fParams,$fValue,$themeType,TRUE,$fICount),$row);
                         } else {
                             $fValue=NULL;
-                            if($idInstance) {
+                            if($instanceId) {
                                 $fValue=$field->getProperty('ivalues',NULL,'is_string');
                             }
                             $builder->AddControl(static::PrepareField($field,$fParams,$fValue,$themeType),$row);
@@ -385,17 +432,17 @@ HTML;
      * @param IEntity     $template
      * @param IEntity     $page
      * @param string      $tName
-     * @param int|null    $idInstance
+     * @param int|null    $instanceId
      * @param int|null    $idSubForm
      * @param int|null    $idItem
      * @param int|null    $index
      * @return array|null Returns BasicForm configuration array
      * @throws \NETopes\Core\AppException
      */
-    public static function PrepareFormTab(?Params $params,IEntity $template,IEntity $page,string $tName,?int $idInstance=NULL,?int $idSubForm=NULL,?int $idItem=NULL,?int $index=NULL): ?array {
-        // NApp::Dlog(['$template'=>$template,'$page'=>$page,'$tName'=>$tName,'$multiPage'=>$multiPage,'$idInstance'=>$idInstance,'$idSubForm'=>$idSubForm,'$idItem'=>$idItem,'$index'=>$index],'PrepareFormPage');
+    public static function PrepareFormTab(?Params $params,IEntity $template,IEntity $page,string $tName,?int $instanceId=NULL,?int $idSubForm=NULL,?int $idItem=NULL,?int $index=NULL): ?array {
+        // NApp::Dlog(['$template'=>$template,'$page'=>$page,'$tName'=>$tName,'$multiPage'=>$multiPage,'$instanceId'=>$instanceId,'$idSubForm'=>$idSubForm,'$idItem'=>$idItem,'$index'=>$index],'PrepareFormPage');
         $pIndex=$page->getProperty('pindex');
-        $builder=static::PrepareFormBuilder($params,$template,$page,$tName,$idInstance,$idSubForm,$idItem,$index);
+        $builder=static::PrepareFormBuilder($params,$template,$page,$tName,$instanceId,$idSubForm,$idItem,$index);
         $tab=[
             'type'=>'fixed',
             'uid'=>$tName.'-'.$pIndex,
@@ -414,7 +461,7 @@ HTML;
      *
      * @param \NETopes\Core\App\Params|null $params Parameters object
      * @param IEntity|null                  $mTemplate
-     * @param int|null                      $idInstance
+     * @param int|null                      $instanceId
      * @param int|null                      $idSubForm
      * @param int|null                      $idItem
      * @param int|null                      $index
@@ -422,18 +469,18 @@ HTML;
      * @return IControlBuilder|null Returns BasicForm configuration array
      * @throws \NETopes\Core\AppException
      */
-    public static function PrepareForm(?Params $params,?IEntity $mTemplate,?int $idInstance=NULL,?int $idSubForm=NULL,?int $idItem=NULL,?int $index=NULL,?int &$formVersion=NULL): ?IControlBuilder {
-        // NApp::Dlog(['$mTemplate'=>$mTemplate,'$idInstance'=>$idInstance,'$idSubForm'=>$idSubForm,'$idItem'=>$idItem,'$index'=>$index],'PrepareForm');
-        $idTemplate=$mTemplate->getProperty('id',NULL,'is_integer');
-        if(!$idTemplate) {
+    public static function PrepareForm(?Params $params,?IEntity $mTemplate,?int $instanceId=NULL,?int $idSubForm=NULL,?int $idItem=NULL,?int $index=NULL,?int &$formVersion=NULL): ?IControlBuilder {
+        // NApp::Dlog(['$mTemplate'=>$mTemplate,'$instanceId'=>$instanceId,'$idSubForm'=>$idSubForm,'$idItem'=>$idItem,'$index'=>$index],'PrepareForm');
+        $templateId=$mTemplate->getProperty('id',NULL,'is_integer');
+        if(!$templateId) {
             return NULL;
         }
         // NApp::Dlog($idSubForm,'$idSubForm');
         if($idSubForm) {
             $template=DataProvider::Get('Plugins\DForms\Instances','GetTemplate',[
-                'for_id'=>($idInstance ? NULL : $idSubForm),
+                'for_id'=>($instanceId ? NULL : $idSubForm),
                 'for_code'=>NULL,
-                'instance_id'=>($idInstance ? $idInstance : NULL),
+                'instance_id'=>($instanceId ? $instanceId : NULL),
                 'item_id'=>$idItem,
                 'for_state'=>1,
             ]);
@@ -446,8 +493,8 @@ HTML;
             }
             $pages=DataProvider::Get('Plugins\DForms\Instances','GetPages',[
                 'for_id'=>NULL,
-                'instance_id'=>($idInstance ? $idInstance : NULL),
-                'template_id'=>$idTemplate,
+                'instance_id'=>($instanceId ? $instanceId : NULL),
+                'template_id'=>$templateId,
                 'for_template_code'=>NULL,
                 'for_pindex'=>NULL,
             ]);
@@ -455,8 +502,8 @@ HTML;
             $template=$mTemplate;
             $pages=DataProvider::Get('Plugins\DForms\Instances','GetPages',[
                 'for_id'=>NULL,
-                'instance_id'=>($idInstance ? $idInstance : NULL),
-                'template_id'=>$idTemplate,
+                'instance_id'=>($instanceId ? $instanceId : NULL),
+                'template_id'=>$templateId,
                 'for_template_code'=>NULL,
                 'for_pindex'=>NULL,
             ]);
@@ -467,8 +514,8 @@ HTML;
             return NULL;
         }
         $formVersion=$template->getProperty('version',NULL,'is_integer');
-        $iPrefix=($idInstance ? $idInstance.'_' : '');
-        $tName=$iPrefix.$idTemplate.'_'.$idSubForm;
+        $iPrefix=($instanceId ? $instanceId.'_' : '');
+        $tName=$iPrefix.$templateId.'_'.$idSubForm;
         $renderType=get_array_value($template,'render_type',1,'is_integer');
         if(in_array($renderType,[21,22])) {
             $builder=new TabControlBuilder([
@@ -478,27 +525,27 @@ HTML;
                 'mode'=>($renderType==22 ? 'accordion' : 'tabs'),
             ]);
             foreach($pages as $page) {
-                $builder->AddTab(static::PrepareFormTab($params,$template,$page,$tName,$idInstance,$idSubForm,$idItem,$index));
+                $builder->AddTab(static::PrepareFormTab($params,$template,$page,$tName,$instanceId,$idSubForm,$idItem,$index));
             }//END foreach
         } else {
-            $builder=static::PrepareFormBuilder($params,$template,$pages->first(),$tName,$idInstance,$idSubForm,$idItem,$index);
+            $builder=static::PrepareFormBuilder($params,$template,$pages->first(),$tName,$instanceId,$idSubForm,$idItem,$index);
         }//if(in_array($renderType,[21,22]))
         return $builder;
     }//END public static function PrepareForm
 
     /**
-     * @param int                      $idTemplate
-     * @param int|null                 $idInstance
+     * @param int                      $templateId
+     * @param int|null                 $instanceId
      * @param \NETopes\Core\App\Params $inputParams
      * @return string|null
      * @throws \NETopes\Core\AppException
      */
-    public static function PrepareRelationsFormPart(int $idTemplate,?int $idInstance,Params $inputParams): ?string {
-        if($idInstance) {
-            $relations=DataProvider::Get('Plugins\DForms\Instances','GetRelations',['instance_id'=>$idInstance]);
+    public static function PrepareRelationsFormPart(int $templateId,?int $instanceId,Params $inputParams): ?string {
+        if($instanceId) {
+            $relations=DataProvider::Get('Plugins\DForms\Instances','GetRelations',['instance_id'=>$instanceId]);
         } else {
-            $relations=DataProvider::Get('Plugins\DForms\Templates','GetRelations',['template_id'=>$idTemplate,'validated'=>1]);
-        }//if($idInstance)
+            $relations=DataProvider::Get('Plugins\DForms\Templates','GetRelations',['template_id'=>$templateId,'validated'=>1]);
+        }//if($instanceId)
         $result=NULL;
         if(is_iterable($relations) && count($relations)) {
             /** @var VirtualEntity $rel */
@@ -517,6 +564,44 @@ HTML;
         }//if(is_iterable($relations) && count($relations))
         return $result;
     }//END public static function PrepareRelationsFormPart
+
+    /**
+     * @param \NETopes\Plugins\DForms\Modules\Instances\Instances $module
+     * @param array                                               $ctrlParams
+     * @param int|null                                            $instanceId
+     * @param string                                              $saveMethod
+     * @param string                                              $responseTarget
+     * @param string                                              $tName
+     * @param string                                              $fTagId
+     * @param string                                              $cModule
+     * @param string                                              $cMethod
+     * @param string                                              $cTarget
+     * @param bool                                                $viewOnly
+     * @param bool                                                $noRedirect
+     * @return array
+     * @throws \NETopes\Core\AppException
+     */
+    public static function PrepareFormActions(Instances $module,array $ctrlParams,?int $instanceId,string $saveMethod,string $responseTarget,string $tName,string $fTagId,string $cModule,string $cMethod,string $cTarget,bool $viewOnly,bool $noRedirect): array {
+        $actions=['container'=>[],'form'=>[],'after'=>[]];
+        if(strlen($fTagId) && strlen($responseTarget)) {
+            if(!$viewOnly) {
+                $actions[$module->actionsLocation][]=[
+                    'params'=>['tag_id'=>'df_'.$tName.'_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','class'=>NApp::$theme->GetBtnPrimaryClass(),'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$module->name}', 'method': '{$saveMethod}', 'params': { 'id_template': '{$module->templateId}', 'id': '{$instanceId}', 'relations': '{nGet|df_{$tName}_relations:form}', 'data': '{nGet|{$fTagId}:form}', 'no_redirect': '".(int)$noRedirect."', 'is_modal': '{$module->formAsModal}', 'c_module': '{$cModule}', 'c_method': '{$cMethod}', 'c_target': '{$cTarget}', 'form_id': '{$fTagId}' } }",$responseTarget)],
+                ];
+            }
+            if($module->formAsModal && strlen($module->backActionLocation)) {
+                $actions['form']=[
+                    'type'=>'CloseModal',
+                    'params'=>['value'=>Translate::GetButton('cancel'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-ban'],
+                ];
+            } elseif(!$module->formAsModal && strlen($module->backActionLocation)) {
+                $actions[$module->backActionLocation][]=[
+                    'params'=>['value'=>Translate::GetButton('back'),'icon'=>'fa fa-chevron-left','class'=>NApp::$theme->GetBtnDefaultClass(),'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$cModule}', 'method': '{$cMethod}', 'params': { 'id_template': {$module->templateId}, 'id': '{$instanceId}', 'target': '{$cTarget}' } }",$cTarget)],
+                ];
+            }//if($isModal && strlen($backAction))
+        }//if(strlen($fTagId) && strlen($fResponseTarget))
+        return $actions;
+    }//END public static function PrepareFormActions
 
     /**
      * @param mixed       $value
@@ -547,27 +632,24 @@ HTML;
     }//END public static function GetValidatedValue
 
     /**
-     * @param int                      $idTemplate
+     * @param int                      $templateId
      * @param \NETopes\Core\App\Params $params
      * @return \NETopes\Core\Data\VirtualEntity
      * @throws \NETopes\Core\AppException
      */
-    public static function GetSingletonInstance(int $idTemplate,Params $params): VirtualEntity {
+    public static function GetSingletonInstance(int $templateId,Params $params): VirtualEntity {
         // NApp::Dlog($params->toArray(),'GetSingletonInstance::$params');
-        $relations=DataProvider::Get('Plugins\DForms\Templates','GetRelations',['template_id'=>$idTemplate,'validated'=>1,'for_utype'=>Templates::RELATION_UTYPE_UID]);
-        if(!($relations instanceof DataSet) || !count($relations) || !($relations->first() instanceof VirtualEntity)) {
+        $relations=DataProvider::Get('Plugins\DForms\Templates','GetRelations',['template_id'=>$templateId,'validated'=>1,'for_utype'=>Templates::RELATION_UTYPE_UID]);
+        if(!($relations instanceof DataSet) || !count($relations)) {
             return new VirtualEntity();
         }
-        $dataType=$relations->first()->getProperty('dtype',NULL,'is_string');
-        $key=$relations->first()->getProperty('key',NULL,'is_string');
-        $instanceUid=NULL;
-        static::GetValidatedValue($params->safeGet($key,NULL,'isset'),$instanceUid,$dataType);
+        $instanceUid=static::GetInstanceUid($templateId,$params,$relations);
         if(!strlen($instanceUid)) {
             return new VirtualEntity();
         }
         $instance=DataProvider::Get('Plugins\DForms\Instances','GetSingletonInstance',[
             'for_uid'=>$instanceUid,
-            'template_id'=>$idTemplate,
+            'template_id'=>$templateId,
         ]);
         if($instance instanceof VirtualEntity) {
             return $instance;
@@ -576,18 +658,18 @@ HTML;
     }//END public static function GetSingletonInstance
 
     /**
-     * @param int                      $idTemplate
-     * @param int|null                 $idInstance
+     * @param int                      $templateId
+     * @param int|null                 $instanceId
      * @param \NETopes\Core\App\Params $params
      * @return bool
      * @throws \NETopes\Core\AppException
      */
-    public static function ValidateRelations(int $idTemplate,?int $idInstance,Params &$params): bool {
-        if($idInstance) {
-            $relations=DataProvider::Get('Plugins\DForms\Instances','GetRelations',['instance_id'=>$idInstance]);
+    public static function ValidateRelations(int $templateId,?int $instanceId,Params &$params): bool {
+        if($instanceId) {
+            $relations=DataProvider::Get('Plugins\DForms\Instances','GetRelations',['instance_id'=>$instanceId]);
         } else {
-            $relations=DataProvider::Get('Plugins\DForms\Templates','GetRelations',['template_id'=>$idTemplate,'validated'=>1]);
-        }//if($idInstance)
+            $relations=DataProvider::Get('Plugins\DForms\Templates','GetRelations',['template_id'=>$templateId,'validated'=>1]);
+        }//if($instanceId)
         $relationsData=$params->safeGet('relations',[],'is_array');
         $fieldsData=$params->safeGet('data',[],'is_array');
         // NApp::Dlog($relations,'$relations');
@@ -631,15 +713,15 @@ HTML;
     }//END public static function ValidateRelations
 
     /**
-     * @param int                      $idTemplate
-     * @param int|null                 $idInstance
+     * @param int                      $templateId
+     * @param int|null                 $instanceId
      * @param \NETopes\Core\App\Params $params
      * @return bool
      * @throws \NETopes\Core\AppException
      */
-    public static function ValidateFields(int $idTemplate,?int $idInstance,Params &$params): bool {
+    public static function ValidateFields(int $templateId,?int $instanceId,Params &$params): bool {
         $fieldsData=$params->safeGet('data',[],'is_array');
-        $fields=DataProvider::Get('Plugins\DForms\Instances','GetFields',['template_id'=>$idTemplate]);
+        $fields=DataProvider::Get('Plugins\DForms\Instances','GetFields',['template_id'=>$templateId]);
         // NApp::Dlog($fields,'$fields');
         $errors=[];
         /** @var VirtualEntity $field */
@@ -748,35 +830,34 @@ HTML;
      * @throws \NETopes\Core\AppException
      */
     public static function ValidateSaveParams(Params &$params): bool {
-        $idTemplate=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
-        $idInstance=$params->safeGet('id',NULL,'?is_integer');
-        if(!static::ValidateRelations($idTemplate,$idInstance,$params)) {
+        $templateId=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
+        $instanceId=$params->safeGet('id',NULL,'?is_integer');
+        if(!static::ValidateRelations($templateId,$instanceId,$params)) {
             return FALSE;
         }
-        if(!static::ValidateFields($idTemplate,$idInstance,$params)) {
+        if(!static::ValidateFields($templateId,$instanceId,$params)) {
             return FALSE;
         }
         return TRUE;
     }//END public static function ValidateSaveParams
 
     /**
-     * @param int                      $idTemplate
      * @param \NETopes\Core\App\Params $params
      * @param                          $module
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public static function RedirectAfterAction(int $idTemplate,Params $params,$module): void {
+    public static function RedirectAfterAction(Params $params,$module): void {
         if($params->safeGet('no_redirect',FALSE,'bool')) {
             return;
         }
-        if($params->safeGet('is_modal',$module->isModal,'is_numeric')==1) {
+        if($params->safeGet('form_as_modal',$module->formAsModal,'is_numeric')==1) {
             /** @var \NETopes\Core\App\Module $module */
             $module->CloseForm();
         }
         $cModule=$params->safeGet('c_module',$module->name,'is_notempty_string');
         $cMethod=$params->safeGet('c_method','Listing','is_notempty_string');
         $cTarget=$params->safeGet('c_target','main-content','is_notempty_string');
-        ModulesProvider::Exec($cModule,$cMethod,['id_template'=>$idTemplate,'target'=>$cTarget],$cTarget);
+        ModulesProvider::Exec($cModule,$cMethod,['id_template'=>$module->templateId,'target'=>$cTarget],$cTarget);
     }//END public static function RedirectAfterAction
 }//END class InstancesHelpers

@@ -340,10 +340,6 @@ class Templates extends Module {
         $dgtarget='dg-'.$target;
         $view=new AppView(get_defined_vars(),$this,'default');
         $view->SetTargetId($dgtarget);
-        if(!$this->AddDRights()) {
-            $btnAdd=new Button(['value'=>Translate::GetButton('add'),'class'=>NApp::$theme->GetBtnPrimaryClass(),'icon'=>'fa fa-plus-circle','onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->class,'method'=>'ShowRelationAddEditForm','params'=>['id_template'=>$idTemplate,'target'=>$target]],['target_id'=>'modal'])]);
-            $view->AddAction($btnAdd->Show());
-        }//if(!$this->AddDRights())
         $view->AddTableView($this->GetViewFile('RelationsEditForm'));
         $view->Render();
     }//END public function ShowRelationsEditForm
