@@ -80,8 +80,6 @@ class InstancesHelpers {
     }//END public static function GetInstanceUid
 
     /**
-     * description
-     *
      * @param \NETopes\Core\Data\VirtualEntity $field
      * @param array                            $fParams
      * @param mixed                            $fValue
@@ -175,8 +173,6 @@ class InstancesHelpers {
     }//END public static function PrepareRepeatableField
 
     /**
-     * description
-     *
      * @param \NETopes\Core\Data\VirtualEntity $field
      * @param array                            $fParams
      * @param mixed                            $fValue
@@ -443,7 +439,7 @@ HTML;
         // NApp::Dlog(['$template'=>$template,'$page'=>$page,'$tName'=>$tName,'$multiPage'=>$multiPage,'$instanceId'=>$instanceId,'$idSubForm'=>$idSubForm,'$idItem'=>$idItem,'$index'=>$index],'PrepareFormPage');
         $pIndex=$page->getProperty('pindex');
         $builder=static::PrepareFormBuilder($params,$template,$page,$tName,$instanceId,$idSubForm,$idItem,$index);
-        $tab=[
+        return [
             'type'=>'fixed',
             'uid'=>$tName.'-'.$pIndex,
             'name'=>$page->getProperty('tr_title'),
@@ -453,7 +449,6 @@ HTML;
                 'control_params'=>$builder->GetConfig(),
             ],
         ];
-        return $tab;
     }//END public static function PrepareFormTab
 
     /**
@@ -865,11 +860,11 @@ HTML;
 
     /**
      * @param \NETopes\Core\App\Params $params
-     * @param                          $module
+     * @param Instances                $module
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public static function RedirectAfterAction(Params $params,$module): void {
+    public static function RedirectAfterAction(Params $params,Instances $module): void {
         if($params->safeGet('no_redirect',FALSE,'bool')) {
             return;
         }

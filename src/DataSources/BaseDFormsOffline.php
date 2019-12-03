@@ -16,8 +16,6 @@ use Translate;
 
 abstract class BaseDFormsOffline extends OfflineBase {
     /**
-     * description
-     *
      * @param array $params Parameters array
      * @param array $extra_params
      * @return array
@@ -34,8 +32,6 @@ abstract class BaseDFormsOffline extends OfflineBase {
     }//END public function GetDynamicFormsTemplatesFTypes
 
     /**
-     * description
-     *
      * @param array $params Parameters array
      * @param array $extra_params
      * @return array
@@ -52,8 +48,6 @@ abstract class BaseDFormsOffline extends OfflineBase {
     }//END public function GetDynamicFormsFieldsITypes
 
     /**
-     * description
-     *
      * @param array $params Parameters array
      * @param array $extra_params
      * @return array
@@ -72,8 +66,6 @@ abstract class BaseDFormsOffline extends OfflineBase {
     }//END public function GetDynamicFormsRelationsRTypes
 
     /**
-     * description
-     *
      * @param array $params Parameters array
      * @param array $extra_params
      * @return array
@@ -91,8 +83,6 @@ abstract class BaseDFormsOffline extends OfflineBase {
     }//END public function GetDynamicFormsRelationsUTypes
 
     /**
-     * description
-     *
      * @param array $params Parameters array
      * @param array $extra_params
      * @return array
@@ -111,8 +101,6 @@ abstract class BaseDFormsOffline extends OfflineBase {
     }//END public function GetDynamicFormsDesignRenderTypes
 
     /**
-     * description
-     *
      * @param array $params Parameters array
      * @param array $extra_params
      * @return array

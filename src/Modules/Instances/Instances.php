@@ -10,7 +10,6 @@
  * @filesource
  */
 namespace NETopes\Plugins\DForms\Modules\Instances;
-use Mpdf\Tag\IndexEntry;
 use NApp;
 use NETopes\Core\App\AppView;
 use NETopes\Core\App\Module;
@@ -124,13 +123,11 @@ class Instances extends Module {
     }//END protected function PrepareConfigParams
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function Listing($params=NULL) {
+    public function Listing(Params $params) {
         $this->PrepareConfigParams($params);
         $template=DataProvider::Get('Plugins\DForms\Instances','GetTemplate',[
             'for_id'=>$this->templateId,
@@ -174,11 +171,11 @@ class Instances extends Module {
     }//END public function Listing
 
     /**
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function GlobalListing($params=NULL) {
+    public function GlobalListing(Params $params) {
         $this->PrepareConfigParams($params);
         $fTypes=DataProvider::GetKeyValue('_Custom\Offline','GetDynamicFormsTemplatesFTypes');
         $listingTarget='listing-content';
@@ -190,13 +187,11 @@ class Instances extends Module {
     }//END public function GlobalListing
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function ShowAddEditForm($params=NULL) {
+    public function ShowAddEditForm(Params $params) {
         // NApp::Dlog($params,'ShowAddEditForm');
         $this->PrepareConfigParams($params);
         $instanceId=$params->safeGet('id',NULL,'is_not0_integer');
@@ -276,13 +271,11 @@ class Instances extends Module {
     }//END public function ShowAddEditForm
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function ShowAddForm($params=NULL) {
+    public function ShowAddForm(Params $params) {
         // NApp::Dlog($params,'ShowAddForm');
         $this->PrepareConfigParams($params);
         $template=DataProvider::Get('Plugins\DForms\Instances','GetTemplate',[
@@ -351,13 +344,11 @@ class Instances extends Module {
     }//END public function ShowAddForm
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function ShowEditForm($params=NULL) {
+    public function ShowEditForm(Params $params) {
         // NApp::Dlog($params,'ShowEditForm');
         $instanceId=$params->safeGet('id',NULL,'is_not0_integer');
         if(!$instanceId) {
@@ -432,13 +423,11 @@ class Instances extends Module {
     }//END public function ShowEditForm
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function SaveInstance($params=NULL) {
+    public function SaveInstance(Params $params) {
         // NApp::Dlog($params->toArray(),'SaveInstance');
         $idInstance=$params->safeGet('id',NULL,'is_integer');
         $formId=$params->safeGet('form_id','','is_string');
@@ -483,13 +472,11 @@ class Instances extends Module {
     }//END public function SaveInstance
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function SaveNewRecord($params=NULL) {
+    public function SaveNewRecord(Params $params) {
         // NApp::Dlog($params,'SaveNewRecord');
         $this->templateId=$params->safeGet('id_template',$this->templateId,'is_not0_integer');
         if(!$this->templateId) {
@@ -573,13 +560,11 @@ class Instances extends Module {
     }//END public function SaveNewRecord
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function SaveRecord($params=NULL) {
+    public function SaveRecord(Params $params) {
         // NApp::Dlog($params,'SaveRecord');
         $idTemplate=$params->safeGet('id_template',$this->templateId,'is_not0_integer');
         $idInstance=$params->safeGet('id',NULL,'is_not0_integer');
@@ -650,13 +635,11 @@ class Instances extends Module {
     }//END public function SaveRecord
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function DeleteRecord($params=NULL) {
+    public function DeleteRecord(Params $params) {
         $id=$params->getOrFail('id','is_not0_integer','Invalid record identifier!');
         $this->templateId=$params->safeGet('id_template',$this->templateId,'is_not0_integer');
         if(!$this->templateId) {
@@ -673,13 +656,11 @@ class Instances extends Module {
     }//END public function DeleteRecord
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function EditRecordState($params=NULL) {
+    public function EditRecordState(Params $params) {
         $id=$params->getOrFail('id','is_not0_integer','Invalid DynamicForm instance identifier!');
         $result=DataProvider::Get('Plugins\DForms\Instances','SetInstanceState',[
             'for_id'=>$id,
@@ -692,78 +673,81 @@ class Instances extends Module {
     }//END public function EditRecordState
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function ShowViewForm($params=NULL) {
+    public function ShowViewForm(Params $params) {
         // NApp::Dlog($params,'ShowViewForm');
         $params->set('view_only',1);
         $this->ShowEditForm($params);
     }//END public function ShowViewForm
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
-     * @return mixed return description
+     * @param \NETopes\Core\App\Params $params Parameters object
+     * @return string|null
      * @throws \NETopes\Core\AppException
      */
-    public function PrintInstancePdf($params=NULL) {
-        NApp::Dlog($params,'PrintInstancePdf');
-        $idInstance=$params->safeGet('id',NULL,'is_integer');
-        if(!$idInstance) {
-            throw new AppException('Invalid DynamicForm instance identifier!');
-        }
-        $cache=$params->safeGet('cache',TRUE,'bool');
-        $result_type=$params->safeGet('result_type',0,'is_integer');
-        $instance=DataProvider::Get('Plugins\DForms\Instances','GetInstanceItem',['for_id'=>$idInstance]);
-        $filename=get_array_value($instance,'uid','','is_string');
-        if(!strlen($filename)) {
-            $filename=date('Y-m-d_H-i-s').'.pdf';
-        } else {
-            $filename=str_replace(' ','_',trim($filename)).'.pdf';
-        }//if(!strlen($filename))
-        $category=get_array_value($instance,'category',get_array_value($instance,'template_code',$this->name,'is_notempty_string'),'is_notempty_string');
-        if($cache && strlen($filename) && file_exists(NAPP::GetRepositoryPath().'forms/'.$category.'/'.$filename)) {
-            if($result_type==1) {
-                $data=[
-                    'file_name'=>$filename,
-                    'path'=>NAPP::GetRepositoryPath().'forms/'.$category.'/',
-                    'download_name'=>$filename,
-                ];
-            } else {
-                $data=file_get_contents(NAPP::GetRepositoryPath().'forms/'.$category.'/'.$filename);
-            }//if($result_type==1)
-            return $data;
-        }//if($cache && strlen($filename) && file_exists(NAPP::GetRepositoryPath().$company.'/'.$filename))
-        if($cache) {
-            if(!file_exists(NAPP::GetRepositoryPath().'forms')) {
-                mkdir(NAPP::GetRepositoryPath().'forms',755);
-            }
-            if(!file_exists(NAPP::GetRepositoryPath().'forms/'.$category)) {
-                mkdir(NAPP::GetRepositoryPath().'forms/'.$category,755);
-            }
-        }//if($cache)
-        $html_data=$this->Exec('PrepareFormHtml',['id'=>$idInstance]);
-        $pdfdoc=new InstancesPdf(['html_data'=>$html_data,'file_name'=>$filename]);
-        if($cache) {
-            // file_put_contents(NAPP::GetRepositoryPath().'forms/'.$category.'/'.$filename,$data);
-            $pdfdoc->Output(['output_type'=>'F','file_name'=>NAPP::GetRepositoryPath().'forms/'.$category.'/'.$filename]);
-            if($result_type==1) {
-                $data=[
-                    'file_name'=>$filename,
-                    'path'=>NAPP::GetRepositoryPath().'forms/'.$category.'/',
-                    'download_name'=>$filename,
-                ];
-            } else {
-                $data=file_get_contents(NAPP::GetRepositoryPath().'forms/'.$category.'/'.$filename);
-            }//if($result_type==1)
-        } else {
-            $data=$pdfdoc->Output(['base64'=>FALSE,'file_name'=>NAPP::GetRepositoryPath().'forms/'.$category.'/'.$filename]);
-        }//if($cache)
+    public function GetPrintData(Params $params): ?string {
+        return NULL;
+    }//END public function GetPrintData
+
+    /**
+     * @param \NETopes\Core\App\Params $params Parameters object
+     * @return mixed
+     * @throws \NETopes\Core\AppException
+     */
+    public function PrintInstancePdf(Params $params) {
+        // NApp::Dlog($params,'PrintInstancePdf');
+        $idInstance=$params->getOrFail('id','is_not0_integer','Invalid DynamicForm instance identifier!');
+        $data=NULL;
+        // $cache=$params->safeGet('cache',TRUE,'bool');
+        // $result_type=$params->safeGet('result_type',0,'is_integer');
+        // $instance=DataProvider::Get('Plugins\DForms\Instances','GetInstanceItem',['for_id'=>$idInstance]);
+        // $filename=get_array_value($instance,'uid','','is_string');
+        // if(!strlen($filename)) {
+        //     $filename=date('Y-m-d_H-i-s').'.pdf';
+        // } else {
+        //     $filename=str_replace(' ','_',trim($filename)).'.pdf';
+        // }//if(!strlen($filename))
+        // $category=get_array_value($instance,'category',get_array_value($instance,'template_code',$this->name,'is_notempty_string'),'is_notempty_string');
+        // if($cache && strlen($filename) && file_exists(NAPP::GetRepositoryPath().'forms/'.$category.'/'.$filename)) {
+        //     if($result_type==1) {
+        //         $data=[
+        //             'file_name'=>$filename,
+        //             'path'=>NAPP::GetRepositoryPath().'forms/'.$category.'/',
+        //             'download_name'=>$filename,
+        //         ];
+        //     } else {
+        //         $data=file_get_contents(NAPP::GetRepositoryPath().'forms/'.$category.'/'.$filename);
+        //     }//if($result_type==1)
+        //     return $data;
+        // }//if($cache && strlen($filename) && file_exists(NAPP::GetRepositoryPath().$company.'/'.$filename))
+        // if($cache) {
+        //     if(!file_exists(NAPP::GetRepositoryPath().'forms')) {
+        //         mkdir(NAPP::GetRepositoryPath().'forms',755);
+        //     }
+        //     if(!file_exists(NAPP::GetRepositoryPath().'forms/'.$category)) {
+        //         mkdir(NAPP::GetRepositoryPath().'forms/'.$category,755);
+        //     }
+        // }//if($cache)
+        // $html_data=$this->Exec('PrepareFormHtml',['id'=>$idInstance]);
+        // $pdfdoc=new InstancesPdf(['html_data'=>$html_data,'file_name'=>$filename]);
+        // if($cache) {
+        //     // file_put_contents(NAPP::GetRepositoryPath().'forms/'.$category.'/'.$filename,$data);
+        //     $pdfdoc->Output(['output_type'=>'F','file_name'=>NAPP::GetRepositoryPath().'forms/'.$category.'/'.$filename]);
+        //     if($result_type==1) {
+        //         $data=[
+        //             'file_name'=>$filename,
+        //             'path'=>NAPP::GetRepositoryPath().'forms/'.$category.'/',
+        //             'download_name'=>$filename,
+        //         ];
+        //     } else {
+        //         $data=file_get_contents(NAPP::GetRepositoryPath().'forms/'.$category.'/'.$filename);
+        //     }//if($result_type==1)
+        // } else {
+        //     $data=$pdfdoc->Output(['base64'=>FALSE,'file_name'=>NAPP::GetRepositoryPath().'forms/'.$category.'/'.$filename]);
+        // }//if($cache)
         return $data;
     }//END public function PrintInstancePdf
 }//END class Instances extends Module

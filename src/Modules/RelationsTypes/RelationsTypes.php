@@ -12,6 +12,7 @@
 namespace NETopes\Plugins\DForms\Modules\RelationsTypes;
 use NETopes\Core\App\AppView;
 use NETopes\Core\App\Module;
+use NETopes\Core\App\Params;
 use NETopes\Core\Controls\Button;
 use NETopes\Core\Data\DataProvider;
 use NETopes\Core\Data\VirtualEntity;
@@ -35,13 +36,11 @@ class RelationsTypes extends Module {
     }//END protected function _Init
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function Listing($params=NULL) {
+    public function Listing(Params $params) {
         $view=new AppView(get_defined_vars(),$this,'main');
         $view->AddTableView($this->GetViewFile('Listing'));
         $view->SetTitle(Translate::GetLabel('relations_types'));
@@ -54,13 +53,11 @@ class RelationsTypes extends Module {
     }//END public function Listing
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function ShowAddForm($params=NULL) {
+    public function ShowAddForm(Params $params) {
         $id=NULL;
         $item=new VirtualEntity();
         $view=new AppView(get_defined_vars(),$this,'modal');
@@ -73,13 +70,11 @@ class RelationsTypes extends Module {
     }//END public function ShowAddForm
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function ShowEditForm($params=NULL) {
+    public function ShowEditForm(Params $params) {
         $id=$params->getOrFail('id','is_not0_integer','Invalid record identifier!');
         $item=DataProvider::Get('Plugins\DForms\Relations','GetTypeItem',['for_id'=>$id]);
         $title=Translate::GetTitle('edit_relation_type').': '.$item->getProperty('name');
@@ -93,13 +88,11 @@ class RelationsTypes extends Module {
     }//END public function ShowEditForm
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function AddEditRecord($params=NULL) {
+    public function AddEditRecord(Params $params) {
         $id=$params->safeGet('id',NULL,'is_integer');
         $dType=$params->safeGet('dtype',NULL,'is_notempty_string');
         $name=trim($params->safeGet('name','','is_notempty_string'));
@@ -146,13 +139,11 @@ class RelationsTypes extends Module {
     }//END public function AddEditRecord
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function DeleteRecord($params=NULL) {
+    public function DeleteRecord(Params $params) {
         $id=$params->getOrFail('id','is_not0_integer','Invalid record identifier!');
         $result=DataProvider::Get('Plugins\DForms\Relations','UnsetTypeItem',['for_id'=>$id]);
         if($result===FALSE) {

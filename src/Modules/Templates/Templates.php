@@ -13,6 +13,7 @@ namespace NETopes\Plugins\DForms\Modules\Templates;
 use NETopes\Core\App\AppView;
 use NETopes\Core\App\Module;
 use NETopes\Core\App\ModulesProvider;
+use NETopes\Core\App\Params;
 use NETopes\Core\Controls\BasicForm;
 use NETopes\Core\Controls\Button;
 use NETopes\Core\Data\DataProvider;
@@ -51,13 +52,11 @@ class Templates extends Module {
     }//END protected function _Init
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function Listing($params=NULL) {
+    public function Listing(Params $params) {
         $listingTarget='dforms_listing';
         $view=new AppView(get_defined_vars(),$this,'main');
         $view->SetTitle('dynamic_forms_templates');
@@ -71,13 +70,11 @@ class Templates extends Module {
     }//END public function Listing
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function ShowAddForm($params=NULL) {
+    public function ShowAddForm(Params $params) {
         $view=new AppView(get_defined_vars(),$this,'modal');
         $view->SetIsModalView(TRUE);
         $view->AddBasicForm($this->GetViewFile('AddForm'));
@@ -88,13 +85,11 @@ class Templates extends Module {
     }//END public function ShowAddForm
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function ShowEditForm($params=NULL) {
+    public function ShowEditForm(Params $params) {
         $id=$params->getOrFail('id','is_not0_integer','Invalid record identifier!');
         $item=DataProvider::Get('Plugins\DForms\Templates','GetItem',['for_id'=>$id]);
         if(!is_object($item)) {
@@ -115,13 +110,11 @@ class Templates extends Module {
     }//END public function ShowEditForm
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function AddEditRecord($params=NULL) {
+    public function AddEditRecord(Params $params) {
         $id=$params->safeGet('id',NULL,'is_not0_numeric');
         $ftype=$params->safeGet('ftype',NULL,'is_numeric');
         $code=$params->safeGet('code',NULL,'is_numeric');
@@ -177,13 +170,11 @@ class Templates extends Module {
     }//END public function AddEditRecord
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function SetPrintTemplate($params=NULL) {
+    public function SetPrintTemplate(Params $params) {
         $idTemplate=$params->getOrFail('id','is_not0_integer','Invalid record identifier!');
         $result=DataProvider::Get('Plugins\DForms\Templates','SetPropertiesItem',[
             'template_id'=>$idTemplate,
@@ -200,13 +191,11 @@ class Templates extends Module {
     }//END public function SetPrintTemplate
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function DeleteRecord($params=NULL) {
+    public function DeleteRecord(Params $params) {
         $id=$params->getOrFail('id','is_not0_integer','Invalid template identifier!');
         $result=DataProvider::GetArray('Plugins\DForms\Templates','UnsetItem',['for_id'=>$id]);
         if($result===FALSE) {
@@ -216,13 +205,11 @@ class Templates extends Module {
     }//END public function DeleteRecord
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function EditRecordState($params=NULL) {
+    public function EditRecordState(Params $params) {
         $id=$params->getOrFail('id','is_not0_integer','Invalid template identifier!');
         $state=$params->getOrFail('state','is_integer','Invalid state value!');
         $result=DataProvider::Get('Plugins\DForms\Templates','SetItemState',[
@@ -236,13 +223,11 @@ class Templates extends Module {
     }//END public function EditRecordState
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function CreateNewVersion($params=NULL) {
+    public function CreateNewVersion(Params $params) {
         $id=$params->getOrFail('id','is_not0_integer','Invalid template identifier!');
         $result=DataProvider::Get('Plugins\DForms\Templates','SetItemValidated',['for_id'=>$id,'new_value'=>0]);
         if($result===FALSE) {
@@ -252,13 +237,11 @@ class Templates extends Module {
     }//END public function CreateNewVersion
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function ValidateRecord($params=NULL) {
+    public function ValidateRecord(Params $params) {
         $id=$params->getOrFail('id','is_not0_integer','Invalid template identifier!');
         $new_value=$params->safeGet('new_value',1,'is_numeric');
         $result=DataProvider::GetArray('Plugins\DForms\Templates','SetItemValidated',[
@@ -273,13 +256,11 @@ class Templates extends Module {
     }//END public function ValidateRecord
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function ShowDesignEditForm($params=NULL) {
+    public function ShowDesignEditForm(Params $params) {
         $idTemplate=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
         $item=DataProvider::Get('Plugins\DForms\Templates','GetItemProperties',['template_id'=>$idTemplate]);
         if(!is_object($item) || $item instanceof DataSet) {
@@ -292,13 +273,11 @@ class Templates extends Module {
     }//END public function ShowDesignEditForm
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function EditDesignRecord($params=NULL) {
+    public function EditDesignRecord(Params $params) {
         $idTemplate=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
         $renderType=$params->safeGet('render_type',NULL,'is_integer');
         $target=$params->safeGet('target','','is_string');
@@ -328,13 +307,11 @@ class Templates extends Module {
     }//END public function EditDesignRecord
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function ShowRelationsEditForm($params=NULL) {
+    public function ShowRelationsEditForm(Params $params) {
         $idTemplate=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
         $target=$params->safeGet('target','','is_string');
         $dgtarget='dg-'.$target;
@@ -345,13 +322,11 @@ class Templates extends Module {
     }//END public function ShowRelationsEditForm
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function ShowRelationAddEditForm($params=NULL) {
+    public function ShowRelationAddEditForm(Params $params) {
         $idTemplate=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
         $id=$params->safeGet('id',NULL,'is_integer');
         if($id) {
@@ -370,13 +345,11 @@ class Templates extends Module {
     }//END public function ShowRelationAddEditForm
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function AddEditRelationRecord($params=NULL) {
+    public function AddEditRelationRecord(Params $params) {
         $idTemplate=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
         $id=$params->safeGet('id',NULL,'is_integer');
         $idType=$params->safeGet('type',NULL,'is_integer');
@@ -422,13 +395,11 @@ class Templates extends Module {
     }//END public function AddEditRelationRecord
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function DeleteRelationRecord($params=NULL) {
+    public function DeleteRelationRecord(Params $params) {
         $id=$params->getOrFail('id','is_not0_integer','Invalid record identifier!');
         $idTemplate=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
         $result=DataProvider::Get('Plugins\DForms\Templates','UnsetRelation',['for_id'=>$id]);
@@ -440,13 +411,11 @@ class Templates extends Module {
     }//END public function DeleteRelationRecord
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function CloneRecord($params=NULL) {
+    public function CloneRecord(Params $params) {
         $id=$params->getOrFail('id','is_not0_integer','Invalid field identifier!');
         $result=DataProvider::Get('Plugins\DForms\Templates','CloneItem',['for_id'=>$id,'user_id'=>NApp::GetCurrentUserId()]);
         if($result===FALSE) {

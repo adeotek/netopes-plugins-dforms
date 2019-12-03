@@ -15,6 +15,7 @@ use Error;
 use Exception;
 use NApp;
 use NETopes\Core\App\Module;
+use NETopes\Core\App\Params;
 use NETopes\Core\Controls\TabControl;
 use NETopes\Core\Data\DataProvider;
 use NETopes\Core\AppException;
@@ -27,14 +28,11 @@ use Translate;
  */
 class Controls extends Module {
     /**
-     * description
-     *
      * @param array       $data
      * @param int         $idControl
      * @param int         $idParent
      * @param string|null $parentGroupName
      * @return array
-     * @throws \NETopes\Core\AppException
      * @throws \NETopes\Core\AppException
      */
     protected function GetTabControlStructure(array $data,int $idControl,int $idParent=0,?string $parentGroupName=NULL) {
@@ -186,14 +184,12 @@ class Controls extends Module {
     }//END protected function GetTabControlStructure
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return \NETopes\Core\Controls\TabControl
      * @throws \NETopes\Core\AppException
      * @throws \Exception
      */
-    public function GetControlPropertiesTab($params=NULL): TabControl {
+    public function GetControlPropertiesTab(Params $params): TabControl {
         $idControl=$params->getOrFail('id_control','is_not0_integer','Invalid control identifier!');
         $data=$params->safeGet('data',NULL,'is_array');
         if(!is_array($data)) {
@@ -216,13 +212,11 @@ class Controls extends Module {
     }//END public function GetControlPropertiesTab
 
     /**
-     * description
-     *
-     * @param \NETopes\Core\App\Params|array|null $params Parameters
+     * @param \NETopes\Core\App\Params $params Parameters object
      * @return mixed
      * @throws \NETopes\Core\AppException
      */
-    public function ProcessFieldProperties($params=NULL) {
+    public function ProcessFieldProperties(Params $params) {
         // \NApp::Dlog($params,'ProcessFieldProperties');
         $idControl=$params->safeGet('id_control',NULL,'is_not0_numeric');
         if(!$idControl) {
@@ -276,8 +270,6 @@ class Controls extends Module {
                                 }
                                 break;
                             case 1:
-                                $result[$propKey]=get_array_value($data,$propKey,NULL,'isset');
-                                break;
                             default:
                                 $result[$propKey]=get_array_value($data,$propKey,NULL,'isset');
                                 break;
