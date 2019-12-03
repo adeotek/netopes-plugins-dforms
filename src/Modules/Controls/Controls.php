@@ -113,6 +113,7 @@ class Controls extends Module {
                         $fpSParams['placeholder']='['.Translate::GetLabel('default').']';
                     }//if($fpRequired)
                     $fpSParams['minimum_results_for_search']=0;
+                    $fpSParams['fixed_width']='100%';
                     $fpSParams['selected_value']=get_array_value($data,$fpKey,$fpi->getProperty('default_value','','is_string'),'is_string');
                     $fpSParams['selected_text']=$fpSParams['selected_value'];
                     break;

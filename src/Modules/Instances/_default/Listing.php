@@ -33,26 +33,26 @@ if($this->inListingActions) {
         'control_params'=>$listingAddAction,
     ]);
 }
-$ctrl_builder->AddAction('actions',[
-    'dright'=>Module::DRIGHT_PRINT,
-    'type'=>'Link',
-    'params'=>['tooltip'=>Translate::GetButton('pdf'),'class'=>NApp::$theme->GetBtnSuccessClass('btn-xxs'),'icon'=>'fa fa-file-pdf-o',
-        'href'=>NApp::$appBaseUrl.'/pipe/cdn.php',
-        'target'=>'_blank',
-        'url_params'=>[
-            'namespace'=>NApp::$currentNamespace,
-            'language'=>NApp::GetLanguageCode(),
-            'rtype'=>'shash',
-            'mrt'=>'1',
-            // 'dbg'=>1,
+if($this->listingPrintAction) {
+    $ctrl_builder->AddAction('actions',[
+        'dright'=>Module::DRIGHT_PRINT,
+        'type'=>'Link',
+        'params'=>['tooltip'=>Translate::GetButton('pdf'),'class'=>NApp::$theme->GetBtnSuccessClass('btn-xxs'),'icon'=>'fa fa-file-pdf-o',
+            'href'=>NApp::$appBaseUrl.$this->printUrl,
+            'target'=>'_blank',
+            'url_params'=>[
+                'namespace'=>NApp::$currentNamespace,
+                'language'=>NApp::GetLanguageCode(),
+                'rtype'=>'ehash',
+                'payload'=>[
+                    'module'=>$this->name,
+                    'method'=>'PrintInstancePdf',
+                    'params'=>['id'=>'{!id!}'],
+                ],
+            ],
         ],
-        'session_params'=>[
-            'module'=>$this->name,
-            'method'=>'GetInstancePdf',
-            'params'=>['id'=>'{!id!}','result_type'=>1,'cache'=>TRUE],
-        ],
-    ],
-]);
+    ]);
+}
 $ctrl_builder->AddAction('actions',[
     'dright'=>Module::DRIGHT_EDIT,
     'type'=>'DivButton',

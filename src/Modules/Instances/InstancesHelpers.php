@@ -583,6 +583,28 @@ HTML;
      */
     public static function PrepareFormActions(Instances $module,array $ctrlParams,?int $instanceId,string $saveMethod,string $responseTarget,string $tName,string $fTagId,string $cModule,string $cMethod,string $cTarget,bool $viewOnly,bool $noRedirect): array {
         $actions=['container'=>[],'form'=>[],'after'=>[]];
+        if($module->formPrintAction) {
+            $actions[$module->formAsModal ? 'form' : $module->actionsLocation][]=[
+                'type'=>'Link',
+                'params'=>[
+                    'value'=>Translate::GetButton('print'),
+                    'icon'=>'fa fa-file-pdf-o',
+                    'class'=>NApp::$theme->GetBtnSuccessClass(),
+                    'href'=>NApp::$appBaseUrl.$module->printUrl,
+                    'target'=>'_blank',
+                    'url_params'=>[
+                        'namespace'=>NApp::$currentNamespace,
+                        'language'=>NApp::GetLanguageCode(),
+                        'rtype'=>'ehash',
+                        'payload'=>[
+                            'module'=>$module->name,
+                            'method'=>'PrintInstancePdf',
+                            'params'=>['id'=>'{!id!}'],
+                        ],
+                    ],
+                ],
+            ];
+        }
         if(strlen($fTagId) && strlen($responseTarget)) {
             if(!$viewOnly) {
                 $actions[$module->actionsLocation][]=[
@@ -590,7 +612,7 @@ HTML;
                 ];
             }
             if($module->formAsModal && strlen($module->backActionLocation)) {
-                $actions['form']=[
+                $actions['form'][]=[
                     'type'=>'CloseModal',
                     'params'=>['value'=>Translate::GetButton('cancel'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-ban'],
                 ];

@@ -68,6 +68,18 @@ class Instances extends Module {
      */
     public $showInListing=['template_code','template_name','create_date','user_full_name','last_modified','last_user_full_name'];
     /**
+     * @var bool Flag for showing print action in listing
+     */
+    public $listingPrintAction=TRUE;
+    /**
+     * @var bool Flag for showing print action in edit/view forms
+     */
+    public $formPrintAction=TRUE;
+    /**
+     * @var string Print relative URL
+     */
+    public $printUrl='/pipe/cdn.php';
+    /**
      * @var array List CSS styles to be used for generating view HTML
      */
     protected $htmlStyles=[
@@ -699,8 +711,8 @@ class Instances extends Module {
      * @return mixed return description
      * @throws \NETopes\Core\AppException
      */
-    public function GetInstancePdf($params=NULL) {
-        NApp::Dlog($params,'GetInstancePdf');
+    public function PrintInstancePdf($params=NULL) {
+        NApp::Dlog($params,'PrintInstancePdf');
         $idInstance=$params->safeGet('id',NULL,'is_integer');
         if(!$idInstance) {
             throw new AppException('Invalid DynamicForm instance identifier!');
@@ -753,5 +765,5 @@ class Instances extends Module {
             $data=$pdfdoc->Output(['base64'=>FALSE,'file_name'=>NAPP::GetRepositoryPath().'forms/'.$category.'/'.$filename]);
         }//if($cache)
         return $data;
-    }//END public function GetInstancePdf
+    }//END public function PrintInstancePdf
 }//END class Instances extends Module
