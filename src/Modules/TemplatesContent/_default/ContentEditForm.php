@@ -3,7 +3,7 @@
  * @var \NETopes\Core\Data\DataSet       $fieldsTypes
  * @var \NETopes\Core\Data\VirtualEntity $templateProps
  * @var \NETopes\Core\Data\DataSet       $templatePages
- * @var int                              $idTemplate
+ * @var int                              $template
  */
 use NETopes\Core\App\ModulesProvider; ?>
 	<div class="dft-container clearfix" id="dft-container">
@@ -32,8 +32,8 @@ use NETopes\Core\App\ModulesProvider; ?>
 		<div class="dft-pages-actions">
             <?php
             if($templateProps->getProperty('render_type',1,'is_integer')>1) {
-                $pagesNo=$templateProps->getProperty('pagesno',1,'is_integer');
-                $btn_add_page=new NETopes\Core\Controls\Button(['value'=>Translate::GetButton('add_page'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-sm pull-left'),'icon'=>'fa fa-plus-circle','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'ShowAddPageForm', 'params': { 'id_template': '{$idTemplate}', 'pagesno': '{$pagesNo}', 'target': '{$target}' } }",'modal')]);
+	            $pagesNo=$templateProps->getProperty('pagesno',1,'is_integer');
+	            $btn_add_page=new NETopes\Core\Controls\Button(['value'=>Translate::GetButton('add_page'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-sm pull-left'),'icon'=>'fa fa-plus-circle','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'ShowAddPageForm', 'params': { 'id_template': '{$template}', 'pagesno': '{$pagesNo}', 'target': '{$target}' } }",'modal')]);
                 echo $btn_add_page->Show();
             }//if($templateProps->getProperty('render_type',1,'is_integer')>1)
             ?>
@@ -44,13 +44,13 @@ use NETopes\Core\App\ModulesProvider; ?>
                 if(is_iterable($templatePages) && count($templatePages)) {
                     /** @var \NETopes\Core\Data\VirtualEntity $page */
                     foreach($templatePages as $page) {
-                        $pageIndex=$page->getProperty('pindex',0,'is_integer');
-                        $pageTargetId='df_template_fields_p'.$pageIndex;
-                        ?>
-						<div class="dft-content-page clearfix" id="<?= $pageTargetId ?>">
-                            <?php ModulesProvider::Exec($this->class,'ShowContentTable',['id_template'=>$idTemplate,'pindex'=>$pageIndex,'target'=>$pageTargetId,'c_target'=>$target]); ?>
-						</div>
-                        <?php
+	                    $pageIndex=$page->getProperty('pindex',0,'is_integer');
+	                    $pageTargetId='df_template_fields_p'.$pageIndex;
+	                    ?>
+	                    <div class="dft-content-page clearfix" id="<?= $pageTargetId ?>">
+		                    <?php ModulesProvider::Exec($this->class,'ShowContentTable',['id_template'=>$template,'pindex'=>$pageIndex,'target'=>$pageTargetId,'c_target'=>$target]); ?>
+	                    </div>
+	                    <?php
                     }//END foreach
                 }//if(is_iterable($templatePages) && count($templatePages))
                 ?>

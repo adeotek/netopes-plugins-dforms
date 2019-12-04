@@ -75,7 +75,7 @@ $ctrl_params=[
     'actions'=>[
         [
             'params'=>['value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','AddEditRelationRecord',
-                'id_template'|{$idTemplate}
+                'id_template'|{$template}
                 ~'id'|'{$id}'
                 ~'type'|df_template_rel_ae_type:value
                 ~'rtype'|df_template_rel_ae_rtype:value

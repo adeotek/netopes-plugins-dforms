@@ -3,7 +3,7 @@ use NETopes\Core\App\Module;
 use NETopes\Core\Data\DataProvider;
 
 /** @var string $dgtarget */
-/** @var int $idTemplate */
+/** @var int $template */
 $ctrl_params=[
     'module'=>$this->class,
     'method'=>$this->GetCurrentMethod(),
@@ -16,13 +16,13 @@ $ctrl_params=[
     'custom_actions'=>[
         'control_type'=>'Button',
         'dright'=>Module::DRIGHT_EDIT,
-        'control_params'=>['value'=>Translate::GetButton('add'),'class'=>NApp::$theme->GetBtnPrimaryClass(),'icon'=>'fa fa-plus-circle','onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->class,'method'=>'ShowRelationAddEditForm','params'=>['id_template'=>$idTemplate,'target'=>$target]],['target_id'=>'modal'])],
+        'control_params'=>['value'=>Translate::GetButton('add'),'class'=>NApp::$theme->GetBtnPrimaryClass(),'icon'=>'fa fa-plus-circle','onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->class,'method'=>'ShowRelationAddEditForm','params'=>['id_template'=>$template,'target'=>$target]],['target_id'=>'modal'])],
     ],
     'sortby'=>['column'=>'name','direction'=>'asc'],
     'qsearch'=>'for_text',
     'ds_class'=>'Plugins\DForms\Templates',
     'ds_method'=>'GetRelations',
-    'ds_params'=>['for_id'=>NULL,'template_id'=>$idTemplate,'for_text'=>NULL],
+    'ds_params'=>['for_id'=>NULL,'template_id'=>$template,'for_text'=>NULL],
     'auto_load_data'=>TRUE,
     'columns'=>[
         'actions'=>[

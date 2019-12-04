@@ -1,6 +1,6 @@
 <?php
 /**
- * description
+ * InstancesHelpers class file
  *
  * @package    NETopes\Plugins\Modules\DForms
  * @author     George Benjamin-Schonberger
@@ -239,20 +239,20 @@ class InstancesHelpers {
      * @param IEntity     $page
      * @param string      $tName
      * @param int|null    $instanceId
-     * @param int|null    $idSubForm
-     * @param int|null    $idItem
+     * @param int|null    $subFormId
+     * @param int|null    $itemId
      * @param int|null    $index
      * @return IControlBuilder|null Returns BasicForm configuration array
      * @throws \NETopes\Core\AppException
      */
-    public static function PrepareFormBuilder(?Params $params,IEntity $template,IEntity $page,string $tName,?int $instanceId=NULL,?int $idSubForm=NULL,?int $idItem=NULL,?int $index=NULL): ?IControlBuilder {
-        // NApp::Dlog(['$template'=>$template,'$page'=>$page,'$tName'=>$tName,'$instanceId'=>$instanceId,'$idSubForm'=>$idSubForm,'$idItem'=>$idItem,'$index'=>$index],'PrepareFormPage');
-        if($idSubForm) {
+    public static function PrepareFormBuilder(?Params $params,IEntity $template,IEntity $page,string $tName,?int $instanceId=NULL,?int $subFormId=NULL,?int $itemId=NULL,?int $index=NULL): ?IControlBuilder {
+        // NApp::Dlog(['$template'=>$template,'$page'=>$page,'$tName'=>$tName,'$instanceId'=>$instanceId,'$subFormId'=>$subFormId,'$itemId'=>$itemId,'$index'=>$index],'PrepareFormPage');
+        if($subFormId) {
             $fields=DataProvider::Get('Plugins\DForms\Instances','GetStructure',[
                 'template_id'=>$template->getProperty('id'),
                 'instance_id'=>($instanceId ? $instanceId : NULL),
                 'for_pindex'=>$page->getProperty('pindex',-1,'is_integer'),
-                'item_id'=>$idItem,
+                'item_id'=>$itemId,
                 'for_index'=>(is_numeric($index) ? $index : NULL),
             ]);
         } else {
@@ -261,7 +261,7 @@ class InstancesHelpers {
                 'instance_id'=>($instanceId ? $instanceId : NULL),
                 'for_pindex'=>$page->getProperty('pindex',-1,'is_integer'),
             ]);
-        }//if($idSubForm)
+        }//if($subFormId)
         // NApp::Dlog($fields,'$fields');
         $viewOnly=$params->safeGet('view_only',FALSE,'bool');
         $themeType=$template->getProperty('theme_type','','is_string');
@@ -279,7 +279,7 @@ class InstancesHelpers {
             'tag_id'=>$formIdPrefix.'_form',
             'cols_no'=>$colsNo,
         ]);
-        if(!$idSubForm) {
+        if(!$subFormId) {
             $builder->SetParam('response_target',$formIdPrefix.'_errors');
         }
         if(strlen($themeType)) {
@@ -306,7 +306,7 @@ class InstancesHelpers {
                 $columnsToSkip=0;
             }
             $fClass=$field->getProperty('class','','is_string');
-            // if($idSubForm) { NApp::Dlog($field,$fClass); }
+            // if($subFormId) { NApp::Dlog($field,$fClass); }
             $fParamsStr=$field->getProperty('params','','is_string');
             $fParams=strlen($fParamsStr) ? json_decode($fParamsStr,TRUE) : [];
             switch($fClass) {
@@ -339,7 +339,7 @@ class InstancesHelpers {
                     $tagId=$iPrefix.$field->getProperty('cell','','is_string').'_'.$field->getProperty('name','','is_string').($index ? '_'.$index : '');
                     $fIType=$field->getProperty('itype',1,'is_not0_numeric');
                     $fIdSubForm=$field->getProperty('id_sub_form',-1,'is_not0_numeric');
-                    $idItem=$field->getProperty('id',NULL,'is_not0_numeric');
+                    $itemId=$field->getProperty('id',NULL,'is_not0_numeric');
 
                     if($fIType==2 && $instanceId) {
                         $fICount=$field->getProperty('icount',1,'is_not0_numeric');
@@ -351,7 +351,7 @@ class InstancesHelpers {
 
                     $fSubFormVersion=NULL;
                     for($i=0; $i<$fICount; $i++) {
-                        $subFormBuilder=static::PrepareForm($params,$template,$instanceId,$fIdSubForm,$idItem,$i,$fSubFormVersion);
+                        $subFormBuilder=static::PrepareForm($params,$template,$instanceId,$fIdSubForm,$itemId,$i,$fSubFormVersion);
                         if(!$subFormBuilder instanceof IControlBuilder) {
                             throw new AppException('Invalid DynamicForm sub-form configuration!');
                         }
@@ -429,16 +429,16 @@ HTML;
      * @param IEntity     $page
      * @param string      $tName
      * @param int|null    $instanceId
-     * @param int|null    $idSubForm
-     * @param int|null    $idItem
+     * @param int|null    $subFormId
+     * @param int|null    $itemId
      * @param int|null    $index
      * @return array|null Returns BasicForm configuration array
      * @throws \NETopes\Core\AppException
      */
-    public static function PrepareFormTab(?Params $params,IEntity $template,IEntity $page,string $tName,?int $instanceId=NULL,?int $idSubForm=NULL,?int $idItem=NULL,?int $index=NULL): ?array {
-        // NApp::Dlog(['$template'=>$template,'$page'=>$page,'$tName'=>$tName,'$multiPage'=>$multiPage,'$instanceId'=>$instanceId,'$idSubForm'=>$idSubForm,'$idItem'=>$idItem,'$index'=>$index],'PrepareFormPage');
+    public static function PrepareFormTab(?Params $params,IEntity $template,IEntity $page,string $tName,?int $instanceId=NULL,?int $subFormId=NULL,?int $itemId=NULL,?int $index=NULL): ?array {
+        // NApp::Dlog(['$template'=>$template,'$page'=>$page,'$tName'=>$tName,'$multiPage'=>$multiPage,'$instanceId'=>$instanceId,'$subFormId'=>$subFormId,'$itemId'=>$itemId,'$index'=>$index],'PrepareFormPage');
         $pIndex=$page->getProperty('pindex');
-        $builder=static::PrepareFormBuilder($params,$template,$page,$tName,$instanceId,$idSubForm,$idItem,$index);
+        $builder=static::PrepareFormBuilder($params,$template,$page,$tName,$instanceId,$subFormId,$itemId,$index);
         return [
             'type'=>'fixed',
             'uid'=>$tName.'-'.$pIndex,
@@ -457,33 +457,33 @@ HTML;
      * @param \NETopes\Core\App\Params|null $params Parameters object
      * @param IEntity|null                  $mTemplate
      * @param int|null                      $instanceId
-     * @param int|null                      $idSubForm
-     * @param int|null                      $idItem
+     * @param int|null                      $subFormId
+     * @param int|null                      $itemId
      * @param int|null                      $index
      * @param int|null                      $formVersion
      * @return IControlBuilder|null Returns BasicForm configuration array
      * @throws \NETopes\Core\AppException
      */
-    public static function PrepareForm(?Params $params,?IEntity $mTemplate,?int $instanceId=NULL,?int $idSubForm=NULL,?int $idItem=NULL,?int $index=NULL,?int &$formVersion=NULL): ?IControlBuilder {
-        // NApp::Dlog(['$mTemplate'=>$mTemplate,'$instanceId'=>$instanceId,'$idSubForm'=>$idSubForm,'$idItem'=>$idItem,'$index'=>$index],'PrepareForm');
+    public static function PrepareForm(?Params $params,?IEntity $mTemplate,?int $instanceId=NULL,?int $subFormId=NULL,?int $itemId=NULL,?int $index=NULL,?int &$formVersion=NULL): ?IControlBuilder {
+        // NApp::Dlog(['$mTemplate'=>$mTemplate,'$instanceId'=>$instanceId,'$subFormId'=>$subFormId,'$itemId'=>$itemId,'$index'=>$index],'PrepareForm');
         $templateId=$mTemplate->getProperty('id',NULL,'is_integer');
         if(!$templateId) {
             return NULL;
         }
-        // NApp::Dlog($idSubForm,'$idSubForm');
-        if($idSubForm) {
+        // NApp::Dlog($subFormId,'$subFormId');
+        if($subFormId) {
             $template=DataProvider::Get('Plugins\DForms\Instances','GetTemplate',[
-                'for_id'=>($instanceId ? NULL : $idSubForm),
+                'for_id'=>($instanceId ? NULL : $subFormId),
                 'for_code'=>NULL,
                 'instance_id'=>($instanceId ? $instanceId : NULL),
-                'item_id'=>$idItem,
+                'item_id'=>$itemId,
                 'for_state'=>1,
             ]);
             // NApp::Dlog($template,'$template');
-            $idSubForm=$template->getProperty('id',NULL,'is_integer');
-            // NApp::Dlog($idItem,'$idItem');
-            // NApp::Dlog($idSubForm,'$idSubForm');
-            if(!$idSubForm || !$idItem) {
+            $subFormId=$template->getProperty('id',NULL,'is_integer');
+            // NApp::Dlog($itemId,'$itemId');
+            // NApp::Dlog($subFormId,'$subFormId');
+            if(!$subFormId || !$itemId) {
                 return NULL;
             }
             $pages=DataProvider::Get('Plugins\DForms\Instances','GetPages',[
@@ -503,14 +503,14 @@ HTML;
                 'for_pindex'=>NULL,
             ]);
             // NApp::Dlog($relations,'$relations');
-        }//if($idSubForm)
+        }//if($subFormId)
         // NApp::Dlog($pages,'$pages');
         if(!is_iterable($pages) || !count($pages)) {
             return NULL;
         }
         $formVersion=$template->getProperty('version',NULL,'is_integer');
         $iPrefix=($instanceId ? $instanceId.'_' : '');
-        $tName=$iPrefix.$templateId.'_'.$idSubForm;
+        $tName=$iPrefix.$templateId.'_'.$subFormId;
         $renderType=get_array_value($template,'render_type',1,'is_integer');
         if(in_array($renderType,[21,22])) {
             $builder=new TabControlBuilder([
@@ -520,10 +520,10 @@ HTML;
                 'mode'=>($renderType==22 ? 'accordion' : 'tabs'),
             ]);
             foreach($pages as $page) {
-                $builder->AddTab(static::PrepareFormTab($params,$template,$page,$tName,$instanceId,$idSubForm,$idItem,$index));
+                $builder->AddTab(static::PrepareFormTab($params,$template,$page,$tName,$instanceId,$subFormId,$itemId,$index));
             }//END foreach
         } else {
-            $builder=static::PrepareFormBuilder($params,$template,$pages->first(),$tName,$instanceId,$idSubForm,$idItem,$index);
+            $builder=static::PrepareFormBuilder($params,$template,$pages->first(),$tName,$instanceId,$subFormId,$itemId,$index);
         }//if(in_array($renderType,[21,22]))
         return $builder;
     }//END public static function PrepareForm
@@ -579,23 +579,24 @@ HTML;
     public static function PrepareFormActions(Instances $module,array $ctrlParams,?int $instanceId,string $saveMethod,string $responseTarget,string $tName,string $fTagId,string $cModule,string $cMethod,string $cTarget,bool $viewOnly,bool $noRedirect): array {
         $actions=['container'=>[],'form'=>[],'after'=>[]];
         if($module->formPrintAction) {
-            $actions[$module->formAsModal ? 'form' : $module->actionsLocation][]=[
+            if(strlen($module->printUrl)) {
+                $printUrl=NApp::$appBaseUrl.$module->printUrl;
+            } else {
+                $printUrl=NApp::Url()->GetNewUrl(['vpath'=>$module->printUrlVirtualPath,'language'=>NApp::GetLanguageCode()]);
+            }
+            $actions[$module->formAsModal ? 'form' : $module->printActionLocation ?? $module->actionsLocation][]=[
                 'type'=>'Link',
                 'params'=>[
                     'value'=>Translate::GetButton('print'),
                     'icon'=>'fa fa-file-pdf-o',
                     'class'=>NApp::$theme->GetBtnSuccessClass(),
-                    'href'=>NApp::$appBaseUrl.$module->printUrl,
+                    'href'=>$printUrl,
                     'target'=>'_blank',
-                    'url_params'=>[
-                        'namespace'=>NApp::$currentNamespace,
-                        'language'=>NApp::GetLanguageCode(),
-                        'rtype'=>'ehash',
-                        'payload'=>[
-                            'module'=>$module->name,
-                            'method'=>'PrintInstancePdf',
-                            'params'=>['id'=>'{!id!}'],
-                        ],
+                    'type'=>'ehash',
+                    'payload'=>[
+                        'module'=>$module->name,
+                        'method'=>'PrintInstance',
+                        'params'=>['id'=>$instanceId],
                     ],
                 ],
             ];

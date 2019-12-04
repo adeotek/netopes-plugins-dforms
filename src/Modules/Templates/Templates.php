@@ -175,9 +175,9 @@ class Templates extends Module {
      * @throws \NETopes\Core\AppException
      */
     public function SetPrintTemplate(Params $params) {
-        $idTemplate=$params->getOrFail('id','is_not0_integer','Invalid record identifier!');
+        $template=$params->getOrFail('id','is_not0_integer','Invalid record identifier!');
         $result=DataProvider::Get('Plugins\DForms\Templates','SetPropertiesItem',[
-            'template_id'=>$idTemplate,
+            'template_id'=>$template,
             'in_print_template'=>$params->safeGet('print_template','','is_string'),
         ]);
         if($result===FALSE) {
@@ -261,8 +261,8 @@ class Templates extends Module {
      * @throws \NETopes\Core\AppException
      */
     public function ShowDesignEditForm(Params $params) {
-        $idTemplate=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
-        $item=DataProvider::Get('Plugins\DForms\Templates','GetItemProperties',['template_id'=>$idTemplate]);
+        $template=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
+        $item=DataProvider::Get('Plugins\DForms\Templates','GetItemProperties',['template_id'=>$template]);
         if(!is_object($item) || $item instanceof DataSet) {
             $item=new VirtualEntity([]);
         }
@@ -278,7 +278,7 @@ class Templates extends Module {
      * @throws \NETopes\Core\AppException
      */
     public function EditDesignRecord(Params $params) {
-        $idTemplate=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
+        $template=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
         $renderType=$params->safeGet('render_type',NULL,'is_integer');
         $target=$params->safeGet('target','','is_string');
         if(!$renderType) {
@@ -287,7 +287,7 @@ class Templates extends Module {
             return;
         }//if(!$renderType)
         $result=DataProvider::Get('Plugins\DForms\Templates','SetPropertiesItem',[
-            'template_id'=>$idTemplate,
+            'template_id'=>$template,
             'in_render_type'=>$renderType,
             'in_theme_type'=>$params->safeGet('theme_type','','is_string'),
             'in_controls_size'=>$params->safeGet('controls_size','','is_string'),
@@ -303,7 +303,7 @@ class Templates extends Module {
             echo Translate::GetMessage('save_done').' ('.date('Y-m-d H:i:s').')';
             return;
         }//if(strlen($cTarget))
-        $this->Exec('ShowDesignEditForm',['id_template'=>$idTemplate,'target'=>$cTarget],$cTarget);
+        $this->Exec('ShowDesignEditForm',['id_template'=>$template,'target'=>$cTarget],$cTarget);
     }//END public function EditDesignRecord
 
     /**
@@ -312,7 +312,7 @@ class Templates extends Module {
      * @throws \NETopes\Core\AppException
      */
     public function ShowRelationsEditForm(Params $params) {
-        $idTemplate=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
+        $template=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
         $target=$params->safeGet('target','','is_string');
         $dgtarget='dg-'.$target;
         $view=new AppView(get_defined_vars(),$this,'default');
@@ -327,7 +327,7 @@ class Templates extends Module {
      * @throws \NETopes\Core\AppException
      */
     public function ShowRelationAddEditForm(Params $params) {
-        $idTemplate=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
+        $template=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
         $id=$params->safeGet('id',NULL,'is_integer');
         if($id) {
             $item=DataProvider::Get('Plugins\DForms\Templates','GetRelation',['for_id'=>$id]);
@@ -350,7 +350,7 @@ class Templates extends Module {
      * @throws \NETopes\Core\AppException
      */
     public function AddEditRelationRecord(Params $params) {
-        $idTemplate=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
+        $template=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
         $id=$params->safeGet('id',NULL,'is_integer');
         $idType=$params->safeGet('type',NULL,'is_integer');
         $rType=$params->safeGet('rtype',NULL,'is_integer');
@@ -377,7 +377,7 @@ class Templates extends Module {
             }
         } else {
             $result=DataProvider::Get('Plugins\DForms\Templates','SetNewRelation',[
-                'template_id'=>$idTemplate,
+                'template_id'=>$template,
                 'relation_type_id'=>$idType,
                 'in_name'=>$name,
                 'in_key'=>$key,
@@ -391,7 +391,7 @@ class Templates extends Module {
         }//if($id)
         $this->CloseForm();
         $cTarget=$params->safeGet('c_target','','is_string');
-        $this->Exec('ShowRelationsEditForm',['id_template'=>$idTemplate,'target'=>$cTarget],$cTarget);
+        $this->Exec('ShowRelationsEditForm',['id_template'=>$template,'target'=>$cTarget],$cTarget);
     }//END public function AddEditRelationRecord
 
     /**
@@ -401,13 +401,13 @@ class Templates extends Module {
      */
     public function DeleteRelationRecord(Params $params) {
         $id=$params->getOrFail('id','is_not0_integer','Invalid record identifier!');
-        $idTemplate=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
+        $template=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
         $result=DataProvider::Get('Plugins\DForms\Templates','UnsetRelation',['for_id'=>$id]);
         if($result===FALSE) {
             throw new AppException('Unknown database error!');
         }
         $target=$params->safeGet('target','','is_string');
-        $this->Exec('ShowRelationsEditForm',['id_template'=>$idTemplate,'target'=>$target],$target);
+        $this->Exec('ShowRelationsEditForm',['id_template'=>$template,'target'=>$target],$target);
     }//END public function DeleteRelationRecord
 
     /**

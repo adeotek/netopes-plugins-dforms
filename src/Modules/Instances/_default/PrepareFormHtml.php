@@ -3,9 +3,9 @@ $empty_val=get_array_value($this->html_styles,'empty_value','','is_string');
 if(!$output) {
     ob_start();
 }
-if(!$idSubForm) {
+if(!$subFormId) {
     ?>
-	<table
+    <table
         <?php echo get_array_value($this->html_styles,'table_attr','','is_string'); ?>style="<?php echo get_array_value($this->html_styles,'table_style','','is_string'); ?>">
         <?php
         if(is_array($relations) && count($relations)) {
@@ -13,7 +13,7 @@ if(!$idSubForm) {
                 $rlabel=get_array_value($rel,'name','','is_string');
                 $rvalue=get_array_value($rel,'display_fields',get_array_value($rel,'svalue',$empty_val,'is_notempty_string'),'is_notempty_string');
                 ?>
-				<tr>
+                <tr>
 					<td>
 						<label style="<?php echo get_array_value($this->html_styles,'label_style','','is_string'); ?>"><?php echo $rlabel.get_array_value($this->html_styles,'label_value_sep','','is_string'); ?></label><span
 								style="<?php echo get_array_value($this->html_styles,'relation_style','','is_string'); ?>"><?php echo $rvalue; ?></span>
@@ -75,20 +75,20 @@ if(!$idSubForm) {
 				<td>
 					<label style="<?php echo get_array_value($this->html_styles,'label_style','','is_string'); ?>"><?php echo Translate::GetLabel('modified_by').get_array_value($this->html_styles,'label_value_sep','','is_string'); ?></label><span
 							style="<?php echo get_array_value($this->html_styles,'relation_style','','is_string'); ?>"><?php echo $modified_by; ?></span>
-				</td>
-			</tr>
+                </td>
+            </tr>
             <?php
         }//if(strlen($last_modified))
         ?>
-		<tr>
-			<td>&nbsp;</td>
-		</tr>
-	</table>
+        <tr>
+            <td>&nbsp;</td>
+        </tr>
+    </table>
     <?php
-}//if(!$idSubForm)
+}//if(!$subFormId)
 if(is_array($fields) && count($fields)) {
     ?>
-	<table
+    <table
         <?php echo get_array_value($this->html_styles,'table_attr','','is_string'); ?>style="<?php echo get_array_value($this->html_styles,'table_style','','is_string'); ?>">
         <?php
         $cols=get_array_value($instance,'colsno',1,'is_numeric');
@@ -119,7 +119,7 @@ if(is_array($fields) && count($fields)) {
                 <?php
                 continue;
             }//if(!strlen($fClass))
-            // if($idSubForm) { NApp::Dlog($field,$fClass); }
+            // if($subFormId) { NApp::Dlog($field,$fClass); }
             $fparams=get_array_value($field,'params','','is_string');
             $fParams=strlen($fparams) ? json_decode($fparams,TRUE) : [];
             $css_class=get_array_value($fParams,'class','','is_string');
@@ -161,15 +161,15 @@ if(is_array($fields) && count($fields)) {
                     break;
                 case 'BasicForm':
                     $fIType=get_array_value($field,'itype',1,'is_not0_numeric');
-                    $idSubForm=get_array_value($field,'id_sub_form',-1,'is_not0_numeric');
-                    $idItem=get_array_value($field,'id',NULL,'is_not0_numeric');
+                    $subFormId=get_array_value($field,'id_sub_form',-1,'is_not0_numeric');
+                    $itemId=get_array_value($field,'id',NULL,'is_not0_numeric');
                     $fICount=$fIType==2 ? get_array_value($field,'icount',0,'is_not0_numeric') : 1;
                     $fValue='';
                     for($i=0; $i<$fICount; $i++) {
-                        $fValue.=$this->Exec('PrepareFormHtml',['id'=>$idInstance,'id_sub_form'=>$idSubForm,'id_item'=>$idItem,'index'=>$i,'output'=>$output]);
+                        $fValue.=$this->Exec('PrepareFormHtml',['id'=>$instanceId,'id_sub_form'=>$subFormId,'id_item'=>$itemId,'index'=>$i,'output'=>$output]);
                     }//END for
                     ?>
-					<td><?php echo $fValue; ?></td>
+                    <td><?php echo $fValue; ?></td>
                     <?php
                     break;
                 case 'Message':

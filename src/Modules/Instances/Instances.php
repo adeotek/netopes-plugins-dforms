@@ -22,6 +22,7 @@ use NETopes\Core\Controls\IControlBuilder;
 use NETopes\Core\Controls\TableView;
 use NETopes\Core\Data\DataProvider;
 use NETopes\Core\Data\IEntity;
+use NETopes\Core\Reporting\PdfBuilder;
 use Translate;
 
 /**
@@ -75,9 +76,17 @@ class Instances extends Module {
      */
     public $formPrintAction=TRUE;
     /**
-     * @var string Print relative URL
+     * @var string|null Print action location (form/container/after)
      */
-    public $printUrl='/pipe/cdn.php';
+    public $printActionLocation='container';
+    /**
+     * @var string Print URL virtual path
+     */
+    public $printUrlVirtualPath='cdn';
+    /**
+     * @var string|null Print relative URL
+     */
+    public $printUrl=NULL;
     /**
      * @var array List CSS styles to be used for generating view HTML
      */
@@ -248,7 +257,8 @@ class Instances extends Module {
         if(count($formActions['container'])) {
             $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="'.$fResponseTarget.'">&nbsp;</div></div>');
             foreach($formActions['container'] as $formAct) {
-                $view->AddAction((new Button($formAct['params']))->Show());
+                $controlClassName='\NETopes\Core\Controls\\'.get_array_value($formAct,'type','Button','is_notempty_string');
+                $view->AddAction((new $controlClassName($formAct['params']))->Show());
             }//END foreach
         }//if(count($formActions['container']))
         if(count($formActions['form'])) {
@@ -263,7 +273,8 @@ class Instances extends Module {
             $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="'.$fResponseTarget.'">&nbsp;</div></div>');
             $afterFormActions=[];
             foreach($formActions['after'] as $formAct) {
-                $formActionsArray[]=(new Button($formAct['params']))->Show();
+                $controlClassName='\NETopes\Core\Controls\\'.get_array_value($formAct,'type','Button','is_notempty_string');
+                $formActionsArray[]=(new $controlClassName($formAct['params']))->Show();
             }//END foreach
             $view->AddHtmlContent('<div class="row"><div class="col-md-12 actions-group">'.implode('',$afterFormActions).'</div></div>');
         }//if(count($formActions['after']))
@@ -350,10 +361,7 @@ class Instances extends Module {
      */
     public function ShowEditForm(Params $params) {
         // NApp::Dlog($params,'ShowEditForm');
-        $instanceId=$params->safeGet('id',NULL,'is_not0_integer');
-        if(!$instanceId) {
-            throw new AppException('Invalid DynamicForm instance identifier!');
-        }
+        $instanceId=$params->getOrFail('id','is_not0_integer','Invalid DynamicForm instance identifier!');
         $template=DataProvider::Get('Plugins\DForms\Instances','GetTemplate',[
             'for_id'=>NULL,
             'for_code'=>NULL,
@@ -429,7 +437,7 @@ class Instances extends Module {
      */
     public function SaveInstance(Params $params) {
         // NApp::Dlog($params->toArray(),'SaveInstance');
-        $idInstance=$params->safeGet('id',NULL,'is_integer');
+        $instanceId=$params->safeGet('id',NULL,'is_integer');
         $formId=$params->safeGet('form_id','','is_string');
         $check=InstancesHelpers::ValidateSaveParams($params);
         if(!$check) {
@@ -463,11 +471,11 @@ class Instances extends Module {
         }//if(!$check)
         $this->templateId=$params->safeGet('id_template',$this->templateId,'is_not0_integer');
         $params->set('save_only',TRUE);
-        if($idInstance>0) {
+        if($instanceId>0) {
             $this->Exec('SaveRecord',$params);
         } else {
             $this->Exec('SaveNewRecord',$params);
-        }//if($idInstance>0)
+        }//if($instanceId>0)
         InstancesHelpers::RedirectAfterAction($params,$this);
     }//END public function SaveInstance
 
@@ -499,8 +507,8 @@ class Instances extends Module {
                 'template_id'=>$this->templateId,
                 'user_id'=>NApp::GetCurrentUserId(),
             ],['transaction'=>$transaction]);
-            $idInstance=get_array_value($dbResult,[0,'inserted_id'],0,'is_integer');
-            if($idInstance<=0) {
+            $instanceId=get_array_value($dbResult,[0,'inserted_id'],0,'is_integer');
+            if($instanceId<=0) {
                 NApp::Dlog($dbResult,'SetNewInstance>>$dbResult');
                 throw new AppException('Database error on instance insert!');
             }
@@ -510,7 +518,7 @@ class Instances extends Module {
                 if(($f->getProperty('itype',0,'is_integer')==2 || $f->getProperty('parent_itype',0,'is_integer')==2) && is_array($fieldValue)) {
                     foreach($fieldValue as $index=>$fValue) {
                         $dbResult=DataProvider::GetArray('Plugins\DForms\Instances','SetNewInstanceValue',[
-                            'instance_id'=>$idInstance,
+                            'instance_id'=>$instanceId,
                             'item_uid'=>$f->getProperty('uid',NULL,'is_notempty_string'),
                             'in_value'=>$fValue,
                             'in_name'=>NULL,
@@ -523,7 +531,7 @@ class Instances extends Module {
                     }//END foreach
                 } else {
                     $dbResult=DataProvider::GetArray('Plugins\DForms\Instances','SetNewInstanceValue',[
-                        'instance_id'=>$idInstance,
+                        'instance_id'=>$instanceId,
                         'item_uid'=>$f->getProperty('uid',NULL,'is_notempty_string'),
                         'in_value'=>$fieldValue,
                         'in_name'=>NULL,
@@ -538,7 +546,7 @@ class Instances extends Module {
             /** @var \NETopes\Core\Data\VirtualEntity $r */
             foreach($relationsData as $r) {
                 $dbResult=DataProvider::GetArray('Plugins\DForms\Instances','SetNewInstanceRelation',[
-                    'instance_id'=>$idInstance,
+                    'instance_id'=>$instanceId,
                     'relation_id'=>$r->getProperty('id',NULL,'is_integer'),
                     'in_ivalue'=>$r->getProperty('ivalue',NULL,'?is_integer'),
                     'in_svalue'=>$r->getProperty('svalue',NULL,'?is_string'),
@@ -549,7 +557,7 @@ class Instances extends Module {
                 }
             }//END foreach
 
-            $dbResult=DataProvider::GetArray('Plugins\DForms\Instances','SetInstanceUid',['for_id'=>$idInstance],['transaction'=>$transaction]);
+            $dbResult=DataProvider::GetArray('Plugins\DForms\Instances','SetInstanceUid',['for_id'=>$instanceId],['transaction'=>$transaction]);
             DataProvider::CloseTransaction('Plugins\DForms\Instances',$transaction,FALSE);
         } catch(AppException $e) {
             DataProvider::CloseTransaction('Plugins\DForms\Instances',$transaction,TRUE);
@@ -566,12 +574,12 @@ class Instances extends Module {
      */
     public function SaveRecord(Params $params) {
         // NApp::Dlog($params,'SaveRecord');
-        $idTemplate=$params->safeGet('id_template',$this->templateId,'is_not0_integer');
-        $idInstance=$params->safeGet('id',NULL,'is_not0_integer');
-        if(!$idTemplate || !$idInstance) {
+        $template=$params->safeGet('id_template',$this->templateId,'is_not0_integer');
+        $instanceId=$params->safeGet('id',NULL,'is_not0_integer');
+        if(!$template || !$instanceId) {
             throw new AppException('Invalid DynamicForm instance identifier!');
         }
-        $template=DataProvider::Get('Plugins\DForms\Instances','GetTemplate',['for_id'=>$idTemplate]);
+        $template=DataProvider::Get('Plugins\DForms\Instances','GetTemplate',['for_id'=>$template]);
         if(!is_object($template)) {
             throw new AppException('Invalid DynamicForm template!');
         }
@@ -581,10 +589,10 @@ class Instances extends Module {
         }
         $relationsData=$params->safeGet('df_relations_values');
 
-        $transaction=AppSession::GetNewUID($template->getProperty('code',$idTemplate,'is_notempty_string'));
+        $transaction=AppSession::GetNewUID($template->getProperty('code',$template,'is_notempty_string'));
         DataProvider::StartTransaction('Plugins\DForms\Instances',$transaction);
         try {
-            $result=DataProvider::Get('Plugins\DForms\Instances','UnsetInstanceValues',['for_id'=>$idInstance],['transaction'=>$transaction]);
+            $result=DataProvider::Get('Plugins\DForms\Instances','UnsetInstanceValues',['for_id'=>$instanceId],['transaction'=>$transaction]);
             if($result===FALSE) {
                 throw new AppException('Database error on instance update!');
             }
@@ -594,7 +602,7 @@ class Instances extends Module {
                 if(($f->getProperty('itype',0,'is_integer')==2 || $f->getProperty('parent_itype',0,'is_integer')==2) && is_array($fieldValue)) {
                     foreach($fieldValue as $index=>$fValue) {
                         $dbResult=DataProvider::GetArray('Plugins\DForms\Instances','SetNewInstanceValue',[
-                            'instance_id'=>$idInstance,
+                            'instance_id'=>$instanceId,
                             'item_uid'=>$f->getProperty('uid',NULL,'is_notempty_string'),
                             'in_value'=>$fValue,
                             'in_name'=>NULL,
@@ -607,7 +615,7 @@ class Instances extends Module {
                     }//END foreach
                 } else {
                     $dbResult=DataProvider::GetArray('Plugins\DForms\Instances','SetNewInstanceValue',[
-                        'instance_id'=>$idInstance,
+                        'instance_id'=>$instanceId,
                         'item_uid'=>$f->getProperty('uid',NULL,'is_notempty_string'),
                         'in_value'=>$fieldValue,
                         'in_name'=>NULL,
@@ -621,7 +629,7 @@ class Instances extends Module {
             }//END foreach
 
             DataProvider::Get('Plugins\DForms\Instances','SetInstanceState',[
-                'for_id'=>$idInstance,
+                'for_id'=>$instanceId,
                 'user_id'=>NApp::GetCurrentUserId(),
             ],['transaction'=>$transaction]);
 
@@ -685,69 +693,34 @@ class Instances extends Module {
 
     /**
      * @param \NETopes\Core\App\Params $params Parameters object
-     * @return string|null
+     * @return InstancesPrintContentBuilder
      * @throws \NETopes\Core\AppException
      */
-    public function GetPrintData(Params $params): ?string {
-        return NULL;
+    public function GetPrintData(Params $params): InstancesPrintContentBuilder {
+        $instanceId=$params->getOrFail('id','is_not0_integer','Invalid DynamicForm instance identifier!');
+        $instance=DataProvider::Get('Plugins\DForms\Instances','GetInstanceItem',['for_id'=>$instanceId]);
+        if(!$instance instanceof IEntity) {
+            throw new AppException('Invalid DynamicForm instance object!');
+        }
+        $contentBuilder=new InstancesPrintContentBuilder($instanceId,$instance->getProperty('id_template',NULL,'?is_string'),$instance->getProperty('print_template','','is_string'));
+        $contentBuilder->PrepareContent();
+        return $contentBuilder;
     }//END public function GetPrintData
 
     /**
      * @param \NETopes\Core\App\Params $params Parameters object
-     * @return mixed
+     * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function PrintInstancePdf(Params $params) {
-        // NApp::Dlog($params,'PrintInstancePdf');
-        $idInstance=$params->getOrFail('id','is_not0_integer','Invalid DynamicForm instance identifier!');
-        $data=NULL;
-        // $cache=$params->safeGet('cache',TRUE,'bool');
-        // $result_type=$params->safeGet('result_type',0,'is_integer');
-        // $instance=DataProvider::Get('Plugins\DForms\Instances','GetInstanceItem',['for_id'=>$idInstance]);
-        // $filename=get_array_value($instance,'uid','','is_string');
-        // if(!strlen($filename)) {
-        //     $filename=date('Y-m-d_H-i-s').'.pdf';
-        // } else {
-        //     $filename=str_replace(' ','_',trim($filename)).'.pdf';
-        // }//if(!strlen($filename))
-        // $category=get_array_value($instance,'category',get_array_value($instance,'template_code',$this->name,'is_notempty_string'),'is_notempty_string');
-        // if($cache && strlen($filename) && file_exists(NAPP::GetRepositoryPath().'forms/'.$category.'/'.$filename)) {
-        //     if($result_type==1) {
-        //         $data=[
-        //             'file_name'=>$filename,
-        //             'path'=>NAPP::GetRepositoryPath().'forms/'.$category.'/',
-        //             'download_name'=>$filename,
-        //         ];
-        //     } else {
-        //         $data=file_get_contents(NAPP::GetRepositoryPath().'forms/'.$category.'/'.$filename);
-        //     }//if($result_type==1)
-        //     return $data;
-        // }//if($cache && strlen($filename) && file_exists(NAPP::GetRepositoryPath().$company.'/'.$filename))
-        // if($cache) {
-        //     if(!file_exists(NAPP::GetRepositoryPath().'forms')) {
-        //         mkdir(NAPP::GetRepositoryPath().'forms',755);
-        //     }
-        //     if(!file_exists(NAPP::GetRepositoryPath().'forms/'.$category)) {
-        //         mkdir(NAPP::GetRepositoryPath().'forms/'.$category,755);
-        //     }
-        // }//if($cache)
-        // $html_data=$this->Exec('PrepareFormHtml',['id'=>$idInstance]);
-        // $pdfdoc=new InstancesPdf(['html_data'=>$html_data,'file_name'=>$filename]);
-        // if($cache) {
-        //     // file_put_contents(NAPP::GetRepositoryPath().'forms/'.$category.'/'.$filename,$data);
-        //     $pdfdoc->Output(['output_type'=>'F','file_name'=>NAPP::GetRepositoryPath().'forms/'.$category.'/'.$filename]);
-        //     if($result_type==1) {
-        //         $data=[
-        //             'file_name'=>$filename,
-        //             'path'=>NAPP::GetRepositoryPath().'forms/'.$category.'/',
-        //             'download_name'=>$filename,
-        //         ];
-        //     } else {
-        //         $data=file_get_contents(NAPP::GetRepositoryPath().'forms/'.$category.'/'.$filename);
-        //     }//if($result_type==1)
-        // } else {
-        //     $data=$pdfdoc->Output(['base64'=>FALSE,'file_name'=>NAPP::GetRepositoryPath().'forms/'.$category.'/'.$filename]);
-        // }//if($cache)
-        return $data;
-    }//END public function PrintInstancePdf
+    public function PrintInstance(Params $params) {
+        // NApp::Dlog($params,'PrintInstance');
+        $contentBuilder=$this->GetPrintData($params);
+        if(!$contentBuilder instanceof InstancesPrintContentBuilder) {
+            throw new AppException('Invalid instance content builder object!');
+        }
+        $pdfBuilder=new PdfBuilder(['orientation'=>$contentBuilder->pageOrientation]);
+        $pdfBuilder->SetTitle($contentBuilder->documentTitle);
+        $pdfBuilder->AddContents(explode('[[insert_new_page]]',$contentBuilder->content));
+        $pdfBuilder->Render();
+    }//END public function PrintInstance
 }//END class Instances extends Module

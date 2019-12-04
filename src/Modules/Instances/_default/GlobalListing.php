@@ -12,7 +12,7 @@ $ctrl_params=[
     'qsearch'=>'for_text',
     'ds_class'=>'Plugins\DForms\Instances',
     'ds_method'=>'GetInstancesList',
-    'ds_params'=>['for_id'=>NULL,'template_id'=>$idTemplate,'for_template_code'=>$template_code,'for_state'=>NULL,'for_text'=>NULL],
+    'ds_params'=>['for_id'=>NULL,'template_id'=>$template,'for_template_code'=>$template_code,'for_state'=>NULL,'for_text'=>NULL],
     'auto_load_data'=>TRUE,
     'columns'=>[
         'actions'=>[

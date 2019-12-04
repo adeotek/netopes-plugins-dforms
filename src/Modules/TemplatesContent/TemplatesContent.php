@@ -73,10 +73,10 @@ class TemplatesContent extends Module {
      * @throws \NETopes\Core\AppException
      */
     public function ShowContentEditForm(Params $params) {
-        $idTemplate=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
-        $templateProps=DataProvider::Get('Plugins\DForms\Templates','GetItemProperties',['template_id'=>$idTemplate]);
+        $template=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
+        $templateProps=DataProvider::Get('Plugins\DForms\Templates','GetItemProperties',['template_id'=>$template]);
         $fieldsTypes=DataProvider::Get('Plugins\DForms\Controls','GetItems',['for_state'=>1]);
-        $templatePages=DataProvider::Get('Plugins\DForms\Templates','GetItemPages',['template_id'=>$idTemplate],['sort'=>['pindex'=>'asc']]);
+        $templatePages=DataProvider::Get('Plugins\DForms\Templates','GetItemPages',['template_id'=>$template],['sort'=>['pindex'=>'asc']]);
         $target=$params->safeGet('target','','is_string');
         $view=new AppView(get_defined_vars(),$this,NULL);
         $view->AddFileContent($this->GetViewFile('ContentEditForm'));
@@ -89,10 +89,10 @@ class TemplatesContent extends Module {
      * @throws \NETopes\Core\AppException
      */
     public function ShowContentTable(Params $params) {
-        $idTemplate=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
+        $template=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
         $pIndex=$params->getOrFail('pindex','is_integer','Invalid template page identifier!');
-        $templatePage=DataProvider::Get('Plugins\DForms\Templates','GetItemPage',['template_id'=>$idTemplate,'for_pindex'=>$pIndex]);
-        $fields=DataProvider::GetKeyValue('Plugins\DForms\Templates','GetFields',['template_id'=>$idTemplate,'for_pindex'=>$pIndex],['keyfield'=>'cell']);
+        $templatePage=DataProvider::Get('Plugins\DForms\Templates','GetItemPage',['template_id'=>$template,'for_pindex'=>$pIndex]);
+        $fields=DataProvider::GetKeyValue('Plugins\DForms\Templates','GetFields',['template_id'=>$template,'for_pindex'=>$pIndex],['keyfield'=>'cell']);
         $target=$params->safeGet('target','','is_string');
         $cTarget=$params->safeGet('c_target','','is_string');
         $view=new AppView(get_defined_vars(),$this,NULL);
@@ -106,7 +106,7 @@ class TemplatesContent extends Module {
      * @throws \NETopes\Core\AppException
      */
     public function ShowAddPageForm(Params $params) {
-        $idTemplate=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
+        $template=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
         $maxPos=$params->safeGet('pagesno',0,'is_numeric');
         if($maxPos<=0) {
             return;
@@ -126,22 +126,22 @@ class TemplatesContent extends Module {
      * @throws \NETopes\Core\AppException
      */
     public function UpdatePagesList(Params $params) {
-        $idTemplate=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
+        $template=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
         $type=$params->getOrFail('type','is_integer','Invalid action type!');
         $pIndex=$params->getOrFail('pindex','is_integer','Invalid page position!');
         if($type<0) {
             $result=DataProvider::Get('Plugins\DForms\Templates','UnsetTemplatePage',[
-                'for_id'=>$idTemplate,
+                'for_id'=>$template,
                 'in_pindex'=>$pIndex,
             ]);
         } elseif($type==0) {
             $result=DataProvider::Get('Plugins\DForms\Templates','SetTemplatePage',[
-                'for_id'=>$idTemplate,
+                'for_id'=>$template,
                 'in_pindex'=>$pIndex,
             ]);
         } else {
             $result=DataProvider::Get('Plugins\DForms\Templates','SetNewTemplatePage',[
-                'for_id'=>$idTemplate,
+                'for_id'=>$template,
                 'in_pindex'=>$pIndex,
             ]);
         }//if($type<0)
@@ -152,7 +152,7 @@ class TemplatesContent extends Module {
             $this->CloseForm();
         }
         $target=$params->safeGet('target','','is_string');
-        $this->Exec('ShowContentEditForm',['id_template'=>$idTemplate,'target'=>$target],$target);
+        $this->Exec('ShowContentEditForm',['id_template'=>$template,'target'=>$target],$target);
     }//END public function UpdatePagesList
 
     /**
@@ -161,11 +161,11 @@ class TemplatesContent extends Module {
      * @throws \NETopes\Core\AppException
      */
     public function SetPageTitle(Params $params) {
-        $idTemplate=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
+        $template=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
         $pIndex=$params->getOrFail('pindex','is_integer','Invalid page index!');
         $title=$params->safeGet('title','','is_string');
         $result=DataProvider::Get('Plugins\DForms\Templates','SetTemplatePageTitle',[
-            'template_id'=>$idTemplate,
+            'template_id'=>$template,
             'for_pindex'=>$pIndex,
             'in_title'=>$title,
         ]);
@@ -180,7 +180,7 @@ class TemplatesContent extends Module {
      * @throws \NETopes\Core\AppException
      */
     public function ShowAddTableElementForm(Params $params) {
-        $idTemplate=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
+        $template=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
         $pIndex=$params->getOrFail('pindex','is_integer','Invalid page position!');
         $type=$params->safeGet('type','','is_string');
         $lastPos=$params->safeGet('last_pos',0,'is_numeric');
@@ -205,7 +205,7 @@ class TemplatesContent extends Module {
      */
     public function UpdateContentTable(Params $params) {
         // NApp::Dlog($params,'UpdateContentTable');
-        $idTemplate=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
+        $template=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
         $pIndex=$params->getOrFail('pindex','is_integer','Invalid page position!');
         $type=$params->getOrFail('type','is_integer','Invalid action type!');
         $colsNo=$params->safeGet('colsno',NULL,'is_not0_integer');
@@ -215,21 +215,21 @@ class TemplatesContent extends Module {
         }
         if($type<0) {
             $result=DataProvider::GetArray('Plugins\DForms\Templates','UnsetTableCell',[
-                'for_id'=>$idTemplate,
+                'for_id'=>$template,
                 'in_col'=>$colsNo,
                 'in_row'=>$rowsNo,
                 'in_pindex'=>$pIndex,
             ]);
         } elseif($type==0) {
             $result=DataProvider::GetArray('Plugins\DForms\Templates','SetTableCell',[
-                'for_id'=>$idTemplate,
+                'for_id'=>$template,
                 'in_col'=>$colsNo,
                 'in_row'=>$rowsNo,
                 'in_pindex'=>$pIndex,
             ]);
         } else {
             $result=DataProvider::GetArray('Plugins\DForms\Templates','SetNewTableCell',[
-                'for_id'=>$idTemplate,
+                'for_id'=>$template,
                 'in_col'=>$colsNo,
                 'in_row'=>$rowsNo,
                 'in_pindex'=>$pIndex,
@@ -243,7 +243,7 @@ class TemplatesContent extends Module {
         }
         $target=$params->safeGet('target','','is_string');
         $cTarget=$params->safeGet('c_target','','is_string');
-        $this->Exec('ShowContentTable',['id_template'=>$idTemplate,'pindex'=>$pIndex,'target'=>$target,'c_target'=>$cTarget],$target);
+        $this->Exec('ShowContentTable',['id_template'=>$template,'pindex'=>$pIndex,'target'=>$target,'c_target'=>$cTarget],$target);
     }//END public function UpdateContentTable
 
     /**
@@ -252,10 +252,10 @@ class TemplatesContent extends Module {
      * @throws \NETopes\Core\AppException
      */
     public function AddEditContentElement(Params $params) {
-        $idTemplate=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
+        $template=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
         $pIndex=$params->getOrFail('pindex','is_integer','Invalid page position!');
-        $idControl=$params->getOrFail('id_control','is_not0_integer','Invalid control identifier!');
-        $fieldType=DataProvider::Get('Plugins\DForms\Controls','GetItem',['for_id'=>$idControl]);
+        $controlId=$params->getOrFail('id_control','is_not0_integer','Invalid control identifier!');
+        $fieldType=DataProvider::Get('Plugins\DForms\Controls','GetItem',['for_id'=>$controlId]);
         $colsNo=$params->safeGet('cols_no',1,'is_not0_integer');
         $id=$params->safeGet('id_item',NULL,'is_not0_integer');
         if($id) {
@@ -284,12 +284,12 @@ class TemplatesContent extends Module {
         $view->SetTitle(Translate::GetLabel('field_properties'));
         $view->SetIsModalView(TRUE);
         $view->SetModalWidth(550);
-        $customClose=NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'CancelAddEditContentElement', 'params': { 'id_template': {$idTemplate}, 'pindex': '{$pIndex}', 'target': '{$target}' } }",'dft_fp_errors');
+        $customClose=NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'CancelAddEditContentElement', 'params': { 'id_template': {$template}, 'pindex': '{$pIndex}', 'target': '{$target}' } }",'dft_fp_errors');
         $view->SetModalCustomClose('"'.addcslashes($customClose,'\\').'"');
         $view->AddBasicForm($this->GetViewFile('FieldPropertiesForm'),[
             'container_type'=>'default',
         ]);
-        $tabCtrl=ModulesProvider::Exec(Controls::class,'GetControlPropertiesTab',['id_control'=>$idControl,'data'=>$item->getProperty('params','','is_string'),'target'=>'dft_fp_properties_tab']);
+        $tabCtrl=ModulesProvider::Exec(Controls::class,'GetControlPropertiesTab',['id_control'=>$controlId,'data'=>$item->getProperty('params','','is_string'),'target'=>'dft_fp_properties_tab']);
         if(is_object($tabCtrl)) {
             $view->AddObjectContent($tabCtrl,'Show',[
                 'container_type'=>'default',
@@ -297,7 +297,7 @@ class TemplatesContent extends Module {
             ]);
         }//if(is_object($tabCtrl))
         $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="dft_fp_form_errors"></div></div>');
-        $btnSave=new Button(['value'=>Translate::GetButton('save'),'class'=>NApp::$theme->GetBtnPrimaryClass(),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'AddEditContentElementRecord', 'params': { 'id_template': {$idTemplate}, 'pindex': '{$pIndex}', 'id_item': '{$id}', 'class': '{$cClass}', 'data_type': '{$cDataType}', 'frow': '{$fRow}', 'fcol': '{$fCol}', 'id_control': '{$idControl}', 'ptarget': '{$target}', 'c_target': '{$cTarget}', 'properties': '{nGet|dft_fp_properties_tab:form}', 'target': 'dft_fp_form' }, 'arrayParams': [ '{nGet|dft_fp_form:form}' ] }",'dft_fp_form_errors')]);
+        $btnSave=new Button(['value'=>Translate::GetButton('save'),'class'=>NApp::$theme->GetBtnPrimaryClass(),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'AddEditContentElementRecord', 'params': { 'id_template': {$template}, 'pindex': '{$pIndex}', 'id_item': '{$id}', 'class': '{$cClass}', 'data_type': '{$cDataType}', 'frow': '{$fRow}', 'fcol': '{$fCol}', 'id_control': '{$controlId}', 'ptarget': '{$target}', 'c_target': '{$cTarget}', 'properties': '{nGet|dft_fp_properties_tab:form}', 'target': 'dft_fp_form' }, 'arrayParams': [ '{nGet|dft_fp_form:form}' ] }",'dft_fp_form_errors')]);
         $view->AddAction($btnSave->Show());
         $btnCancel=new Button(['value'=>Translate::GetButton('cancel'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-ban','onclick'=>$customClose]);
         $view->AddAction($btnCancel->Show());
@@ -310,12 +310,12 @@ class TemplatesContent extends Module {
      * @throws \NETopes\Core\AppException
      */
     public function CancelAddEditContentElement(Params $params) {
-        $idTemplate=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
+        $template=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
         $pIndex=$params->getOrFail('pindex','is_integer','Invalid page position!');
         $this->CloseForm();
         $target=$params->safeGet('target','','is_string');
         $cTarget=$params->safeGet('c_target','','is_string');
-        $this->Exec('ShowContentTable',['id_template'=>$idTemplate,'pindex'=>$pIndex,'target'=>$target,'c_target'=>$cTarget],$target);
+        $this->Exec('ShowContentTable',['id_template'=>$template,'pindex'=>$pIndex,'target'=>$target,'c_target'=>$cTarget],$target);
     }//END public function CancelAddEditContentElement
 
     /**
@@ -324,7 +324,7 @@ class TemplatesContent extends Module {
      * @throws \NETopes\Core\AppException
      */
     public function AddEditContentElementRecord(Params $params) {
-        $idTemplate=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
+        $template=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
         $pIndex=$params->getOrFail('pindex','is_integer','Invalid page position!');
         $id=$params->safeGet('id_item',NULL,'is_not0_numeric');
         $name=$params->safeGet('name','','is_string');
@@ -375,20 +375,20 @@ class TemplatesContent extends Module {
             }
             $data_type=$params->safeGet('data_type','','is_string');
             if($class=='BasicForm') {
-                $idSubForm=$params->safeGet('id_sub_form',0,'is_integer');
-                if(!$idSubForm) {
+                $subFormId=$params->safeGet('id_sub_form',0,'is_integer');
+                if(!$subFormId) {
                     NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
                     echo Translate::GetMessage('required_fields');
                     return;
-                }//if(!$idSubForm)
+                }//if(!$subFormId)
                 $name=NULL;
                 $label=NULL;
             } else {
-                $idSubForm=NULL;
-            }//if($class=='BasicForm' && !$idSubForm)
+                $subFormId=NULL;
+            }//if($class=='BasicForm' && !$subFormId)
             $result=DataProvider::Get('Plugins\DForms\Templates','SetNewField',[
-                'template_id'=>$idTemplate,
-                'sub_form_id'=>$idSubForm,
+                'template_id'=>$template,
+                'sub_form_id'=>$subFormId,
                 'in_pindex'=>$pIndex,
                 'in_itype'=>$params->safeGet('itype',1,'is_not0_integer'),
                 'in_frow'=>$fRow,
@@ -411,7 +411,7 @@ class TemplatesContent extends Module {
         $this->CloseForm();
         $pTarget=$params->safeGet('ptarget','','is_string');
         $cTarget=$params->safeGet('c_target','','is_string');
-        $this->Exec('ShowContentTable',['id_template'=>$idTemplate,'pindex'=>$pIndex,'target'=>$pTarget,'c_target'=>$cTarget],$pTarget);
+        $this->Exec('ShowContentTable',['id_template'=>$template,'pindex'=>$pIndex,'target'=>$pTarget,'c_target'=>$cTarget],$pTarget);
     }//END public function AddEditContentElementRecord
 
     /**
@@ -420,7 +420,7 @@ class TemplatesContent extends Module {
      * @throws \NETopes\Core\AppException
      */
     public function MoveContentElement(Params $params) {
-        $idTemplate=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
+        $template=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
         $initialPageIndex=$params->getOrFail('pindex','is_integer','Invalid page position!');
         $id=$params->getOrFail('id_item','is_not0_integer','Invalid field identifier!');
         $cell=$params->safeGet('cell','','is_string');
@@ -458,7 +458,7 @@ class TemplatesContent extends Module {
      * @throws \NETopes\Core\AppException
      */
     public function DeleteContentElementRecord(Params $params) {
-        $idTemplate=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
+        $template=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
         $pIndex=$params->getOrFail('pindex','is_integer','Invalid page position!');
         $id=$params->getOrFail('id','is_not0_integer','Invalid field identifier!');
         $result=DataProvider::Get('Plugins\DForms\Templates','UnsetField',['for_id'=>$id]);
@@ -467,6 +467,6 @@ class TemplatesContent extends Module {
         }
         $target=$params->safeGet('target','','is_string');
         $cTarget=$params->safeGet('c_target','','is_string');
-        $this->Exec('ShowContentTable',['id_template'=>$idTemplate,'pindex'=>$pIndex,'target'=>$target,'c_target'=>$cTarget],$target);
+        $this->Exec('ShowContentTable',['id_template'=>$template,'pindex'=>$pIndex,'target'=>$target,'c_target'=>$cTarget],$target);
     }//END public function DeleteContentElementRecord
 }//END class TemplatesContent extends Module

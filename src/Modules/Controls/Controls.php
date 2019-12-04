@@ -29,19 +29,19 @@ use Translate;
 class Controls extends Module {
     /**
      * @param array       $data
-     * @param int         $idControl
-     * @param int         $idParent
+     * @param int         $controlId
+     * @param int         $parentId
      * @param string|null $parentGroupName
      * @return array
      * @throws \NETopes\Core\AppException
      */
-    protected function GetTabControlStructure(array $data,int $idControl,int $idParent=0,?string $parentGroupName=NULL) {
+    protected function GetTabControlStructure(array $data,int $controlId,int $parentId=0,?string $parentGroupName=NULL) {
         // \NApp::Dlog($data,'GetTabControlStructure:$data');
-        // \NApp::Dlog(['$idControl'=>$idControl,'$idParent'=>$idParent,'$parentGroupName'=>$parentGroupName],'GetTabControlStructure');
+        // \NApp::Dlog(['$controlId'=>$controlId,'$parentId'=>$parentId,'$parentGroupName'=>$parentGroupName],'GetTabControlStructure');
         $fieldProperties=DataProvider::Get('Plugins\DForms\Controls','GetProperties',[
-            'control_id'=>$idControl,
+            'control_id'=>$controlId,
             'for_state'=>-1,
-            'parent_id'=>$idParent,
+            'parent_id'=>$parentId,
         ]);
         // \NApp::Dlog($fieldProperties,'$fieldProperties');
         $result=[];
@@ -126,7 +126,7 @@ class Controls extends Module {
                         break;
                     }
                     $cData=get_array_value($data,$fpKey,[],'is_array');
-                    $cResult=$this->GetTabControlStructure($cData,$idControl,$idp,$groupName);
+                    $cResult=$this->GetTabControlStructure($cData,$controlId,$idp,$groupName);
                     $result[$groupName]['content']['control_params']['content'][]=['separator'=>'subtitle','value'=>$fpLabel];
                     $result[$groupName]['content']['control_params']['content']=array_merge($result[$groupName]['content']['control_params']['content'],$cResult);
                     break;
@@ -146,7 +146,7 @@ class Controls extends Module {
             if($skip) {
                 continue;
             }
-            if($idParent>0) {
+            if($parentId>0) {
                 $result[]=[
                     [
                         'hidden_row'=>$hidden,
@@ -178,7 +178,7 @@ class Controls extends Module {
                         'control_params'=>array_merge(['tag_id'=>'dft_fpe_'.$fpKey,'tag_name'=>$fpKey,'value'=>$fpValue,'label'=>$fpLabel,'label_cols'=>$fpLCols,'fixed_width'=>$fpFixedWidth,'cols'=>$fpCCols,'required'=>$fpi->getProperty('required',FALSE,'bool')],$fpSParams),
                     ],
                 ];
-            }//if($idParent>0)
+            }//if($parentId>0)
         }//END foreach
         return $result;
     }//END protected function GetTabControlStructure
@@ -190,7 +190,7 @@ class Controls extends Module {
      * @throws \Exception
      */
     public function GetControlPropertiesTab(Params $params): TabControl {
-        $idControl=$params->getOrFail('id_control','is_not0_integer','Invalid control identifier!');
+        $controlId=$params->getOrFail('id_control','is_not0_integer','Invalid control identifier!');
         $data=$params->safeGet('data',NULL,'is_array');
         if(!is_array($data)) {
             $data=$params->safeGet('data','','is_string');
@@ -206,7 +206,7 @@ class Controls extends Module {
             }//if(strlen($data))
         }//if(is_string($data))
         $target=$params->safeGet('target','ctrl_properties_tab','is_notempty_string');
-        $ctrlTabs=$this->GetTabControlStructure($data,$idControl);
+        $ctrlTabs=$this->GetTabControlStructure($data,$controlId);
         $ctrlTabs=new TabControl(['tag_id'=>$target,'tabs'=>$ctrlTabs]);
         return $ctrlTabs;
     }//END public function GetControlPropertiesTab
@@ -218,12 +218,12 @@ class Controls extends Module {
      */
     public function ProcessFieldProperties(Params $params) {
         // \NApp::Dlog($params,'ProcessFieldProperties');
-        $idControl=$params->safeGet('id_control',NULL,'is_not0_numeric');
-        if(!$idControl) {
+        $controlId=$params->safeGet('id_control',NULL,'is_not0_numeric');
+        if(!$controlId) {
             throw new AppException('Invalid control identifier!');
         }
         $data=$params->safeGet('data',[],'is_array');
-        $cParams=DataProvider::Get('Plugins\DForms\Controls','GetProperties',['control_id'=>$idControl,'for_state'=>-1,'parent_id'=>0]);
+        $cParams=DataProvider::Get('Plugins\DForms\Controls','GetProperties',['control_id'=>$controlId,'for_state'=>-1,'parent_id'=>0]);
         $result=[];
         if(is_iterable($cParams) && count($cParams)) {
             foreach($cParams as $cp) {

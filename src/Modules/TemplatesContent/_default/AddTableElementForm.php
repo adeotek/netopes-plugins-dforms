@@ -18,7 +18,7 @@ $ctrl_params=[
     ],
     'actions'=>[
         [
-            'params'=>['value'=>Translate::GetButton('add_'.$type),'icon'=>'fa fa-plus-circle','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','UpdateContentTable','id_template'|{$idTemplate}~'pindex'|'{$pIndex}'~'type'|0~'close'|1~'{$type}sno'|dft_add_element_position:value~'c_target'|'{$cTarget}','{$target}')->dft_add_element_errors")],
+            'params'=>['value'=>Translate::GetButton('add_'.$type),'icon'=>'fa fa-plus-circle','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','UpdateContentTable','id_template'|{$template}~'pindex'|'{$pIndex}'~'type'|0~'close'|1~'{$type}sno'|dft_add_element_position:value~'c_target'|'{$cTarget}','{$target}')->dft_add_element_errors")],
         ],
     ],
 ];

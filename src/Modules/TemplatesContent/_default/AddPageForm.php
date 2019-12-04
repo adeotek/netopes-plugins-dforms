@@ -1,6 +1,6 @@
 <?php
 /**
- * @var int $idTemplate
+ * @var int $template
  * @var int $maxPos
  */
 $positions=[];
@@ -22,7 +22,7 @@ $ctrl_params=[
     ],
     'actions'=>[
         [
-            'params'=>['value'=>Translate::GetButton('add_page'),'icon'=>'fa fa-plus-circle','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','UpdatePagesList','id_template'|{$idTemplate}~'type'|0~'close'|1~'pindex'|dft_add_page_position:value,'{$target}')->dft_add_page_errors")],
+            'params'=>['value'=>Translate::GetButton('add_page'),'icon'=>'fa fa-plus-circle','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','UpdatePagesList','id_template'|{$template}~'type'|0~'close'|1~'pindex'|dft_add_page_position:value,'{$target}')->dft_add_page_errors")],
         ],
     ],
 ];

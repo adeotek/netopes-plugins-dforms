@@ -12,7 +12,7 @@ $ctrl_params=[
     'qsearch'=>'for_text',
     'ds_class'=>'Plugins\DForms\ValuesLists',
     'ds_method'=>'GetValues',
-    'ds_params'=>['for_id'=>NULL,'list_id'=>$idList,'for_ltype'=>NULL,'for_state'=>NULL,'for_implicit'=>NULL,'for_text'=>NULL],
+    'ds_params'=>['for_id'=>NULL,'list_id'=>$listId,'for_ltype'=>NULL,'for_state'=>NULL,'for_implicit'=>NULL,'for_text'=>NULL],
     'auto_load_data'=>TRUE,
     'columns'=>[
         'actions'=>($edit ? [

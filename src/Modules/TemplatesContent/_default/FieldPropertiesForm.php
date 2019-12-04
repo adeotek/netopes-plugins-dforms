@@ -3,8 +3,8 @@ use NETopes\Core\AppSession;
 use NETopes\Core\Controls\HiddenInput;
 
 /**
- * @var int                              $idTemplate
- * @var int                              $idControl
+ * @var int                              $template
+ * @var int                              $controlId
  * @var int                              $fRow
  * @var int                              $fCol
  * @var int                              $colsNo
@@ -20,9 +20,9 @@ switch($cClass) {
     case 'FormSeparator':
     case 'FormSubTitle':
         $ctrl=new HiddenInput(['tag_id'=>'dft_fp_itype','tag_name'=>'itype','value'=>$item->getProperty('itype',1,'is_integer')]);
-        $hFields[]=$ctrl->Show();
-        $ctrl=new HiddenInput(['tag_id'=>'dft_fp_name','tag_name'=>'name','value'=>$item->getProperty('name',AppSession::GetNewUID($idTemplate.$cClass),'is_string')]);
-        $hFields[]=$ctrl->Show();
+    $hFields[]=$ctrl->Show();
+    $ctrl=new HiddenInput(['tag_id'=>'dft_fp_name','tag_name'=>'name','value'=>$item->getProperty('name',AppSession::GetNewUID($template.$cClass),'is_string')]);
+    $hFields[]=$ctrl->Show();
         if($cClass=='FormSeparator') {
             $ctrl=new HiddenInput(['tag_id'=>'dft_fp_label','tag_name'=>'label','value'=>$item->getProperty('label',$cClass,'is_string')]);
             $hFields[]=$ctrl->Show();
@@ -74,7 +74,7 @@ $ctrl_params=[
                     'data_source'=>[
                         'ds_class'=>'Plugins\DForms\Templates',
                         'ds_method'=>'GetItems',
-                        'ds_params'=>['for_id'=>NULL,'for_validated'=>1,'for_state'=>1,'for_text'=>NULL,'for_ftype'=>NULL,'exclude_id'=>$idTemplate],
+                        'ds_params'=>['for_id'=>NULL,'for_validated'=>1,'for_state'=>1,'for_text'=>NULL,'for_ftype'=>NULL,'exclude_id'=>$template],
                     ],
                 ],
             ],

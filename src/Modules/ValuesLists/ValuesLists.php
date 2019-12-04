@@ -153,7 +153,7 @@ class ValuesLists extends Module {
      * @throws \NETopes\Core\AppException
      */
     public function ValuesListing(Params $params) {
-        $idList=$params->getOrFail('id_list','is_not0_integer','Invalid list identifier!');
+        $listId=$params->getOrFail('id_list','is_not0_integer','Invalid list identifier!');
         $edit=$params->safeGet('edit',0,'is_integer');
         $target=$params->safeGet('target','','is_string');
         if($edit) {
@@ -165,7 +165,7 @@ class ValuesLists extends Module {
                     'value'=>Translate::GetButton('add'),
                     'class'=>NApp::$theme->GetBtnPrimaryClass(),
                     'icon'=>'fa fa-plus-circle',
-                    'onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->class,'method'=>'ShowValueAddEditForm','params'=>['id_list'=>$idList,'target'=>$target]],['target_id'=>'modal'])]);
+                    'onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->class,'method'=>'ShowValueAddEditForm','params'=>['id_list'=>$listId,'target'=>$target]],['target_id'=>'modal'])]);
                 $view->AddAction($btnAdd->Show());
             }//if(!$this->AddDRights())
         } else {
@@ -185,7 +185,7 @@ class ValuesLists extends Module {
      * @throws \NETopes\Core\AppException
      */
     public function ShowValueAddEditForm(Params $params) {
-        $idList=$params->getOrFail('id_list','is_not0_integer','Invalid list identifier!');
+        $listId=$params->getOrFail('id_list','is_not0_integer','Invalid list identifier!');
         $id=$params->safeGet('id',NULL,'is_integer');
         if($id) {
             $item=DataProvider::Get('Plugins\DForms\ValuesLists','GetValue',['for_id'=>$id]);
@@ -208,7 +208,7 @@ class ValuesLists extends Module {
      * @throws \NETopes\Core\AppException
      */
     public function AddEditValueRecord(Params $params) {
-        $idList=$params->getOrFail('id_list','is_not0_integer','Invalid list identifier!');
+        $listId=$params->getOrFail('id_list','is_not0_integer','Invalid list identifier!');
         $id=$params->safeGet('id',NULL,'is_integer');
         $value=trim($params->safeGet('value','','is_string'));
         $name=$params->safeGet('name',NULL,'is_notempty_string');
@@ -231,7 +231,7 @@ class ValuesLists extends Module {
             }
         } else {
             $result=DataProvider::Get('Plugins\DForms\ValuesLists','SetNewValue',[
-                'list_id'=>$idList,
+                'list_id'=>$listId,
                 'in_value'=>$value,
                 'in_name'=>$name,
                 'in_state'=>$params->safeGet('state',1,'is_integer'),
@@ -243,7 +243,7 @@ class ValuesLists extends Module {
         }//if($id)
         $this->CloseForm();
         $cTarget=$params->safeGet('c_target','','is_string');
-        $this->Exec('ValuesListing',['id_list'=>$idList,'edit'=>1,'target'=>$cTarget],$cTarget);
+        $this->Exec('ValuesListing',['id_list'=>$listId,'edit'=>1,'target'=>$cTarget],$cTarget);
     }//END public function AddEditValueRecord
 
     /**
@@ -253,12 +253,12 @@ class ValuesLists extends Module {
      */
     public function DeleteValueRecord(Params $params) {
         $id=$params->getOrFail('id','is_not0_integer','Invalid record identifier!');
-        $idList=$params->safeGet('id_list','is_not0_integer','Invalid list identifier!');
+        $listId=$params->safeGet('id_list','is_not0_integer','Invalid list identifier!');
         $result=DataProvider::Get('Plugins\DForms\ValuesLists','UnsetValue',['for_id'=>$id]);
         if($result===FALSE) {
             throw new AppException('Unknown database error!');
         }
         $target=$params->safeGet('target','','is_string');
-        $this->Exec('ValuesListing',['id_list'=>$idList,'edit'=>1,'target'=>$target],$target);
+        $this->Exec('ValuesListing',['id_list'=>$listId,'edit'=>1,'target'=>$target],$target);
     }//END public function DeleteValueRecord
 }//END class ValuesLists extends Module
