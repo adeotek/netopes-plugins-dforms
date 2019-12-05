@@ -211,7 +211,7 @@ class Instances extends Module {
             'instance_id'=>$instanceId,
             'for_state'=>1,
         ]);
-        if(!is_object($template)) {
+        if(!$template instanceof IEntity) {
             throw new AppException('Invalid DynamicForm template!');
         }
         $this->templateId=$template->getProperty('id',NULL,'is_integer');
@@ -224,9 +224,9 @@ class Instances extends Module {
             $instanceId=$instance->getProperty('id',NULL,'is_integer');
         }//if(!$instanceId && $template->getProperty('ftype',0,'is_integer')==2 && $params instanceof Params)
         $viewOnly=$params->safeGet('view_only',FALSE,'bool');
-        $noRedirect=$params->safeGet('no_redirect',FALSE,'bool');
+        $noRedirect=$params->safeGet('no_redirect',TRUE,'bool');
         $cModule=$params->safeGet('c_module',$this->name,'is_notempty_string');
-        $cMethod=$params->safeGet('c_method','Listing','is_notempty_string');
+        $cMethod=$params->safeGet('c_method','ShowAddEditForm','is_notempty_string');
         $cTarget=$params->safeGet('c_target','main-content','is_notempty_string');
 
         $builder=InstancesHelpers::PrepareForm($params,$template,$instanceId);
@@ -470,11 +470,12 @@ class Instances extends Module {
             return;
         }//if(!$check)
         $this->templateId=$params->safeGet('id_template',$this->templateId,'is_not0_integer');
-        $params->set('save_only',TRUE);
+        $aParams=clone $params;
+        $aParams->set('no_redirect',TRUE);
         if($instanceId>0) {
-            $this->Exec('SaveRecord',$params);
+            $this->Exec('SaveRecord',$aParams);
         } else {
-            $this->Exec('SaveNewRecord',$params);
+            $this->Exec('SaveNewRecord',$aParams);
         }//if($instanceId>0)
         InstancesHelpers::RedirectAfterAction($params,$this);
     }//END public function SaveInstance
@@ -587,7 +588,7 @@ class Instances extends Module {
         if(!count($fieldsData)) {
             throw new AppException('Invalid DynamicForm fields data!');
         }
-        $relationsData=$params->safeGet('df_relations_values');
+        // $relationsData=$params->safeGet('df_relations_values');
 
         $transaction=AppSession::GetNewUID($template->getProperty('code',$template,'is_notempty_string'));
         DataProvider::StartTransaction('Plugins\DForms\Instances',$transaction);
@@ -702,7 +703,7 @@ class Instances extends Module {
         if(!$instance instanceof IEntity) {
             throw new AppException('Invalid DynamicForm instance object!');
         }
-        $contentBuilder=new InstancesPrintContentBuilder($instanceId,$instance->getProperty('id_template',NULL,'?is_string'),$instance->getProperty('print_template','','is_string'));
+        $contentBuilder=new InstancesPrintContentBuilder($instance);
         $contentBuilder->PrepareContent();
         return $contentBuilder;
     }//END public function GetPrintData
@@ -721,6 +722,6 @@ class Instances extends Module {
         $pdfBuilder=new PdfBuilder(['orientation'=>$contentBuilder->pageOrientation]);
         $pdfBuilder->SetTitle($contentBuilder->documentTitle);
         $pdfBuilder->AddContents(explode('[[insert_new_page]]',$contentBuilder->content));
-        $pdfBuilder->Render();
+        // $pdfBuilder->Render();
     }//END public function PrintInstance
 }//END class Instances extends Module

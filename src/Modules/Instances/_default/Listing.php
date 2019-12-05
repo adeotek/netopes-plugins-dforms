@@ -34,21 +34,22 @@ if($this->inListingActions) {
     ]);
 }
 if($this->listingPrintAction) {
+    if(strlen($this->printUrl)) {
+        $printUrl=NApp::$appBaseUrl.$this->printUrl;
+    } else {
+        $printUrl=NApp::Url()->GetNewUrl(['vpath'=>$this->printUrlVirtualPath,'language'=>NApp::GetLanguageCode()]);
+    }
     $ctrl_builder->AddAction('actions',[
         'dright'=>Module::DRIGHT_PRINT,
         'type'=>'Link',
         'params'=>['tooltip'=>Translate::GetButton('pdf'),'class'=>NApp::$theme->GetBtnSuccessClass('btn-xxs'),'icon'=>'fa fa-file-pdf-o',
-            'href'=>NApp::$appBaseUrl.$this->printUrl,
+            'href'=>$printUrl,
             'target'=>'_blank',
-            'url_params'=>[
-                'namespace'=>NApp::$currentNamespace,
-                'language'=>NApp::GetLanguageCode(),
-                'rtype'=>'ehash',
-                'payload'=>[
-                    'module'=>$this->name,
-                    'method'=>'PrintInstancePdf',
-                    'params'=>['id'=>'{!id!}'],
-                ],
+            'type'=>'ehash',
+            'payload'=>[
+                'module'=>$this->name,
+                'method'=>'PrintInstance',
+                'params'=>['id'=>'{!id!}'],
             ],
         ],
     ]);

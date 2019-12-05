@@ -10,8 +10,11 @@
  * @filesource
  */
 namespace NETopes\Plugins\DForms\Modules\Instances;
+use Exception;
+use NETopes\Core\App\Params;
 use NETopes\Core\AppException;
 use NETopes\Core\Data\DataProvider;
+use NETopes\Core\Data\IEntity;
 use NETopes\Core\Data\TPlaceholdersManipulation;
 
 /**
@@ -50,16 +53,40 @@ class InstancesPrintContentBuilder {
     /**
      * InstancesPdfBuilder constructor.
      *
-     * @param int         $instanceId
-     * @param int         $templateId
-     * @param string|null $printTemplate
+     * @param \NETopes\Core\Data\IEntity $instance
+     * @throws \NETopes\Core\AppException
      */
-    public function __construct(int $instanceId,int $templateId,?string $printTemplate=NULL) {
-        $this->instanceId=$instanceId;
-        $this->templateId=$templateId;
-        $this->content=$printTemplate;
-        //$this->pageOrientation
+    public function __construct(IEntity $instance) {
+        $this->instanceId=$instance->getProperty('id',NULL,'?is_string');
+        $this->templateId=$instance->getProperty('id_template',NULL,'?is_string');
+        $this->content=$instance->getProperty('print_template','','is_string');
+        $this->pageOrientation=$instance->getProperty('print_page_orientation','L','is_notempty_string');
     }//END public function __construct
+
+    /**
+     * @param \NETopes\Core\App\Params $params
+     * @param mixed|null               $value
+     * @return string|null
+     * @throws \NETopes\Core\AppException
+     */
+    public function GetFieldHtml(Params $params,$value=NULL): ?string {
+        $sValue=!is_string($value) ? NULL : $value;
+        if($params->safeGet('hide_empty',FALSE,'bool') && !strlen($sValue)) {
+            return NULL;
+        }
+        $label=$params->safeGet('label','','is_string');
+        if(strlen($label)) {
+            $label='<td><label>'.$label.'</label>:&nbsp;</td>';
+        }
+        return <<<HTML
+<table>
+    <tr>
+        {$label}
+        <td>{$sValue}</td>
+    </tr>
+</table>
+HTML;
+    }//END public function GetFieldHtml
 
     /**
      * Prepare HTML content
@@ -74,7 +101,6 @@ class InstancesPrintContentBuilder {
         if(!is_string($this->content)) {
             throw new AppException('Invalid instance print HTML content!');
         }
-
         if($subFormId) {
             $fields=DataProvider::Get('Plugins\DForms\Instances','GetStructure',[
                 'template_id'=>$this->templateId,
@@ -90,13 +116,32 @@ class InstancesPrintContentBuilder {
                 'for_pindex'=>NULL,
             ]);
         }//if($subFormId)
-
+        // vprint($fields);
         $parameters=[];
         /** @var \NETopes\Core\Data\IEntity $field */
         foreach($fields as $field) {
-            $parameters[]=[$field->getProperty('name',NULL,'is_string')=>NULL];
+            $fieldName=$field->getProperty('name',NULL,'is_string');
+            $fieldClass=$field->getProperty('class',NULL,'is_string');
+            $fieldParamsString=$field->getProperty('class',NULL,'is_string');
+            if(!strlen($fieldName) || !strlen($fieldClass) || in_array($fieldClass,['FormSeparator','FormTitle','FormSubTitle']) || !strlen($fieldParamsString)) {
+                continue;
+            }
+            try {
+                $fieldParams=new Params(json_decode($fieldParamsString,TRUE));
+            } catch(Exception $je) {
+                continue;
+            }//END try
+            if($fieldClass==='BasicForm') {
+                $fieldValue=NULL;
+            } else {
+                $fieldValue=NULL;
+                if($fieldParams->safeGet('labels_source','','is_string')==='form') {
+                    $parameters[]=[$fieldName=>$this->GetFieldHtml($fieldParams,$fieldValue)];
+                } else {
+                    $parameters[]=[$fieldName=>$fieldValue];
+                }
+            }//if($fieldClass==='BasicForm')
         }//END foreach
-
         $this->content=$this->ReplacePlaceholders($this->content,$parameters);
         return $this->content;
     }//END public function PrepareContent

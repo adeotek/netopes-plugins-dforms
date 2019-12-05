@@ -93,16 +93,16 @@ if($renderType>1) {
 	                        $editItemAct=$btnEditItem->Show();
 	                        $btnDelItem=new DivButton(['tag_id'=>'dfti_del','tooltip'=>Translate::GetButton('delete'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs'),'icon'=>'fa fa-times','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'DeleteContentElementRecord', 'params': { 'id_template': {$template}, 'pindex': '{$pIndex}', 'id': {$f->getProperty('id')}, 'c_target': '{$cTarget}', 'target': '{$target}' } }",'errors'),'confirm_text'=>Translate::GetMessage('confirm_delete')]);
 	                        $delItemAct=$btnDelItem->Show();
-                            ?>
-							<td class="ccolumn droppable" id="cell-<?= $pIndex.'-'.$i.'-'.$j ?>" data-cell="<?= $pIndex.'-'.$i.'-'.$j ?>"
-								data-full="1">
-								<span class="blank" style="display: none;"><?= $i.'-'.$j ?></span>
-								<div class="dft-item draggable move" data-id="<?= $f->getProperty('id') ?>" data-cell="<?= $pIndex.'-'.$i.'-'.$j ?>">
-									<span class="name"><?= $this->module->GetItemTitle($f) ?></span>
-                                    <?= $editItemAct ?>
-									<span class="desc"><span
-												class="title">[<?= $f->getProperty('class') ?>]</span>&nbsp;-&nbsp;<?= $f->getProperty('control_name') ?></span>
-                                    <?= $delItemAct ?>
+	                        ?>
+	                        <td class="ccolumn droppable" id="cell-<?= $pIndex.'-'.$i.'-'.$j ?>" data-cell="<?= $pIndex.'-'.$i.'-'.$j ?>"
+	                            data-full="1">
+		                        <span class="blank" style="display: none;"><?= $i.'-'.$j ?></span>
+		                        <div class="dft-item draggable move" data-id="<?= $f->getProperty('id') ?>" data-cell="<?= $pIndex.'-'.$i.'-'.$j ?>">
+			                        <span class="name"><?= $this->module->GetItemTitle($f) ?></span>
+			                        <?= $editItemAct ?>
+			                        <span class="desc"><span
+					                        class="title">[<?= $f->getProperty('class') ?>]</span>&nbsp;-&nbsp;<?= $f->getProperty('control_name') ?></span>
+			                        <?= $delItemAct ?>
 								</div>
 							</td>
                             <?php

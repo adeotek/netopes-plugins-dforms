@@ -272,12 +272,12 @@ abstract class BaseTemplates extends DataSource {
     /**
      * SetPropertiesItem default parameters
      */
-    const SET_PROPERTIES_ITEM=['template_id'=>NULL,'in_render_type'=>NULL,'in_theme_type'=>NULL,'in_controls_size'=>NULL,'in_label_cols'=>NULL,'in_separator_width'=>NULL,'in_iso_code'=>NULL,'in_print_template'=>NULL];
+    const SET_PROPERTIES_ITEM=['template_id'=>NULL,'in_render_type'=>NULL,'in_theme_type'=>NULL,'in_controls_size'=>NULL,'in_label_cols'=>NULL,'in_separator_width'=>NULL,'in_iso_code'=>NULL,'in_print_page_orientation'=>NULL,'in_print_template'=>NULL];
 
     /**
      * Sets a relation
      *
-     * @param array $params ['template_id'=>NULL,'in_render_type'=>NULL,'in_theme_type'=>NULL,'in_controls_size'=>NULL,'in_label_cols'=>NULL,'in_separator_width'=>NULL,'in_iso_code'=>NULL,'in_print_template'=>NULL]
+     * @param array $params ['template_id'=>NULL,'in_render_type'=>NULL,'in_theme_type'=>NULL,'in_controls_size'=>NULL,'in_label_cols'=>NULL,'in_separator_width'=>NULL,'in_iso_code'=>NULL,'in_print_page_orientation'=>NULL,'in_print_template'=>NULL]
      * @param array $extra_params
      * @return mixed
      */

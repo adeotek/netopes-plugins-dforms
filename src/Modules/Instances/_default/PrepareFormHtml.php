@@ -14,8 +14,8 @@ if(!$subFormId) {
                 $rvalue=get_array_value($rel,'display_fields',get_array_value($rel,'svalue',$empty_val,'is_notempty_string'),'is_notempty_string');
                 ?>
                 <tr>
-					<td>
-						<label style="<?php echo get_array_value($this->html_styles,'label_style','','is_string'); ?>"><?php echo $rlabel.get_array_value($this->html_styles,'label_value_sep','','is_string'); ?></label><span
+                    <td>
+                        <label style="<?php echo get_array_value($this->html_styles,'label_style','','is_string'); ?>"><?php echo $rlabel.get_array_value($this->html_styles,'label_value_sep','','is_string'); ?></label><span
 								style="<?php echo get_array_value($this->html_styles,'relation_style','','is_string'); ?>"><?php echo $rvalue; ?></span>
 					</td>
 				</tr>

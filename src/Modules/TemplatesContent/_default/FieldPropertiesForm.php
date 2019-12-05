@@ -23,15 +23,15 @@ switch($cClass) {
     $hFields[]=$ctrl->Show();
     $ctrl=new HiddenInput(['tag_id'=>'dft_fp_name','tag_name'=>'name','value'=>$item->getProperty('name',AppSession::GetNewUID($template.$cClass),'is_string')]);
     $hFields[]=$ctrl->Show();
-        if($cClass=='FormSeparator') {
-            $ctrl=new HiddenInput(['tag_id'=>'dft_fp_label','tag_name'=>'label','value'=>$item->getProperty('label',$cClass,'is_string')]);
-            $hFields[]=$ctrl->Show();
-        }//if($cClass=='FormTitle')
-        $ctrl=new HiddenInput(['tag_id'=>'dft_fp_required','tag_name'=>'required','value'=>$item->getProperty('required',0,'is_integer')]);
+    if($cClass=='FormSeparator') {
+        $ctrl=new HiddenInput(['tag_id'=>'dft_fp_label','tag_name'=>'label','value'=>$item->getProperty('label',$cClass,'is_string')]);
         $hFields[]=$ctrl->Show();
-        $ctrl=new HiddenInput(['tag_id'=>'dft_fp_listing','tag_name'=>'listing','value'=>$item->getProperty('listing',0,'is_integer')]);
-        $hFields[]=$ctrl->Show();
-        break;
+    }//if($cClass=='FormTitle')
+    $ctrl=new HiddenInput(['tag_id'=>'dft_fp_required','tag_name'=>'required','value'=>$item->getProperty('required',0,'is_integer')]);
+    $hFields[]=$ctrl->Show();
+    $ctrl=new HiddenInput(['tag_id'=>'dft_fp_listing','tag_name'=>'listing','value'=>$item->getProperty('listing',0,'is_integer')]);
+    $hFields[]=$ctrl->Show();
+    break;
     case 'BasicForm':
         $ctrl=new HiddenInput(['tag_id'=>'dft_fp_required','tag_name'=>'required','value'=>$item->getProperty('required',0,'is_integer')]);
         $hFields[]=$ctrl->Show();

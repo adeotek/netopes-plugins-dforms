@@ -1,5 +1,6 @@
 <?php
 use NETopes\Core\Data\DataProvider;
+use NETopes\Plugins\DForms\Modules\TemplatesContent\TemplatesContent;
 
 $ctrl_params=[
     'tag_id'=>'df_template_edit_tabs',
@@ -57,7 +58,7 @@ $ctrl_params=[
                     ],
                     'actions'=>[
                         [
-                            'params'=>['tag_id'=>'df_template_edit_save1','value'=>Translate::GetButton('save_and_close'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','AddEditRecord',
+                            'params'=>['tag_id'=>'df_template_edit_save1','value'=>Translate::GetButton('save_and_close'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->name}','AddEditRecord',
                                 'id'|'{$id}'
                                 ~'close'|1
                                 ~'code'|df_template_edit_code:value
@@ -68,7 +69,7 @@ $ctrl_params=[
                         ],
                         //~'state'|df_template_edit_state:value
                         [
-                            'params'=>['tag_id'=>'df_template_edit_save0','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','AddEditRecord',
+                            'params'=>['tag_id'=>'df_template_edit_save0','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->name}','AddEditRecord',
                                 'id'|'{$id}'
                                 ~'close'|0
                                 ~'code'|df_template_edit_code:value
@@ -86,7 +87,7 @@ $ctrl_params=[
             'uid'=>'design',
             'name'=>Translate::GetLabel('design'),
             'content_type'=>'ajax',
-            'content_ajax_command'=>"{ 'module': '{$this->class}', 'method': 'ShowDesignEditForm', 'params': { 'id_template': {$id}, 'target': '{!t_target!}' } }",
+            'content_ajax_command'=>"{ 'module': '{$this->name}', 'method': 'ShowDesignEditForm', 'params': { 'id_template': {$id}, 'target': '{!t_target!}' } }",
             'reload_onchange'=>TRUE,
             'autoload'=>FALSE,
         ],
@@ -95,7 +96,7 @@ $ctrl_params=[
             'uid'=>'relations',
             'name'=>Translate::GetLabel('relations'),
             'content_type'=>'ajax',
-            'content_ajax_command'=>"{ 'module': '{$this->class}', 'method': 'ShowRelationsEditForm', 'params': { 'id_template': {$id}, 'target': '{!t_target!}' } }",
+            'content_ajax_command'=>"{ 'module': '{$this->name}', 'method': 'ShowRelationsEditForm', 'params': { 'id_template': {$id}, 'target': '{!t_target!}' } }",
             'reload_onchange'=>TRUE,
             'autoload'=>FALSE,
         ],
@@ -104,7 +105,7 @@ $ctrl_params=[
             'uid'=>'content',
             'name'=>Translate::GetLabel('content'),
             'content_type'=>'ajax',
-            'content_ajax_command'=>"{ 'module': '\NETopes\Plugins\DForms\Modules\TemplatesContent\TemplatesContent', 'method': 'ShowContentEditForm', 'params': { 'id_template': {$id}, 'target': '{!t_target!}' } }",
+            'content_ajax_command'=>"{ 'module': '".TemplatesContent::class."', 'method': 'ShowContentEditForm', 'params': { 'id_template': {$id}, 'target': '{!t_target!}' } }",
             'reload_onchange'=>TRUE,
             'autoload'=>FALSE,
         ],
@@ -112,39 +113,10 @@ $ctrl_params=[
             'type'=>'fixed',
             'uid'=>'print_template',
             'name'=>Translate::GetLabel('print_template'),
-            'content_type'=>'control',
-            'content'=>[
-                'control_type'=>'BasicForm',
-                'control_params'=>[
-                    'tag_id'=>'df_template_edit_print_template_form',
-                    'response_target'=>'df_template_edit_print_template_errors',
-                    'cols_no'=>1,
-                    'content'=>[
-                        [
-                            [
-                                'control_type'=>'CkEditor',
-                                'control_params'=>['tag_id'=>'df_template_edit_print_template_value','value'=>$item->getProperty('t_print_template','','is_string'),'no_label'=>TRUE,'width'=>'100%','height'=>600,'extra_config'=>'toolbarStartupExpanded: true'],
-                            ],
-                        ],
-                    ],
-                    'actions'=>[
-                        [
-                            'params'=>['value'=>Translate::GetButton('save_and_close'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','SetPrintTemplate',
-                                'id'|'{$id}'
-                                ~'close'|1
-                                ~'print_template'|GetCkEditorData('df_template_edit_print_template_value')
-                            ,'df_template_edit_form')->df_template_edit_errors")],
-                        ],
-                        [
-                            'params'=>['value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','SetPrintTemplate',
-                                'id'|'{$id}'
-                                ~'close'|0
-                                ~'print_template'|GetCkEditorData('df_template_edit_print_template_value')
-                            ,'df_template_edit_print_template_form')->df_template_edit_print_template_errors")],
-                        ],
-                    ],
-                ],
-            ],
+            'content_type'=>'ajax',
+            'content_ajax_command'=>"{ 'module': '{$this->name}', 'method': 'ShowPrintTemplateEditForm', 'params': { 'id_template': {$id}, 'target': '{!t_target!}' } }",
+            'reload_onchange'=>TRUE,
+            'autoload'=>FALSE,
         ],
     ],
 ];

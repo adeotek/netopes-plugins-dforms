@@ -18,6 +18,7 @@ use NETopes\Core\Controls\BasicForm;
 use NETopes\Core\Controls\Button;
 use NETopes\Core\Data\DataProvider;
 use NETopes\Core\Data\DataSet;
+use NETopes\Core\Data\IEntity;
 use NETopes\Core\Data\VirtualEntity;
 use NETopes\Core\AppException;
 use NApp;
@@ -174,20 +175,33 @@ class Templates extends Module {
      * @return void
      * @throws \NETopes\Core\AppException
      */
+    public function ShowPrintTemplateEditForm(Params $params) {
+        $templateId=$params->getOrFail('id_template','is_not0_integer','Invalid record identifier!');
+        $item=DataProvider::Get('Plugins\DForms\Templates','GetItemProperties',['template_id'=>$templateId]);
+        if(!$item instanceof IEntity) {
+            throw new AppException('Invalid record!');
+        }
+        $view=new AppView(get_defined_vars(),$this,'default');
+        $view->AddBasicForm($this->GetViewFile('PrintTemplateForm'));
+        $view->Render();
+    }//END public function ShowPrintTemplateEditForm
+
+    /**
+     * @param \NETopes\Core\App\Params $params Parameters object
+     * @return void
+     * @throws \NETopes\Core\AppException
+     */
     public function SetPrintTemplate(Params $params) {
-        $template=$params->getOrFail('id','is_not0_integer','Invalid record identifier!');
+        $templateId=$params->getOrFail('id_template','is_not0_integer','Invalid record identifier!');
         $result=DataProvider::Get('Plugins\DForms\Templates','SetPropertiesItem',[
-            'template_id'=>$template,
+            'template_id'=>$templateId,
+            'in_print_page_orientation'=>strtoupper($params->safeGet('print_page_orientation','L','is_notempty_string')),
             'in_print_template'=>$params->safeGet('print_template','','is_string'),
         ]);
         if($result===FALSE) {
             throw new AppException('Unknown database error!');
         }
-        if($params->safeGet('close',1,'is_numeric')!=1) {
-            echo Translate::GetMessage('save_done').' ('.date('Y-m-d H:i:s').')';
-            return;
-        }//if($result!==FALSE)
-        $this->Exec('Listing',[],'main-content');
+        echo Translate::GetMessage('save_done').' ('.date('Y-m-d H:i:s').')';
     }//END public function SetPrintTemplate
 
     /**
