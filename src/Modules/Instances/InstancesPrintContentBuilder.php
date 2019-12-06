@@ -14,8 +14,10 @@ use Exception;
 use NETopes\Core\App\Params;
 use NETopes\Core\AppException;
 use NETopes\Core\Data\DataProvider;
+use NETopes\Core\Data\DataSet;
 use NETopes\Core\Data\IEntity;
 use NETopes\Core\Data\TPlaceholdersManipulation;
+use Translate;
 
 /**
  * Class InstancesPdfBuilder
@@ -64,17 +66,56 @@ class InstancesPrintContentBuilder {
     }//END public function __construct
 
     /**
-     * @param \NETopes\Core\App\Params $params
-     * @param mixed|null               $value
+     * @param \NETopes\Core\Data\IEntity $field
+     * @param \NETopes\Core\App\Params   $params
      * @return string|null
      * @throws \NETopes\Core\AppException
      */
-    public function GetFieldHtml(Params $params,$value=NULL): ?string {
+    protected function GetFieldValue(IEntity $field,Params $params): ?string {
+        $value=$field->getProperty('ivalues',NULL,'isset');
+        switch($field->getProperty('class',NULL,'is_string')) {
+            case 'CheckBox':
+                $result=$value ? Translate::GetLabel('yes') : Translate::GetLabel('no');
+                break;
+            case 'SmartComboBox':
+                $valuesListId=$field->getProperty('id_values_list',0,'is_numeric');
+                if($valuesListId>0) {
+                    $result=NULL;
+                    $listValues=DataProvider::Get('Plugins\DForms\ValuesLists','GetSelectedValues',[
+                        'instance_id'=>$this->instanceId,
+                        'field_id'=>$field->getProperty('id',NULL,'is_integer'),
+                        'list_id'=>$valuesListId,
+                    ]);
+                    if($listValues instanceof DataSet) {
+                        /** @var IEntity $listValue */
+                        foreach($listValues as $listValue) {
+                            $result.=(strlen($result) ? '; ' : '').$listValue->getProperty('name',NULL,'is_string');
+                        }//END foreach
+                    }
+                } else {
+                    $result=$value;
+                }//if($valuesListId>0)
+                break;
+            default:
+                $result=is_string($value) ? $value : NULL;
+                break;
+        }//END switch
+        return $result;
+    }//END protected function GetFieldValue
+
+    /**
+     * @param \NETopes\Core\Data\IEntity $field
+     * @param \NETopes\Core\App\Params   $params
+     * @param mixed|null                 $value
+     * @return string|null
+     * @throws \NETopes\Core\AppException
+     */
+    protected function GetFieldHtml(IEntity $field,Params $params,$value=NULL): ?string {
         $sValue=!is_string($value) ? NULL : $value;
         if($params->safeGet('hide_empty',FALSE,'bool') && !strlen($sValue)) {
             return NULL;
         }
-        $label=$params->safeGet('label','','is_string');
+        $label=$field->getProperty('label','','is_string');
         if(strlen($label)) {
             $label='<td><label>'.$label.'</label>:&nbsp;</td>';
         }
@@ -86,21 +127,17 @@ class InstancesPrintContentBuilder {
     </tr>
 </table>
 HTML;
-    }//END public function GetFieldHtml
+    }//END protected function GetFieldHtml
 
     /**
-     * Prepare HTML content
-     *
-     * @param int|null $subFormId
-     * @param int|null $itemId
-     * @return string|null Returns HTML string for print
+     * @param string|null $content
+     * @param int|null    $subFormId
+     * @param int|null    $itemId
+     * @return string|null
      * @throws \NETopes\Core\AppException
      */
-    public function PrepareContent(?int $subFormId=NULL,?int $itemId=NULL): ?string {
-        // NApp::Dlog(['$this->content'=>$this->content,'$subFormId'=>$subFormId,'$itemId'=>$itemId],'PrepareContent');
-        if(!is_string($this->content)) {
-            throw new AppException('Invalid instance print HTML content!');
-        }
+    protected function PrepareFormContent(?string $content,?int $subFormId=NULL,?int $itemId=NULL): ?string {
+        // NApp::Dlog(['$content'=>$content,'$subFormId'=>$subFormId,'$itemId'=>$itemId],'PrepareContent');
         if($subFormId) {
             $fields=DataProvider::Get('Plugins\DForms\Instances','GetStructure',[
                 'template_id'=>$this->templateId,
@@ -122,7 +159,7 @@ HTML;
         foreach($fields as $field) {
             $fieldName=$field->getProperty('name',NULL,'is_string');
             $fieldClass=$field->getProperty('class',NULL,'is_string');
-            $fieldParamsString=$field->getProperty('class',NULL,'is_string');
+            $fieldParamsString=$field->getProperty('params',NULL,'is_string');
             if(!strlen($fieldName) || !strlen($fieldClass) || in_array($fieldClass,['FormSeparator','FormTitle','FormSubTitle']) || !strlen($fieldParamsString)) {
                 continue;
             }
@@ -132,17 +169,31 @@ HTML;
                 continue;
             }//END try
             if($fieldClass==='BasicForm') {
-                $fieldValue=NULL;
+                $fieldSubFormId=$field->getProperty('id_sub_form',NULL,'is_integer');
+                $fieldItemId=$field->getProperty('id',NULL,'is_not0_integer');
+                $content=$this->PrepareFormContent($content,$fieldSubFormId,$fieldItemId);
             } else {
-                $fieldValue=NULL;
+                $fieldValue=$this->GetFieldValue($field,$fieldParams);
                 if($fieldParams->safeGet('labels_source','','is_string')==='form') {
-                    $parameters[]=[$fieldName=>$this->GetFieldHtml($fieldParams,$fieldValue)];
+                    $parameters[$fieldName]=$this->GetFieldHtml($field,$fieldParams,$fieldValue);
                 } else {
-                    $parameters[]=[$fieldName=>$fieldValue];
+                    $parameters[$fieldName]=$fieldValue;
                 }
             }//if($fieldClass==='BasicForm')
         }//END foreach
-        $this->content=$this->ReplacePlaceholders($this->content,$parameters);
-        return $this->content;
+        return $this->ReplacePlaceholders($content,$parameters,is_null($subFormId));
+    }//END protected function PrepareFormContent
+
+    /**
+     * Prepare HTML content
+     *
+     * @return void
+     * @throws \NETopes\Core\AppException
+     */
+    public function PrepareContent(): void {
+        if(!is_string($this->content)) {
+            throw new AppException('Invalid instance print HTML content!');
+        }
+        $this->content=$this->PrepareFormContent($this->content);
     }//END public function PrepareContent
 }//END class class InstancesPrintContentBuilder

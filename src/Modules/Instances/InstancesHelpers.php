@@ -338,8 +338,8 @@ class InstancesHelpers {
                     $fParams=['value'=>''];
                     $tagId=$iPrefix.$field->getProperty('cell','','is_string').'_'.$field->getProperty('name','','is_string').($index ? '_'.$index : '');
                     $fIType=$field->getProperty('itype',1,'is_not0_numeric');
-                    $fIdSubForm=$field->getProperty('id_sub_form',-1,'is_not0_numeric');
-                    $itemId=$field->getProperty('id',NULL,'is_not0_numeric');
+                    $fIdSubForm=$field->getProperty('id_sub_form',-1,'is_not0_integer');
+                    $itemId=$field->getProperty('id',NULL,'is_not0_integer');
 
                     if($fIType==2 && $instanceId) {
                         $fICount=$field->getProperty('icount',1,'is_not0_numeric');
@@ -578,7 +578,7 @@ HTML;
      */
     public static function PrepareFormActions(Instances $module,array $ctrlParams,?int $instanceId,string $saveMethod,string $responseTarget,string $tName,string $fTagId,string $cModule,string $cMethod,string $cTarget,bool $viewOnly,bool $noRedirect): array {
         $actions=['container'=>[],'form'=>[],'after'=>[]];
-        if($module->formPrintAction) {
+        if($module->formPrintAction && $instanceId) {
             if(strlen($module->printUrl)) {
                 $printUrl=NApp::$appBaseUrl.$module->printUrl;
             } else {
@@ -600,7 +600,7 @@ HTML;
                     ],
                 ],
             ];
-        }
+        }//END if($module->formPrintAction && $instanceId)
         if(strlen($fTagId) && strlen($responseTarget)) {
             if(!$viewOnly) {
                 $actions[$module->actionsLocation][]=[

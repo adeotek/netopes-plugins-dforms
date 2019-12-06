@@ -723,5 +723,6 @@ class Instances extends Module {
         $pdfBuilder->SetTitle($contentBuilder->documentTitle);
         $pdfBuilder->AddContents(explode('[[insert_new_page]]',$contentBuilder->content));
         // $pdfBuilder->Render();
+        echo $contentBuilder->content;
     }//END public function PrintInstance
 }//END class Instances extends Module

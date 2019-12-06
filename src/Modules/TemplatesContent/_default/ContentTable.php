@@ -103,9 +103,9 @@ if($renderType>1) {
 			                        <span class="desc"><span
 					                        class="title">[<?= $f->getProperty('class') ?>]</span>&nbsp;-&nbsp;<?= $f->getProperty('control_name') ?></span>
 			                        <?= $delItemAct ?>
-								</div>
-							</td>
-                            <?php
+		                        </div>
+	                        </td>
+	                        <?php
                         } else {
                             ?>
 							<td class="ccolumn droppable" id="cell-<?= $pIndex.'-'.$i.'-'.$j ?>" data-cell="<?= $pIndex.'-'.$i.'-'.$j ?>"
