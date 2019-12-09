@@ -14,9 +14,11 @@ $ctrl_params=[
     'with_filter'=>TRUE,
     'with_pagination'=>TRUE,
     'custom_actions'=>[
-        'control_type'=>'Button',
-        'dright'=>Module::DRIGHT_EDIT,
-        'control_params'=>['value'=>Translate::GetButton('add'),'class'=>NApp::$theme->GetBtnPrimaryClass(),'icon'=>'fa fa-plus-circle','onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->class,'method'=>'ShowRelationAddEditForm','params'=>['id_template'=>$template,'target'=>$target]],['target_id'=>'modal'])],
+        [
+            'control_type'=>'Button',
+            'dright'=>Module::DRIGHT_EDIT,
+            'control_params'=>['value'=>Translate::GetButton('add'),'class'=>NApp::$theme->GetBtnPrimaryClass(),'icon'=>'fa fa-plus-circle','onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->class,'method'=>'ShowRelationAddEditForm','params'=>['id_template'=>$template,'target'=>$target]],['target_id'=>'modal'])],
+        ],
     ],
     'sortby'=>['column'=>'name','direction'=>'asc'],
     'qsearch'=>'for_text',

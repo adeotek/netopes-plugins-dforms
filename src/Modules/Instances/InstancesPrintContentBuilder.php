@@ -10,9 +10,13 @@
  * @filesource
  */
 namespace NETopes\Plugins\DForms\Modules\Instances;
+use DateTime;
+use Doctrine\Tests\DBAL\Types\DateTest;
 use Exception;
+use NApp;
 use NETopes\Core\App\Params;
 use NETopes\Core\AppException;
+use NETopes\Core\Controls\NumericTextBox;
 use NETopes\Core\Data\DataProvider;
 use NETopes\Core\Data\DataSet;
 use NETopes\Core\Data\IEntity;
@@ -26,6 +30,11 @@ use Translate;
  */
 class InstancesPrintContentBuilder {
     use TPlaceholdersManipulation;
+
+    /**
+     * @var IEntity
+     */
+    public $instance;
 
     /**
      * @var int
@@ -59,6 +68,7 @@ class InstancesPrintContentBuilder {
      * @throws \NETopes\Core\AppException
      */
     public function __construct(IEntity $instance) {
+        $this->instance=$instance;
         $this->instanceId=$instance->getProperty('id',NULL,'?is_string');
         $this->templateId=$instance->getProperty('id_template',NULL,'?is_string');
         $this->content=$instance->getProperty('print_template','','is_string');
@@ -76,6 +86,9 @@ class InstancesPrintContentBuilder {
         switch($field->getProperty('class',NULL,'is_string')) {
             case 'CheckBox':
                 $result=$value ? Translate::GetLabel('yes') : Translate::GetLabel('no');
+                break;
+            case 'NumericTextBox':
+                $result=NumericTextBox::FormatValue($value,$params->safeGet('number_format','','is_string'),$params->safeGet('allow_null',FALSE,'bool'));
                 break;
             case 'SmartComboBox':
                 $valuesListId=$field->getProperty('id_values_list',0,'is_numeric');
@@ -133,11 +146,25 @@ HTML;
      * @param string|null $content
      * @param int|null    $subFormId
      * @param int|null    $itemId
+     * @param string|null $formTag
      * @return string|null
      * @throws \NETopes\Core\AppException
      */
-    protected function PrepareFormContent(?string $content,?int $subFormId=NULL,?int $itemId=NULL): ?string {
+    protected function PrepareFormContent(?string $content,?int $subFormId=NULL,?int $itemId=NULL,?string $formTag=NULL): ?string {
         // NApp::Dlog(['$content'=>$content,'$subFormId'=>$subFormId,'$itemId'=>$itemId],'PrepareContent');
+        if($subFormId && strlen($formTag)) {
+            $formTemplate=DataProvider::Get('Plugins\DForms\Instances','GetTemplate',[
+                'for_id'=>$subFormId,
+                'for_code'=>NULL,
+                'instance_id'=>$this->instanceId,
+                'item_id'=>$itemId,
+                'for_state'=>1,
+            ]);
+            if(!$formTemplate instanceof IEntity) {
+                throw new AppException('Invalid sub-form template object!');
+            }
+            $content.=$formTemplate->getProperty('print_template','','is_string');
+        }
         if($subFormId) {
             $fields=DataProvider::Get('Plugins\DForms\Instances','GetStructure',[
                 'template_id'=>$this->templateId,
@@ -171,7 +198,13 @@ HTML;
             if($fieldClass==='BasicForm') {
                 $fieldSubFormId=$field->getProperty('id_sub_form',NULL,'is_integer');
                 $fieldItemId=$field->getProperty('id',NULL,'is_not0_integer');
-                $content=$this->PrepareFormContent($content,$fieldSubFormId,$fieldItemId);
+                if($fieldParams->safeGet('print_mode','','is_string')==='form_placeholder') {
+                    $formTag=$field->getProperty('name','','is_string');
+                    $formContent=$this->PrepareFormContent(NULL,$fieldSubFormId,$fieldItemId,$formTag);
+                    $parameters[$formTag]=$formContent;
+                } else {
+                    $content=$this->PrepareFormContent($content,$fieldSubFormId,$fieldItemId);
+                }
             } else {
                 $fieldValue=$this->GetFieldValue($field,$fieldParams);
                 if($fieldParams->safeGet('labels_source','','is_string')==='form') {
@@ -185,6 +218,47 @@ HTML;
     }//END protected function PrepareFormContent
 
     /**
+     * @param string $content
+     * @return string
+     * @throws \NETopes\Core\AppException
+     */
+    protected function PrepareFormRelations(string $content): string {
+        $relations=DataProvider::Get('Plugins\DForms\Instances','GetRelations',['instance_id'=>$this->instanceId]);
+        $relationsData=[];
+        /** @var IEntity $relation */
+        foreach($relations as $relation) {
+            $key=$relation->getProperty('key',NULL,'is_string');
+            $value=$relation->getProperty('svalue',$relation->getProperty('ivalue',NULL,'is_string'),'is_integer');
+            $relationsData[$key]=$value;
+            $displayFields=$relation->getProperty('display_fields',NULL,'is_string');
+            $displayFieldsValues=explode('|',$relation->getProperty('display_fields_value',NULL,'is_string'));
+            foreach(explode(';',$displayFields) as $i=>$dField) {
+                $relationsData[$key.'-'.strtolower(trim($dField,' ]['))]=get_array_value($displayFieldsValues,$i,NULL,'is_string');
+            }//END foreach
+        }//END foreach
+        return $this->ReplacePlaceholders($content,$relationsData,FALSE);
+    }//END protected function PrepareFormRelations
+
+    /**
+     * @param string $content
+     * @return string
+     * @throws \NETopes\Core\AppException
+     */
+    protected function PrepareFormMetaData(string $content): string {
+        $printedAt=new DateTime();
+        $createdAt=$this->instance->getProperty('created_at',NULL,'is_datetime');
+        $parameters=[
+            'created_by_full_name'=>$this->instance->getProperty('created_by_full_name'),
+            'created_at_date'=>($createdAt ? $createdAt->format(NApp::GetDateFormat(TRUE)) : NULL),
+            'created_at_time'=>($createdAt ? $createdAt->format(NApp::GetTimeFormat(TRUE)) : NULL),
+            'printed_by_full_name'=>NApp::GetParam('user_full_name'),
+            'printed_at_date'=>($printedAt ? $printedAt->format(NApp::GetDateFormat(TRUE)) : NULL),
+            'printed_at_time'=>($printedAt ? $printedAt->format(NApp::GetTimeFormat(TRUE)) : NULL),
+        ];
+        return $this->ReplacePlaceholders($content,$parameters,FALSE);
+    }//END protected function PrepareFormMetaData
+
+    /**
      * Prepare HTML content
      *
      * @return void
@@ -194,6 +268,8 @@ HTML;
         if(!is_string($this->content)) {
             throw new AppException('Invalid instance print HTML content!');
         }
+        $this->content=$this->PrepareFormRelations($this->content);
+        $this->content=$this->PrepareFormMetaData($this->content);
         $this->content=$this->PrepareFormContent($this->content);
     }//END public function PrepareContent
 }//END class class InstancesPrintContentBuilder

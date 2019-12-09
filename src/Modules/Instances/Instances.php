@@ -206,7 +206,7 @@ class Instances extends Module {
         $instanceId=$params->safeGet('id',NULL,'is_not0_integer');
         /** @var \NETopes\Core\Data\VirtualEntity $template */
         $template=DataProvider::Get('Plugins\DForms\Instances','GetTemplate',[
-            'for_id'=>NULL,
+            'for_id'=>$this->templateId,
             'for_code'=>$this->templateCode,
             'instance_id'=>$instanceId,
             'for_state'=>1,
@@ -224,7 +224,7 @@ class Instances extends Module {
             $instanceId=$instance->getProperty('id',NULL,'is_integer');
         }//if(!$instanceId && $template->getProperty('ftype',0,'is_integer')==2 && $params instanceof Params)
         $viewOnly=$params->safeGet('view_only',FALSE,'bool');
-        $noRedirect=$params->safeGet('no_redirect',TRUE,'bool');
+        $noRedirect=$params->safeGet('no_redirect',FALSE,'bool');
         $cModule=$params->safeGet('c_module',$this->name,'is_notempty_string');
         $cMethod=$params->safeGet('c_method','ShowAddEditForm','is_notempty_string');
         $cTarget=$params->safeGet('c_target','main-content','is_notempty_string');
@@ -722,7 +722,7 @@ class Instances extends Module {
         $pdfBuilder=new PdfBuilder(['orientation'=>$contentBuilder->pageOrientation]);
         $pdfBuilder->SetTitle($contentBuilder->documentTitle);
         $pdfBuilder->AddContents(explode('[[insert_new_page]]',$contentBuilder->content));
-        // $pdfBuilder->Render();
-        echo $contentBuilder->content;
+        $pdfBuilder->Render();
+        // echo $contentBuilder->content;
     }//END public function PrintInstance
 }//END class Instances extends Module

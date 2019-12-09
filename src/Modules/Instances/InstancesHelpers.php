@@ -876,6 +876,8 @@ HTML;
         $cModule=$params->safeGet('c_module',$module->name,'is_notempty_string');
         $cMethod=$params->safeGet('c_method','Listing','is_notempty_string');
         $cTarget=$params->safeGet('c_target','main-content','is_notempty_string');
-        ModulesProvider::Exec($cModule,$cMethod,['id_template'=>$module->templateId,'target'=>$cTarget],$cTarget);
+        $redirectParams=['id_template'=>$module->templateId,'id'=>$params->safeGet('id',NULL,'is_integer'),'target'=>$cTarget];
+        $relations=$params->safeGet('relations',[],'is_array');
+        ModulesProvider::Exec($cModule,$cMethod,array_merge($redirectParams,$relations),$cTarget);
     }//END public static function RedirectAfterAction
 }//END class InstancesHelpers
