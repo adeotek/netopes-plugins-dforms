@@ -11,7 +11,6 @@
  */
 namespace NETopes\Plugins\DForms\Modules\Instances;
 use DateTime;
-use Doctrine\Tests\DBAL\Types\DateTest;
 use Exception;
 use NApp;
 use NETopes\Core\App\Params;
@@ -45,6 +44,11 @@ class InstancesPrintContentBuilder {
      * @var int
      */
     public $templateId;
+
+    /**
+     * @var DataSet|array|null
+     */
+    public $relations;
 
     /**
      * @var string|null Document title
@@ -147,10 +151,11 @@ HTML;
      * @param int|null    $subFormId
      * @param int|null    $itemId
      * @param string|null $formTag
+     * @param bool        $preserveUnusedPlaceholders
      * @return string|null
      * @throws \NETopes\Core\AppException
      */
-    protected function PrepareFormContent(?string $content,?int $subFormId=NULL,?int $itemId=NULL,?string $formTag=NULL): ?string {
+    protected function PrepareFormContent(?string $content,?int $subFormId=NULL,?int $itemId=NULL,?string $formTag=NULL,bool $preserveUnusedPlaceholders=FALSE): ?string {
         // NApp::Dlog(['$content'=>$content,'$subFormId'=>$subFormId,'$itemId'=>$itemId],'PrepareContent');
         if($subFormId && strlen($formTag)) {
             $formTemplate=DataProvider::Get('Plugins\DForms\Instances','GetTemplate',[
@@ -214,7 +219,7 @@ HTML;
                 }
             }//if($fieldClass==='BasicForm')
         }//END foreach
-        return $this->ReplacePlaceholders($content,$parameters,is_null($subFormId));
+        return $this->ReplacePlaceholders($content,$parameters,is_null($subFormId) || $preserveUnusedPlaceholders);
     }//END protected function PrepareFormContent
 
     /**
@@ -223,10 +228,10 @@ HTML;
      * @throws \NETopes\Core\AppException
      */
     protected function PrepareFormRelations(string $content): string {
-        $relations=DataProvider::Get('Plugins\DForms\Instances','GetRelations',['instance_id'=>$this->instanceId]);
+        $this->relations=DataProvider::Get('Plugins\DForms\Instances','GetRelations',['instance_id'=>$this->instanceId]);
         $relationsData=[];
         /** @var IEntity $relation */
-        foreach($relations as $relation) {
+        foreach($this->relations as $relation) {
             $key=$relation->getProperty('key',NULL,'is_string');
             $value=$relation->getProperty('svalue',$relation->getProperty('ivalue',NULL,'is_string'),'is_integer');
             $relationsData[$key]=$value;
@@ -261,15 +266,16 @@ HTML;
     /**
      * Prepare HTML content
      *
+     * @param bool $preserveUnusedPlaceholders
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function PrepareContent(): void {
+    public function PrepareContent(bool $preserveUnusedPlaceholders=FALSE): void {
         if(!is_string($this->content)) {
             throw new AppException('Invalid instance print HTML content!');
         }
         $this->content=$this->PrepareFormRelations($this->content);
         $this->content=$this->PrepareFormMetaData($this->content);
-        $this->content=$this->PrepareFormContent($this->content);
+        $this->content=$this->PrepareFormContent($this->content,NULL,NULL,NULL,$preserveUnusedPlaceholders);
     }//END public function PrepareContent
 }//END class class InstancesPrintContentBuilder

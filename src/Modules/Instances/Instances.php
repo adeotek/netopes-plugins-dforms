@@ -697,16 +697,14 @@ class Instances extends Module {
      * @return InstancesPrintContentBuilder
      * @throws \NETopes\Core\AppException
      */
-    public function GetPrintData(Params $params): InstancesPrintContentBuilder {
+    public function GetPrintContentBuilder(Params $params): InstancesPrintContentBuilder {
         $instanceId=$params->getOrFail('id','is_not0_integer','Invalid DynamicForm instance identifier!');
         $instance=DataProvider::Get('Plugins\DForms\Instances','GetInstanceItem',['for_id'=>$instanceId]);
         if(!$instance instanceof IEntity) {
             throw new AppException('Invalid DynamicForm instance object!');
         }
-        $contentBuilder=new InstancesPrintContentBuilder($instance);
-        $contentBuilder->PrepareContent();
-        return $contentBuilder;
-    }//END public function GetPrintData
+        return new InstancesPrintContentBuilder($instance);
+    }//END public function GetPrintContentBuilder
 
     /**
      * @param \NETopes\Core\App\Params $params Parameters object
@@ -715,10 +713,11 @@ class Instances extends Module {
      */
     public function PrintInstance(Params $params) {
         // NApp::Dlog($params,'PrintInstance');
-        $contentBuilder=$this->GetPrintData($params);
+        $contentBuilder=$this->GetPrintContentBuilder($params);
         if(!$contentBuilder instanceof InstancesPrintContentBuilder) {
             throw new AppException('Invalid instance content builder object!');
         }
+        $contentBuilder->PrepareContent();
         $pdfBuilder=new PdfBuilder(['orientation'=>$contentBuilder->pageOrientation]);
         $pdfBuilder->SetTitle($contentBuilder->documentTitle);
         $pdfBuilder->AddContents(explode('[[insert_new_page]]',$contentBuilder->content));
