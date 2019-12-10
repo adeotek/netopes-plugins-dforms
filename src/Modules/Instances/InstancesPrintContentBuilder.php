@@ -76,7 +76,7 @@ class InstancesPrintContentBuilder {
         $this->instanceId=$instance->getProperty('id',NULL,'?is_string');
         $this->templateId=$instance->getProperty('id_template',NULL,'?is_string');
         $this->content=$instance->getProperty('print_template','','is_string');
-        $this->pageOrientation=$instance->getProperty('print_page_orientation','L','is_notempty_string');
+        $this->pageOrientation=$instance->getProperty('print_page_orientation','P','is_notempty_string');
     }//END public function __construct
 
     /**

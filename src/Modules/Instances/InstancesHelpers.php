@@ -543,7 +543,7 @@ HTML;
         }//if($instanceId)
         $result=NULL;
         if(is_iterable($relations) && count($relations)) {
-            /** @var VirtualEntity $rel */
+            /** @var IEntity $rel */
             foreach($relations as $rel) {
                 if($rel->getProperty('rtype')!=30) {
                     continue;
@@ -559,6 +559,29 @@ HTML;
         }//if(is_iterable($relations) && count($relations))
         return $result;
     }//END public static function PrepareRelationsFormPart
+
+    /**
+     * @param int                      $templateId
+     * @param \NETopes\Core\App\Params $inputParams
+     * @return string
+     * @throws \NETopes\Core\AppException
+     */
+    public static function GetAddActionRelationsParams(int $templateId,Params $inputParams): string {
+        $relations=DataProvider::Get('Plugins\DForms\Templates','GetRelations',['template_id'=>$templateId,'validated'=>1]);
+        $result=NULL;
+        if(is_iterable($relations) && count($relations)) {
+            /** @var IEntity $rel */
+            foreach($relations as $rel) {
+                if($rel->getProperty('rtype')!=30) {
+                    continue;
+                }
+                $rKey=$rel->getProperty('key');
+                $rValue=$inputParams->safeGet($rKey,NULL,'?isset');
+                $result.=" '{$rKey}': '{$rValue}',";
+            }//END foreach
+        }//if(is_iterable($relations) && count($relations))
+        return $result;
+    }//END public static function GetAddActionRelationsParams
 
     /**
      * @param \NETopes\Plugins\DForms\Modules\Instances\Instances $module

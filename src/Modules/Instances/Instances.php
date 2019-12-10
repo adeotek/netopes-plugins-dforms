@@ -159,11 +159,12 @@ class Instances extends Module {
         $cTarget=$params->safeGet('c_target','main-content','is_notempty_string');
         $target=$params->safeGet('target','main-content','is_notempty_string');
         $listingTarget=$target.'_listing';
+        $listingAddActionRelations=InstancesHelpers::GetAddActionRelationsParams($this->templateId,$params);
         $listingAddAction=[
             'value'=>Translate::GetButton('add'),
             'class'=>NApp::$theme->GetBtnPrimaryClass(),
             'icon'=>'fa fa-plus',
-            'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->name}', 'method': 'ShowAddForm', 'params': { 'id_template': '{$this->templateId}', 'c_module': '{$cModule}', 'c_method': '{$cMethod}', 'c_target': '{$cTarget}', 'target': '{$target}' } }",$target),
+            'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->name}', 'method': 'ShowAddForm', 'params': { 'id_template': '{$this->templateId}',{$listingAddActionRelations} 'c_module': '{$cModule}', 'c_method': '{$cMethod}', 'c_target': '{$cTarget}', 'target': '{$target}' } }",$target),
         ];
 
         $view=new AppView(get_defined_vars(),$this,($target=='main-content' ? 'main' : 'default'));
@@ -394,27 +395,27 @@ class Instances extends Module {
      * @throws \NETopes\Core\AppException
      */
     public function ShowEditForm(Params $params) {
-        // NApp::Dlog($params,'ShowEditForm');
+        // NApp::Dlog($params->toArray(),'ShowEditForm');
         $instanceId=$params->getOrFail('id','is_not0_integer','Invalid DynamicForm instance identifier!');
+        $this->PrepareConfigParams($params);
         $template=DataProvider::Get('Plugins\DForms\Instances','GetTemplate',[
-            'for_id'=>NULL,
+            'for_id'=>$this->templateId,
             'for_code'=>NULL,
             'instance_id'=>$instanceId,
             'for_state'=>1,
         ]);
-        $this->templateId=$template->getProperty('id',NULL,'is_integer');
+        $this->templateId=get_array_value($template,'id',NULL,'is_integer');
         if(!$this->templateId) {
             throw new AppException('Invalid DynamicForm template!');
         }
-        $this->templateCode=$template->getProperty('code',NULL,'is_integer');
-        $this->PrepareConfigParams($params);
+
         $viewOnly=$params->safeGet('view_only',FALSE,'bool');
         $noRedirect=$params->safeGet('no_redirect',FALSE,'bool');
         $cModule=$params->safeGet('c_module',$this->name,'is_notempty_string');
         $cMethod=$params->safeGet('c_method','Listing','is_notempty_string');
         $cTarget=$params->safeGet('c_target','main-content','is_notempty_string');
 
-        $builder=InstancesHelpers::PrepareForm($params,$template);
+        $builder=InstancesHelpers::PrepareForm($params,$template,$instanceId);
         if(!$builder instanceof IControlBuilder) {
             throw new AppException('Invalid DynamicForm configuration!');
         }
@@ -463,6 +464,19 @@ class Instances extends Module {
         }//if(count($formActions['after']))
         $view->Render();
     }//END public function ShowEditForm
+
+    /**
+     * @param \NETopes\Core\App\Params $params Parameters object
+     * @return void
+     * @throws \NETopes\Core\AppException
+     */
+    public function ShowViewForm(Params $params) {
+        // NApp::Dlog($params->toArray(),'ShowViewForm');
+        $viewAsModal=$params->safeGet('view_as_modal',$this->viewAsModal,'bool');
+        $params->set('forms_as_modal',intval($viewAsModal));
+        $params->set('view_only',1);
+        $this->ShowEditForm($params);
+    }//END public function ShowViewForm
 
     /**
      * @param \NETopes\Core\App\Params $params Parameters object
@@ -692,17 +706,6 @@ class Instances extends Module {
             throw new AppException('Failed database operation!');
         }
     }//END public function EditRecordState
-
-    /**
-     * @param \NETopes\Core\App\Params $params Parameters object
-     * @return void
-     * @throws \NETopes\Core\AppException
-     */
-    public function ShowViewForm(Params $params) {
-        // NApp::Dlog($params,'ShowViewForm');
-        $params->set('view_only',1);
-        $this->ShowEditForm($params);
-    }//END public function ShowViewForm
 
     /**
      * @param \NETopes\Core\App\Params $params Parameters object

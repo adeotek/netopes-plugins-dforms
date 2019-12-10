@@ -20,6 +20,7 @@ use NETopes\Core\Controls\TabControl;
 use NETopes\Core\Controls\TabControlBuilder;
 use NETopes\Core\Data\DataProvider;
 use NETopes\Core\AppException;
+use NETopes\Core\Data\IEntity;
 use Translate;
 
 /**
@@ -212,6 +213,33 @@ class Controls extends Module {
         return $builder;
     }//END public function GetControlPropertiesTabBuilder
 
+    protected function GetPropertyValue(string $key,IEntity $property,array $data) {
+        switch($property->getProperty('ptype')) {
+            case 'bool':
+                $value=get_array_value($data,$key,NULL,'bool');
+                break;
+            case 'integer':
+                $value=get_array_value($data,$key,NULL,'is_integer');
+                break;
+            case 'array':
+                $value=get_array_value($data,$key,NULL,'is_array');
+                break;
+            case 'flist':
+            case 'text':
+            case 'smalltext':
+                if($property->getProperty('allow_null',0,'is_integer')===2) {
+                    $value=get_array_value($data,$key,NULL,'is_notempty_string');
+                } else {
+                    $value=get_array_value($data,$key,NULL,'is_string');
+                }
+                break;
+            default:
+                $value=get_array_value($data,$key,NULL,'isset');
+                break;
+        }//END switch
+        return $value;
+    }//END protected function GetPropertyValue
+
     /**
      * @param \NETopes\Core\App\Params $params Parameters object
      * @return mixed
@@ -263,18 +291,14 @@ class Controls extends Module {
                         }//END switch
                         break;
                     default:
-                        switch($cp->getProperty('allow_null',0,'is_integer')) {
-                            case 2:
-                                $cpVal=get_array_value($data,$propKey,'','is_string');
-                                if(strlen($cpVal)) {
-                                    $result[$propKey]=$cpVal;
-                                }
-                                break;
-                            case 1:
-                            default:
-                                $result[$propKey]=get_array_value($data,$propKey,NULL,'isset');
-                                break;
-                        }//END switch
+                        $cpVal=$this->GetPropertyValue($propKey,$cp,$data);
+                        if($cp->getProperty('allow_null',0,'is_integer')===2) {
+                            if(isset($cpVal)) {
+                                $result[$propKey]=$cpVal;
+                            }
+                        } else {
+                            $result[$propKey]=$cpVal;
+                        }
                         break;
                 }//END switch
             }//END foreach
