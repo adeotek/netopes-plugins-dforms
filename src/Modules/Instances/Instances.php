@@ -196,6 +196,40 @@ class Instances extends Module {
     }//END public function GlobalListing
 
     /**
+     * @param \NETopes\Core\App\Params $params
+     * @param string                   $formId
+     * @throws \NETopes\Core\AppException
+     */
+    protected function ShowAddEditErrors(Params $params,string $formId): void {
+        $message=NULL;
+        $relationsErrors=$params->safeGet('df_relations_errors',[],'is_array');
+        foreach($relationsErrors as $error) {
+            $type=get_array_param($error,'type','','is_string');
+            $name=get_array_param($error,'name','','is_string');
+            $message.='<li>'.$name.': '.Translate::GetError('required_field').'</li>';
+            if(strlen($type)=='required_field') {
+                NApp::Ajax()->ExecuteJs("AddClassOnErrorByName('{$formId}','".get_array_param($error,'key','','is_string')."')");
+            }//if(strlen($type)=='required_field')
+        }//END foreach
+        $fieldsErrors=$params->safeGet('df_fields_errors',[],'is_array');
+        foreach($fieldsErrors as $error) {
+            // $type=get_array_param($error,'type','','is_string');
+            $name=get_array_param($error,'label','','is_string');
+            $fieldUid=get_array_param($error,'uid',NULL,'is_string');
+            $message.='<li>'.$name.': '.Translate::GetError('required_field').'</li>';
+            if(strlen($fieldUid)) {
+                NApp::Ajax()->ExecuteJs("AddClassOnErrorByName('{$formId}','{$fieldUid}')");
+            }//if(strlen($fieldUid))
+        }//END foreach
+        if(strlen($message)) {
+            echo '<ul class="errors-list">'.$message.'</ul>';
+        } else {
+            NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$formId}')");
+            echo Translate::GetMessage('required_fields');
+        }//if(strlen($message))
+    }//END protected function ShowAddEditErrors
+
+    /**
      * @param \NETopes\Core\App\Params $params Parameters object
      * @return void
      * @throws \NETopes\Core\AppException
@@ -439,38 +473,15 @@ class Instances extends Module {
         // NApp::Dlog($params->toArray(),'SaveInstance');
         $instanceId=$params->safeGet('id',NULL,'is_integer');
         $formId=$params->safeGet('form_id','','is_string');
+        $this->PrepareConfigParams($params);
         $check=InstancesHelpers::ValidateSaveParams($params);
         if(!$check) {
-            $message=NULL;
-            $relationsErrors=$params->safeGet('df_relations_errors',[],'is_array');
-            foreach($relationsErrors as $error) {
-                $type=get_array_param($error,'type','','is_string');
-                $name=get_array_param($error,'name','','is_string');
-                $message.='<li>'.$name.': '.Translate::GetError('required_field').'</li>';
-                if(strlen($type)=='required_field') {
-                    NApp::Ajax()->ExecuteJs("AddClassOnErrorByName('{$formId}','".get_array_param($error,'key','','is_string')."')");
-                }//if(strlen($type)=='required_field')
-            }//END foreach
-            $fieldsErrors=$params->safeGet('df_fields_errors',[],'is_array');
-            foreach($fieldsErrors as $error) {
-                // $type=get_array_param($error,'type','','is_string');
-                $name=get_array_param($error,'label','','is_string');
-                $fieldUid=get_array_param($error,'uid',NULL,'is_string');
-                $message.='<li>'.$name.': '.Translate::GetError('required_field').'</li>';
-                if(strlen($fieldUid)) {
-                    NApp::Ajax()->ExecuteJs("AddClassOnErrorByName('{$formId}','{$fieldUid}')");
-                }//if(strlen($fieldUid))
-            }//END foreach
-            if(strlen($message)) {
-                echo '<ul class="errors-list">'.$message.'</ul>';
-            } else {
-                NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$formId}')");
-                echo Translate::GetMessage('required_fields');
-            }//if(strlen($message))
+            $this->ShowAddEditErrors($params,$formId);
             return;
         }//if(!$check)
         $this->templateId=$params->safeGet('id_template',$this->templateId,'is_not0_integer');
         $aParams=clone $params;
+        $aParams->set('no_check',TRUE);
         $aParams->set('no_redirect',TRUE);
         if($instanceId>0) {
             $this->Exec('SaveRecord',$aParams);
@@ -487,18 +498,20 @@ class Instances extends Module {
      */
     public function SaveNewRecord(Params $params) {
         // NApp::Dlog($params,'SaveNewRecord');
-        $this->templateId=$params->safeGet('id_template',$this->templateId,'is_not0_integer');
-        if(!$this->templateId) {
-            throw new AppException('Invalid DynamicForm template identifier!');
-        }
+        if(!$params->safeGet('no_check',FALSE,'bool')) {
+            $this->PrepareConfigParams($params);
+            $formId=$params->safeGet('form_id','','is_string');
+            $check=InstancesHelpers::ValidateSaveParams($params);
+            if(!$check) {
+                $this->ShowAddEditErrors($params,$formId);
+                return;
+            }//if(!$check)
+        }//if(!$params->safeGet('no_check',FALSE,'bool'))
         $template=DataProvider::Get('Plugins\DForms\Instances','GetTemplate',['for_id'=>$this->templateId]);
         if(!$template instanceof IEntity) {
             throw new AppException('Invalid DynamicForm template!');
         }
         $fieldsData=$params->safeGet('df_fields_values');
-        if(!count($fieldsData)) {
-            throw new AppException('Invalid DynamicForm fields data!');
-        }
         $relationsData=$params->safeGet('df_relations_values');
 
         $transaction=AppSession::GetNewUID($template->getProperty('code',$this->templateId,'is_notempty_string'));
@@ -575,19 +588,21 @@ class Instances extends Module {
      */
     public function SaveRecord(Params $params) {
         // NApp::Dlog($params,'SaveRecord');
-        $template=$params->safeGet('id_template',$this->templateId,'is_not0_integer');
         $instanceId=$params->safeGet('id',NULL,'is_not0_integer');
-        if(!$template || !$instanceId) {
-            throw new AppException('Invalid DynamicForm instance identifier!');
-        }
-        $template=DataProvider::Get('Plugins\DForms\Instances','GetTemplate',['for_id'=>$template]);
+        if(!$params->safeGet('no_check',FALSE,'bool')) {
+            $this->PrepareConfigParams($params);
+            $formId=$params->safeGet('form_id','','is_string');
+            $check=InstancesHelpers::ValidateSaveParams($params);
+            if(!$check) {
+                $this->ShowAddEditErrors($params,$formId);
+                return;
+            }//if(!$check)
+        }//if(!$params->safeGet('no_check',FALSE,'bool'))
+        $template=DataProvider::Get('Plugins\DForms\Instances','GetTemplate',['for_id'=>$this->templateId]);
         if(!is_object($template)) {
             throw new AppException('Invalid DynamicForm template!');
         }
         $fieldsData=$params->safeGet('df_fields_values');
-        if(!count($fieldsData)) {
-            throw new AppException('Invalid DynamicForm fields data!');
-        }
         // $relationsData=$params->safeGet('df_relations_values');
 
         $transaction=AppSession::GetNewUID($template->getProperty('code',$template,'is_notempty_string'));
@@ -650,10 +665,7 @@ class Instances extends Module {
      */
     public function DeleteRecord(Params $params) {
         $id=$params->getOrFail('id','is_not0_integer','Invalid record identifier!');
-        $this->templateId=$params->safeGet('id_template',$this->templateId,'is_not0_integer');
-        if(!$this->templateId) {
-            throw new AppException('Invalid template identifier!');
-        }
+        $this->PrepareConfigParams($params);
         $result=DataProvider::Get('Plugins\DForms\Instances','UnsetInstance',['for_id'=>$id]);
         if($result===FALSE) {
             throw new AppException('Unknown database error!');

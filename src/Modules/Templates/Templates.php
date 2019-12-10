@@ -90,11 +90,47 @@ class Templates extends Module {
      * @return void
      * @throws \NETopes\Core\AppException
      */
+    public function AddRecord(Params $params) {
+        $fType=$params->safeGet('ftype',NULL,'is_numeric');
+        $code=$params->safeGet('code',NULL,'is_numeric');
+        $name=trim($params->safeGet('name',NULL,'is_notempty_string'));
+        $formId=$params->safeGet('form_id','','is_string');
+        if(!$fType || !$code || !strlen($name)) {
+            NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$formId}')");
+            echo Translate::GetMessage('required_fields');
+            return;
+        }//if(!$ftype || !$code || !strlen($name))
+        $result=DataProvider::Get('Plugins\DForms\Templates','SetNewItem',[
+            'in_code'=>$code,
+            'in_name'=>$name,
+            'in_ftype'=>$fType,
+            'in_state'=>$params->safeGet('state',NULL,'is_integer'),
+            'in_colsno'=>$params->safeGet('colsno',NULL,'is_integer'),
+            'in_rowsno'=>$params->safeGet('rowsno',NULL,'is_integer'),
+            'in_delete_mode'=>$params->safeGet('dmode',NULL,'is_integer'),
+            'user_id'=>NApp::GetCurrentUserId(),
+        ]);
+        if(!$result instanceof DataSet || !count($result)) {
+            throw new AppException('Unknown database error!');
+        }
+        $id=$result->first()->getProperty('inserted_id',0,'is_integer');
+        if($id<=0) {
+            throw new AppException('Unknown database error!');
+        }
+        $this->CloseForm();
+        $this->Exec('ShowEditForm',['id'=>$id],'main-content');
+    }//END public function AddRecord
+
+    /**
+     * @param \NETopes\Core\App\Params $params Parameters object
+     * @return void
+     * @throws \NETopes\Core\AppException
+     */
     public function ShowEditForm(Params $params) {
-        $id=$params->getOrFail('id','is_not0_integer','Invalid record identifier!');
+        $id=$params->getOrFail('id','is_not0_integer','Invalid DynamicForms template record identifier!');
         $item=DataProvider::Get('Plugins\DForms\Templates','GetItem',['for_id'=>$id]);
-        if(!is_object($item)) {
-            throw new AppException('Invalid record!');
+        if(!$item instanceof IEntity) {
+            throw new AppException('Invalid DynamicForms template record!');
         }
         $version=$item->getProperty('version',0,'is_numeric');
         $view=new AppView(get_defined_vars(),$this,'main');
@@ -115,60 +151,34 @@ class Templates extends Module {
      * @return void
      * @throws \NETopes\Core\AppException
      */
-    public function AddEditRecord(Params $params) {
-        $id=$params->safeGet('id',NULL,'is_not0_numeric');
-        $ftype=$params->safeGet('ftype',NULL,'is_numeric');
+    public function EditRecord(Params $params) {
+        $id=$params->getOrFail('id','is_not0_integer','Invalid DynamicForm template record identifier!');
+        $fType=$params->safeGet('ftype',NULL,'is_numeric');
         $code=$params->safeGet('code',NULL,'is_numeric');
         $name=trim($params->safeGet('name',NULL,'is_notempty_string'));
-        $target=$params->safeGet('target','','is_string');
-        if(!$ftype || !$code || !strlen($name)) {
-            NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
+        $formId=$params->safeGet('form_id','','is_string');
+        if(!$fType || !$code || !strlen($name)) {
+            NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$formId}')");
             echo Translate::GetMessage('required_fields');
             return;
         }//if(!$ftype || !$code || !strlen($name))
-        $state=$params->safeGet('state',NULL,'is_numeric');
-        $colsNo=$params->safeGet('colsno',NULL,'is_numeric');
-        $rowsNo=$params->safeGet('rowsno',NULL,'is_numeric');
-        $dmode=$params->safeGet('dmode',NULL,'is_numeric');
-        if($id) {
-            $result=DataProvider::Get('Plugins\DForms\Templates','SetItem',[
-                'for_id'=>$id,
-                'in_name'=>$name,
-                'in_ftype'=>$ftype,
-                'in_state'=>$state,
-                'in_delete_mode'=>$dmode,
-                'user_id'=>NApp::GetCurrentUserId(),
-            ]);
-            if($result===FALSE) {
-                throw new AppException('Unknown database error!');
-            }
-            if($params->safeGet('close',1,'is_numeric')!=1) {
-                echo Translate::GetMessage('save_done').' ('.date('Y-m-d H:i:s').')';
-                return;
-            }//if($result!==FALSE)
-            $this->Exec('Listing',[],'main-content');
-        } else {
-            $result=DataProvider::Get('Plugins\DForms\Templates','SetNewItem',[
-                'in_code'=>$code,
-                'in_name'=>$name,
-                'in_ftype'=>$ftype,
-                'in_state'=>$state,
-                'in_colsno'=>$colsNo,
-                'in_rowsno'=>$rowsNo,
-                'in_delete_mode'=>$dmode,
-                'user_id'=>NApp::GetCurrentUserId(),
-            ]);
-            if(!is_object($result) || !count($result)) {
-                throw new AppException('Unknown database error!');
-            }
-            $id=$result->first()->getProperty('inserted_id',0,'is_integer');
-            if($id<=0) {
-                throw new AppException('Unknown database error!');
-            }
-            $this->CloseForm();
-            $this->Exec('ShowEditForm',['id'=>$id],'main-content');
-        }//if($id)
-    }//END public function AddEditRecord
+        $result=DataProvider::Get('Plugins\DForms\Templates','SetItem',[
+            'for_id'=>$id,
+            'in_name'=>$name,
+            'in_ftype'=>$fType,
+            'in_state'=>$params->safeGet('state',NULL,'is_integer'),
+            'in_delete_mode'=>$params->safeGet('dmode',NULL,'is_integer'),
+            'user_id'=>NApp::GetCurrentUserId(),
+        ]);
+        if($result===FALSE) {
+            throw new AppException('Unknown database error!');
+        }
+        if($params->safeGet('close',1,'is_numeric')!=1) {
+            echo Translate::GetMessage('save_done').' ('.date('Y-m-d H:i:s').')';
+            return;
+        }//if($result!==FALSE)
+        $this->Exec('Listing',[],'main-content');
+    }//END public function EditRecord
 
     /**
      * @param \NETopes\Core\App\Params $params Parameters object
@@ -179,7 +189,7 @@ class Templates extends Module {
         $templateId=$params->getOrFail('id_template','is_not0_integer','Invalid record identifier!');
         $item=DataProvider::Get('Plugins\DForms\Templates','GetItemProperties',['template_id'=>$templateId]);
         if(!$item instanceof IEntity) {
-            throw new AppException('Invalid record!');
+            throw new AppException('Invalid DynamicForms template properties record!');
         }
         $view=new AppView(get_defined_vars(),$this,'default');
         $view->AddBasicForm($this->GetViewFile('PrintTemplateForm'));
@@ -195,8 +205,8 @@ class Templates extends Module {
         $templateId=$params->getOrFail('id_template','is_not0_integer','Invalid record identifier!');
         $result=DataProvider::Get('Plugins\DForms\Templates','SetPropertiesItem',[
             'template_id'=>$templateId,
-            'in_print_page_orientation'=>strtoupper($params->safeGet('print_page_orientation','L','is_notempty_string')),
-            'in_print_template'=>$params->safeGet('print_template','','is_string'),
+            'in_print_page_orientation'=>strtoupper($params->safeGet('page_orientation','P','is_notempty_string')),
+            'in_print_template'=>str_replace('``','"',$params->safeGet('print_template','','is_string')),
         ]);
         if($result===FALSE) {
             throw new AppException('Unknown database error!');
@@ -275,9 +285,9 @@ class Templates extends Module {
      * @throws \NETopes\Core\AppException
      */
     public function ShowDesignEditForm(Params $params) {
-        $template=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
-        $item=DataProvider::Get('Plugins\DForms\Templates','GetItemProperties',['template_id'=>$template]);
-        if(!is_object($item) || $item instanceof DataSet) {
+        $templateId=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
+        $item=DataProvider::Get('Plugins\DForms\Templates','GetItemProperties',['template_id'=>$templateId]);
+        if(!$item instanceof IEntity) {
             $item=new VirtualEntity([]);
         }
         $target=$params->safeGet('target','','is_string');
@@ -294,9 +304,9 @@ class Templates extends Module {
     public function EditDesignRecord(Params $params) {
         $template=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
         $renderType=$params->safeGet('render_type',NULL,'is_integer');
-        $target=$params->safeGet('target','','is_string');
+        $formId=$params->safeGet('form_id','','is_string');
         if(!$renderType) {
-            NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
+            NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$formId}')");
             echo Translate::GetMessage('required_fields');
             return;
         }//if(!$renderType)
@@ -341,7 +351,7 @@ class Templates extends Module {
      * @throws \NETopes\Core\AppException
      */
     public function ShowRelationAddEditForm(Params $params) {
-        $template=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
+        $templateId=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
         $id=$params->safeGet('id',NULL,'is_integer');
         if($id) {
             $item=DataProvider::Get('Plugins\DForms\Templates','GetRelation',['for_id'=>$id]);
@@ -364,16 +374,16 @@ class Templates extends Module {
      * @throws \NETopes\Core\AppException
      */
     public function AddEditRelationRecord(Params $params) {
-        $template=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
+        $templateId=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
         $id=$params->safeGet('id',NULL,'is_integer');
         $idType=$params->safeGet('type',NULL,'is_integer');
         $rType=$params->safeGet('rtype',NULL,'is_integer');
         $uType=$params->safeGet('utype',NULL,'is_integer');
         $name=$params->safeGet('name',NULL,'is_string');
         $key=$params->safeGet('key',NULL,'is_string');
-        $target=$params->safeGet('target','');
+        $formId=$params->safeGet('form_id','');
         if(!strlen($name) || !strlen($key) || !is_numeric($rType) || !is_numeric($uType) || (!$id && !$idType)) {
-            NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
+            NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$formId}')");
             echo Translate::GetMessage('required_fields');
             return;
         }//if(!strlen($name) || !strlen($key) || !is_numeric($rType) || !is_numeric($uType) || (!$id && !$type))
@@ -391,7 +401,7 @@ class Templates extends Module {
             }
         } else {
             $result=DataProvider::Get('Plugins\DForms\Templates','SetNewRelation',[
-                'template_id'=>$template,
+                'template_id'=>$templateId,
                 'relation_type_id'=>$idType,
                 'in_name'=>$name,
                 'in_key'=>$key,
@@ -405,7 +415,7 @@ class Templates extends Module {
         }//if($id)
         $this->CloseForm();
         $cTarget=$params->safeGet('c_target','','is_string');
-        $this->Exec('ShowRelationsEditForm',['id_template'=>$template,'target'=>$cTarget],$cTarget);
+        $this->Exec('ShowRelationsEditForm',['id_template'=>$templateId,'target'=>$cTarget],$cTarget);
     }//END public function AddEditRelationRecord
 
     /**

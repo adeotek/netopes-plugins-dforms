@@ -1,13 +1,12 @@
 <?php
-/**
- * @var int $template
- * @var int $maxPos
- */
+/** @var int $maxPos */
+/** @var int $templateId */
 $positions=[];
 for($i=0; $i<$maxPos; $i++) {
     $positions[]=['val'=>$i,'name'=>Translate::GetLabel('page').' '.($i + 1)];
 }
 $positions[]=['val'=>$maxPos,'name'=>Translate::GetLabel('end')];
+
 $ctrl_params=[
     'tag_id'=>'dft_add_page_form',
     'response_target'=>'dft_add_page_errors',
@@ -22,7 +21,8 @@ $ctrl_params=[
     ],
     'actions'=>[
         [
-            'params'=>['value'=>Translate::GetButton('add_page'),'icon'=>'fa fa-plus-circle','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','UpdatePagesList','id_template'|{$template}~'type'|0~'close'|1~'pindex'|dft_add_page_position:value,'{$target}')->dft_add_page_errors")],
+            'params'=>['value'=>Translate::GetButton('add_page'),'icon'=>'fa fa-plus-circle','onclick'=>
+                NApp::Ajax()->Prepare("{ 'module': '{$this->name}', 'method': 'UpdatePagesList', 'params': { 'id_template': '{$templateId}', 'type': 0, 'close': 1, 'pindex': '{nGet|dft_add_page_position:value}', 'target': '{$target}' } }",'dft_add_page_errors')],
         ],
     ],
 ];

@@ -1,4 +1,5 @@
 <?php
+/** @var TYPE_NAME $listId */
 $ctrl_params=[
     'tag_id'=>'df_lv_ae_form',
     'response_target'=>'df_lv_ae_errors',
@@ -31,7 +32,7 @@ $ctrl_params=[
     ],
     'actions'=>[
         [
-            'params'=>['value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','AddEditValueRecord','id_list'|{$listId}~'id'|'{$id}'~'c_target'|'{$target}'~df_lv_ae_form:form,'df_lv_ae_form')->df_lv_ae_errors")],
+            'params'=>['value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("{ module: '{$this->name}', 'method': 'AddEditValueRecord', 'params': { 'id_list': '{$listId}', 'id': '{$id}', 'c_target': '{$target}', 'form_id': 'df_lv_ae_form' }, 'arrayParams': [ '{nGet|df_lv_ae_form:form}' ] }",'df_lv_ae_errors')],
         ],
         [
             'type'=>'CloseModal',

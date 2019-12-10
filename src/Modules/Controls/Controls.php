@@ -17,6 +17,7 @@ use NApp;
 use NETopes\Core\App\Module;
 use NETopes\Core\App\Params;
 use NETopes\Core\Controls\TabControl;
+use NETopes\Core\Controls\TabControlBuilder;
 use NETopes\Core\Data\DataProvider;
 use NETopes\Core\AppException;
 use Translate;
@@ -35,7 +36,7 @@ class Controls extends Module {
      * @return array
      * @throws \NETopes\Core\AppException
      */
-    protected function GetTabControlStructure(array $data,int $controlId,int $parentId=0,?string $parentGroupName=NULL) {
+    protected function GetTabControlStructure(array $data,int $controlId,int $parentId=0,?string $parentGroupName=NULL): array {
         // \NApp::Dlog($data,'GetTabControlStructure:$data');
         // \NApp::Dlog(['$controlId'=>$controlId,'$parentId'=>$parentId,'$parentGroupName'=>$parentGroupName],'GetTabControlStructure');
         $fieldProperties=DataProvider::Get('Plugins\DForms\Controls','GetProperties',[
@@ -49,7 +50,7 @@ class Controls extends Module {
             return $result;
         }
         foreach($fieldProperties as $fpi) {
-            /** @var \NETopes\Core\Data\VirtualEntity $fpi */
+            /** @var \NETopes\Core\Data\IEntity $fpi */
             $skip=FALSE;
             $hidden=FALSE;
             if(isset($parentGroupName)) {
@@ -74,7 +75,7 @@ class Controls extends Module {
                     $fpCType='TextBox';
                     $fpValue=get_array_value($data,$fpKey,$fpi->getProperty('default_value','','is_string'),'is_string');
                     break;
-                case 'small_text':
+                case 'smalltext':
                     $fpCType='TextBox';
                     $fpValue=get_array_value($data,$fpKey,$fpi->getProperty('default_value','','is_string'),'is_string');
                     $fpFixedWidth=100;
@@ -86,12 +87,12 @@ class Controls extends Module {
                     break;
                 case 'integer':
                     $fpCType='NumericTextBox';
-                    $fp_nval=0;
+                    $fpNVal=0;
                     if($fpi->getProperty('allow_null',0,'is_numeric')>0) {
                         $fpSParams['allow_null']=TRUE;
-                        $fp_nval='';
+                        $fpNVal='';
                     }//if($fpi->getProperty('allow_null',0,'is_numeric')>0)
-                    $fpValue=get_array_value($data,$fpKey,$fpi->getProperty('default_value',$fp_nval,'is_numeric'),'is_numeric');
+                    $fpValue=get_array_value($data,$fpKey,$fpi->getProperty('default_value',$fpNVal,'is_numeric'),'is_numeric');
                     $fpSParams['number_format']='0|||';
                     $fpSParams['align']='center';
                     $fpFixedWidth=100;
@@ -185,11 +186,11 @@ class Controls extends Module {
 
     /**
      * @param \NETopes\Core\App\Params $params Parameters object
-     * @return \NETopes\Core\Controls\TabControl
+     * @return \NETopes\Core\Controls\TabControlBuilder
      * @throws \NETopes\Core\AppException
      * @throws \Exception
      */
-    public function GetControlPropertiesTab(Params $params): TabControl {
+    public function GetControlPropertiesTabBuilder(Params $params): TabControlBuilder {
         $controlId=$params->getOrFail('id_control','is_not0_integer','Invalid control identifier!');
         $data=$params->safeGet('data',NULL,'is_array');
         if(!is_array($data)) {
@@ -206,10 +207,10 @@ class Controls extends Module {
             }//if(strlen($data))
         }//if(is_string($data))
         $target=$params->safeGet('target','ctrl_properties_tab','is_notempty_string');
-        $ctrlTabs=$this->GetTabControlStructure($data,$controlId);
-        $ctrlTabs=new TabControl(['tag_id'=>$target,'tabs'=>$ctrlTabs]);
-        return $ctrlTabs;
-    }//END public function GetControlPropertiesTab
+        $builder=new TabControlBuilder(['tag_id'=>$target]);
+        $builder->SetTabs($this->GetTabControlStructure($data,$controlId));
+        return $builder;
+    }//END public function GetControlPropertiesTabBuilder
 
     /**
      * @param \NETopes\Core\App\Params $params Parameters object

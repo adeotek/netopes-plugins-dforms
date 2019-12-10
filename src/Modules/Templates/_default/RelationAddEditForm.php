@@ -1,4 +1,6 @@
 <?php
+/** @var \NETopes\Core\Data\IEntity $item */
+/** @var TYPE_NAME $templateId */
 $ctrl_params=[
     'tag_id'=>'df_template_rel_ae_form',
     'response_target'=>'df_template_rel_ae_errors',
@@ -7,7 +9,7 @@ $ctrl_params=[
         [
             [
                 'control_type'=>'SmartComboBox',
-                'control_params'=>['tag_id'=>'df_template_rel_ae_type','label'=>Translate::GetLabel('type'),'required'=>TRUE,'disabled'=>(is_numeric($id) && $id>0),
+                'control_params'=>['tag_id'=>'df_template_rel_ae_type','tag_name'=>'type','label'=>Translate::GetLabel('type'),'required'=>TRUE,'disabled'=>(is_numeric($id) && $id>0),
                     'value_field'=>'id',
                     'display_field'=>'name',
                     'selected_value'=>$item->getProperty('id_relation_type',NULL,'is_numeric'),
@@ -26,19 +28,19 @@ $ctrl_params=[
         [
             [
                 'control_type'=>'TextBox',
-                'control_params'=>['tag_id'=>'df_template_rel_ae_name','value'=>$item->getProperty('name','','is_string'),'label'=>Translate::GetLabel('name'),'required'=>TRUE,'onenter_button'=>'df_template_rel_ae_save'],
+                'control_params'=>['tag_id'=>'df_template_rel_ae_name','tag_name'=>'name','value'=>$item->getProperty('name','','is_string'),'label'=>Translate::GetLabel('name'),'required'=>TRUE,'onenter_button'=>'df_template_rel_ae_save'],
             ],
         ],
         [
             [
                 'control_type'=>'TextBox',
-                'control_params'=>['tag_id'=>'df_template_rel_ae_key','value'=>$item->getProperty('key','','is_string'),'label'=>Translate::GetLabel('key'),'required'=>TRUE,'onenter_button'=>'df_template_rel_ae_save'],
+                'control_params'=>['tag_id'=>'df_template_rel_ae_key','tag_name'=>'key','value'=>$item->getProperty('key','','is_string'),'label'=>Translate::GetLabel('key'),'required'=>TRUE,'onenter_button'=>'df_template_rel_ae_save'],
             ],
         ],
         [
             [
                 'control_type'=>'SmartComboBox',
-                'control_params'=>['tag_id'=>'df_template_rel_ae_rtype','label'=>Translate::GetLabel('value_type'),'required'=>TRUE,
+                'control_params'=>['tag_id'=>'df_template_rel_ae_rtype','tag_name'=>'rtype','label'=>Translate::GetLabel('value_type'),'required'=>TRUE,
                     'value_field'=>'id',
                     'display_field'=>'name',
                     'selected_value'=>$item->getProperty('rtype',NULL,'is_numeric'),
@@ -53,7 +55,7 @@ $ctrl_params=[
         [
             [
                 'control_type'=>'SmartComboBox',
-                'control_params'=>['tag_id'=>'df_template_rel_ae_utype','label'=>Translate::GetLabel('usage_type'),'required'=>TRUE,
+                'control_params'=>['tag_id'=>'df_template_rel_ae_utype','tag_name'=>'utype','label'=>Translate::GetLabel('usage_type'),'required'=>TRUE,
                     'value_field'=>'id',
                     'display_field'=>'name',
                     'selected_value'=>$item->getProperty('utype',NULL,'is_numeric'),
@@ -68,23 +70,13 @@ $ctrl_params=[
         [
             [
                 'control_type'=>'CheckBox',
-                'control_params'=>['tag_id'=>'df_template_rel_ae_required','value'=>$item->getProperty('required',0,'is_numeric'),'label'=>Translate::GetLabel('required'),'class'=>'pull-left'],
+                'control_params'=>['tag_id'=>'df_template_rel_ae_required','tag_name'=>'required','value'=>$item->getProperty('required',0,'is_numeric'),'label'=>Translate::GetLabel('required'),'class'=>'pull-left'],
             ],
         ],
     ],
     'actions'=>[
         [
-            'params'=>['value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','AddEditRelationRecord',
-                'id_template'|{$template}
-                ~'id'|'{$id}'
-                ~'type'|df_template_rel_ae_type:value
-                ~'rtype'|df_template_rel_ae_rtype:value
-                ~'utype'|df_template_rel_ae_utype:value
-                ~'name'|df_template_rel_ae_name:value
-                ~'key'|df_template_rel_ae_key:value
-                ~'required'|df_template_rel_ae_required:value
-                ~'c_target'|'{$target}'
-            ,'df_template_rel_ae_form')->df_template_rel_ae_errors")],
+            'params'=>['value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->name}', 'method': 'AddEditRelationRecord', 'params': { 'id_template': '{$templateId}', 'id': '{$id}', 'c_target': '{$target}', 'form_id': 'df_template_rel_ae_form' }, 'arrayParams': [ '{nGet|df_template_rel_ae_form:form}' ] }",'df_template_rel_ae_errors')],
         ],
         [
             'type'=>'CloseModal',

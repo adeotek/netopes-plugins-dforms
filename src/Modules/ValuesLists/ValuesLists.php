@@ -212,9 +212,9 @@ class ValuesLists extends Module {
         $id=$params->safeGet('id',NULL,'is_integer');
         $value=trim($params->safeGet('value','','is_string'));
         $name=$params->safeGet('name',NULL,'is_notempty_string');
-        $target=$params->safeGet('target','','is_string');
+        $formId=$params->safeGet('form_id','','is_string');
         if(!strlen($value)) {
-            NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$target}')");
+            NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$formId}')");
             echo Translate::GetMessage('required_fields');
             return;
         }//if(!strlen($value))

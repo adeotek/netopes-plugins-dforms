@@ -1,4 +1,6 @@
 <?php
+/** @var \NETopes\Core\Data\IEntity $item */
+/** @var int $templateId */
 $pagesNo=$item->getProperty('pagesno',1,'is_integer');
 $ctrl_params=[
     'tag_id'=>'df_template_design_edit_form',
@@ -59,7 +61,7 @@ $ctrl_params=[
     ],
     'actions'=>[
         [
-            'params'=>['tag_id'=>'df_template_design_edit_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->class}','EditDesignRecord','id_template'|{$template}~df_template_design_edit_form:form,'df_template_design_edit_form')->df_template_design_edit_errors")],
+            'params'=>['tag_id'=>'df_template_design_edit_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->name}', 'method': 'EditDesignRecord', 'params': { 'id_template': '{$templateId}', 'form_id': 'df_template_design_edit_form' }, 'arrayParams': [ '{nGet|df_template_design_edit_form:form}' ] }",'df_template_design_edit_errors')],
         ],
     ],
 ];

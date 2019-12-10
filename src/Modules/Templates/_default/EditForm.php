@@ -2,6 +2,7 @@
 use NETopes\Core\Data\DataProvider;
 use NETopes\Plugins\DForms\Modules\TemplatesContent\TemplatesContent;
 
+/** @var \NETopes\Core\Data\IEntity $item */
 $ctrl_params=[
     'tag_id'=>'df_template_edit_tabs',
     'tabs'=>[
@@ -20,25 +21,25 @@ $ctrl_params=[
                         [
                             [
                                 'control_type'=>'TextBox',
-                                'control_params'=>['tag_id'=>'df_template_edit_version','value'=>$version.' - '.($version + 1),'label'=>Translate::GetLabel('version').' ('.Translate::GetLabel('validated').' - '.Translate::GetLabel('in_edit').')','align'=>'center','disabled'=>TRUE],
+                                'control_params'=>['tag_id'=>'df_template_edit_version','tag_name'=>'version','value'=>$version.' - '.($version + 1),'label'=>Translate::GetLabel('version').' ('.Translate::GetLabel('validated').' - '.Translate::GetLabel('in_edit').')','align'=>'center','disabled'=>TRUE],
                             ],
                         ],
                         [
                             [
                                 'control_type'=>'NumericTextBox',
-                                'control_params'=>['tag_id'=>'df_template_edit_code','value'=>$item->getProperty('code',0,'is_numeric'),'label'=>Translate::GetLabel('code').' ('.Translate::GetLabel('numeric').')','align'=>'center','number_format'=>'0|||','disabled'=>TRUE,'required'=>TRUE],
+                                'control_params'=>['tag_id'=>'df_template_edit_code','tag_name'=>'code','value'=>$item->getProperty('code',0,'is_numeric'),'label'=>Translate::GetLabel('code').' ('.Translate::GetLabel('numeric').')','align'=>'center','number_format'=>'0|||','disabled'=>TRUE,'required'=>TRUE],
                             ],
                         ],
                         [
                             [
                                 'control_type'=>'TextBox',
-                                'control_params'=>['tag_id'=>'df_template_edit_name','value'=>$item->getProperty('name','','is_string'),'label'=>Translate::GetLabel('name'),'onenter_button'=>'df_template_edit_save','required'=>TRUE,'disabled'=>($item->getProperty('version',0,'is_numeric')>0)],
+                                'control_params'=>['tag_id'=>'df_template_edit_name','tag_name'=>'name','value'=>$item->getProperty('name','','is_string'),'label'=>Translate::GetLabel('name'),'onenter_button'=>'df_template_edit_save','required'=>TRUE,'disabled'=>($item->getProperty('version',0,'is_numeric')>0)],
                             ],
                         ],
                         [
                             [
                                 'control_type'=>'ComboBox',
-                                'control_params'=>['tag_id'=>'df_template_edit_ftype','value'=>DataProvider::GetKeyValue('_Custom\DFormsOffline','GetDynamicFormsTemplatesFTypes'),'label'=>Translate::GetLabel('type'),'value_field'=>'id','display_field'=>'name','selected_value'=>$item->getProperty('ftype',0,'is_numeric'),'required'=>TRUE,'disabled'=>TRUE],
+                                'control_params'=>['tag_id'=>'df_template_edit_ftype','tag_name'=>'ftype','value'=>DataProvider::GetKeyValue('_Custom\DFormsOffline','GetDynamicFormsTemplatesFTypes'),'label'=>Translate::GetLabel('type'),'value_field'=>'id','display_field'=>'name','selected_value'=>$item->getProperty('ftype',0,'is_numeric'),'required'=>TRUE,'disabled'=>TRUE],
                             ],
                         ],
                         ['separator'=>'line'],
@@ -46,37 +47,22 @@ $ctrl_params=[
                         // 	array(
                         //
                         // 		'control_type'=>'CheckBox',
-                        // 		'control_params'=>array('tag_id'=>'df_template_edit_state','value'=>$item->getProperty('state',0,'is_numeric'),'label'=>Translate::GetLabel('active'),'class'=>'pull-left'),
+                        // 		'control_params'=>array('tag_id'=>'df_template_edit_state','tag_name'=>'state','value'=>$item->getProperty('state',0,'is_numeric'),'label'=>Translate::GetLabel('active'),'class'=>'pull-left'),
                         // 	),
                         // ),
                         [
                             [
                                 'control_type'=>'CheckBox',
-                                'control_params'=>['tag_id'=>'df_template_edit_dmode','value'=>$item->getProperty('t_delete_mode',0,'is_numeric'),'label'=>Translate::GetLabel('hard_delete'),'class'=>'pull-left'],
+                                'control_params'=>['tag_id'=>'df_template_edit_dmode','tag_name'=>'dmode','value'=>$item->getProperty('t_delete_mode',0,'is_numeric'),'label'=>Translate::GetLabel('hard_delete'),'class'=>'pull-left'],
                             ],
                         ],
                     ],
                     'actions'=>[
                         [
-                            'params'=>['tag_id'=>'df_template_edit_save1','value'=>Translate::GetButton('save_and_close'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->name}','AddEditRecord',
-                                'id'|'{$id}'
-                                ~'close'|1
-                                ~'code'|df_template_edit_code:value
-                                ~'name'|df_template_edit_name:value
-                                ~'ftype'|df_template_edit_ftype:value
-                                ~'dmode'|df_template_edit_dmode:value
-                            ,'df_template_edit_form')->df_template_edit_errors")],
+                            'params'=>['tag_id'=>'df_template_edit_save1','value'=>Translate::GetButton('save_and_close'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->name}', 'method': 'EditRecord', 'params': { 'id': '{$id}', 'close': 1, 'form_id': 'df_template_edit_form' }, 'arrayParams': [ '{nGet|df_template_edit_form:form}' ] }",'df_template_edit_errors')],
                         ],
-                        //~'state'|df_template_edit_state:value
                         [
-                            'params'=>['tag_id'=>'df_template_edit_save0','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->LegacyPrepare("AjaxRequest('{$this->name}','AddEditRecord',
-                                'id'|'{$id}'
-                                ~'close'|0
-                                ~'code'|df_template_edit_code:value
-                                ~'name'|df_template_edit_name:value
-                                ~'ftype'|df_template_edit_ftype:value
-                                ~'dmode'|df_template_edit_dmode:value
-                            ,'df_template_edit_form')->df_template_edit_errors")],
+                            'params'=>['tag_id'=>'df_template_edit_save0','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->name}', 'method': 'EditRecord', 'params': { 'id': '{$id}', 'close': 0, 'form_id': 'df_template_edit_form' }, 'arrayParams': [ '{nGet|df_template_edit_form:form}' ] }",'df_template_edit_errors')],
                         ],
                     ],
                 ],
