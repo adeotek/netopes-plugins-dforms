@@ -1,0 +1,64 @@
+<?php
+/* @var \NETopes\Core\Data\VirtualEntity $item */
+$ctrl_params=[
+    'tag_id'=>'df_rel_type_ae_form',
+    'response_target'=>'df_rel_type_ae_errors',
+    'cols_no'=>1,
+    'content'=>[
+        [
+            [
+                'control_type'=>'SmartComboBox',
+                'control_params'=>['tag_id'=>'df_rel_type_ae_dtype','tag_name'=>'dtype','label'=>Translate::GetLabel('data_type'),'required'=>TRUE,
+                    'paf_property'=>'function:GetSmartCBOValue',
+                    'value_field'=>'id',
+                    'display_field'=>'name',
+                    'selected_value'=>$item->getProperty('dtype',NULL,'is_string'),
+                    'load_type'=>'database',
+                    'data_source'=>[
+                        'ds_class'=>'_Custom\DFormsOffline',
+                        'ds_method'=>'GetDataTypes',
+                    ],
+                ],
+            ],
+        ],
+        [
+            [
+                'control_type'=>'TextBox',
+                'control_params'=>['tag_id'=>'df_rel_type_ae_name','tag_name'=>'name','value'=>$item->getProperty('name','','is_string'),'label'=>Translate::GetLabel('name'),'required'=>TRUE,'onenter_button'=>'df_rel_type_ae_save'],
+            ],
+        ],
+        [
+            [
+                'control_type'=>'TextBox',
+                'control_params'=>['tag_id'=>'df_rel_type_ae_table_name','tag_name'=>'table_name','value'=>$item->getProperty('table_name','','is_string'),'label'=>Translate::GetLabel('table_name'),'required'=>TRUE,'onenter_button'=>'df_rel_type_ae_save'],
+            ],
+        ],
+        [
+            [
+                'control_type'=>'TextBox',
+                'control_params'=>['tag_id'=>'df_rel_type_ae_column_name','tag_name'=>'column_name','value'=>$item->getProperty('column_name','','is_string'),'label'=>Translate::GetLabel('column_name'),'required'=>TRUE,'onenter_button'=>'df_rel_type_ae_save'],
+            ],
+        ],
+        [
+            [
+                'control_type'=>'EditBox',
+                'control_params'=>['tag_id'=>'df_rel_type_ae_display_fields','tag_name'=>'display_fields','value'=>$item->getProperty('display_fields','','is_string'),'label'=>Translate::GetLabel('display_fields'),'height'=>60],
+            ],
+        ],
+        [
+            [
+                'control_type'=>'CheckBox',
+                'control_params'=>['tag_id'=>'df_rel_type_ae_state','tag_name'=>'state','value'=>$item->getProperty('state',1,'is_integer'),'label'=>Translate::GetLabel('active'),'class'=>'pull-left'],
+            ],
+        ],
+    ],
+    'actions'=>[
+        [
+            'params'=>['tag_id'=>'df_rel_type_ae_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'AddEditRecord', 'params': { 'id': '{$id}', 'target': 'df_rel_type_ae_form' }, 'arrayParams': [ '{nGet|df_rel_type_ae_form:form}' ] }",'df_rel_type_ae_errors')],
+        ],
+        [
+            'type'=>'CloseModal',
+            'params'=>['tag_id'=>'df_rel_type_ae_cancel','value'=>Translate::GetButton('cancel'),'icon'=>'fa fa-ban'],
+        ],
+    ],
+];
