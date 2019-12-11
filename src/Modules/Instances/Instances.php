@@ -154,10 +154,11 @@ class Instances extends Module {
             'for_listing'=>1,
         ]);
         $fTypes=DataProvider::GetKeyValue('_Custom\Offline','GetDynamicFormsTemplatesFTypes');
+        $target=$params->safeGet('target',$params->safeGet('_target_id','main-content','is_notempty_string'),'is_notempty_string');
         $cModule=$params->safeGet('c_module',$this->class,'is_notempty_string');
         $cMethod=$params->safeGet('c_method',call_back_trace(0),'is_notempty_string');
-        $cTarget=$params->safeGet('c_target','main-content','is_notempty_string');
-        $target=$params->safeGet('target','main-content','is_notempty_string');
+        $cTarget=$params->safeGet('c_target',$target,'is_notempty_string');
+
         $listingTarget=$target.'_listing';
         $listingAddActionRelations=InstancesHelpers::GetAddActionRelationsParams($this->templateId,$params);
         $listingAddAction=[
@@ -167,7 +168,7 @@ class Instances extends Module {
             'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->name}', 'method': 'ShowAddForm', 'params': { 'id_template': '{$this->templateId}',{$listingAddActionRelations} 'c_module': '{$cModule}', 'c_method': '{$cMethod}', 'c_target': '{$cTarget}', 'target': '{$target}' } }",$target),
         ];
 
-        $view=new AppView(get_defined_vars(),$this,($target=='main-content' ? 'main' : 'default'));
+        $view=new AppView(get_defined_vars(),$this,$this->containerType);
         $view->SetTitle($params->safeGet('title',$template->getProperty('name','','is_string'),'is_string'));
         $view->SetTargetId($listingTarget);
         $view->AddControlBuilderContent($this->GetViewFile('Listing'),TableView::class);
@@ -260,9 +261,10 @@ class Instances extends Module {
         }//if(!$instanceId && $template->getProperty('ftype',0,'is_integer')==2 && $params instanceof Params)
         $viewOnly=$params->safeGet('view_only',FALSE,'bool');
         $noRedirect=$params->safeGet('no_redirect',FALSE,'bool');
+        $target=$params->safeGet('target',$params->safeGet('_target_id','main-content','is_notempty_string'),'is_notempty_string');
         $cModule=$params->safeGet('c_module',$this->name,'is_notempty_string');
         $cMethod=$params->safeGet('c_method','ShowAddEditForm','is_notempty_string');
-        $cTarget=$params->safeGet('c_target','main-content','is_notempty_string');
+        $cTarget=$params->safeGet('c_target',$target,'is_notempty_string');
 
         $builder=InstancesHelpers::PrepareForm($params,$template,$instanceId);
         if(!$builder instanceof IControlBuilder) {
@@ -335,9 +337,10 @@ class Instances extends Module {
             throw new AppException('Invalid DynamicForm template!');
         }
         $noRedirect=$params->safeGet('no_redirect',FALSE,'bool');
+        $target=$params->safeGet('target',$params->safeGet('_target_id','main-content','is_notempty_string'),'is_notempty_string');
         $cModule=$params->safeGet('c_module',$this->name,'is_notempty_string');
         $cMethod=$params->safeGet('c_method','Listing','is_notempty_string');
-        $cTarget=$params->safeGet('c_target','main-content','is_notempty_string');
+        $cTarget=$params->safeGet('c_target',$target,'is_notempty_string');
 
         $builder=InstancesHelpers::PrepareForm($params,$template);
         if(!$builder instanceof IControlBuilder) {
@@ -411,9 +414,10 @@ class Instances extends Module {
 
         $viewOnly=$params->safeGet('view_only',FALSE,'bool');
         $noRedirect=$params->safeGet('no_redirect',FALSE,'bool');
+        $target=$params->safeGet('target',$params->safeGet('_target_id','main-content','is_notempty_string'),'is_notempty_string');
         $cModule=$params->safeGet('c_module',$this->name,'is_notempty_string');
         $cMethod=$params->safeGet('c_method','Listing','is_notempty_string');
-        $cTarget=$params->safeGet('c_target','main-content','is_notempty_string');
+        $cTarget=$params->safeGet('c_target',$target,'is_notempty_string');
 
         $builder=InstancesHelpers::PrepareForm($params,$template,$instanceId);
         if(!$builder instanceof IControlBuilder) {

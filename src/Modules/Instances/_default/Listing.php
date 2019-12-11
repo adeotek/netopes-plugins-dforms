@@ -19,7 +19,7 @@ $ctrl_builder=new TableViewBuilder([
     'scrollable'=>FALSE,
     'with_filter'=>TRUE,
     'with_pagination'=>TRUE,
-    'sortby'=>['column'=>'CREATE_DATE','direction'=>'ASC'],
+    'sortby'=>['column'=>'CREATE_DATE','direction'=>'DESC'],
     'qsearch'=>'for_text',
     'ds_class'=>'Plugins\DForms\Instances',
     'ds_method'=>'GetInstances',
@@ -93,7 +93,7 @@ if(is_iterable($fields) && count($fields)) {
             'db_field'=>'item-'.$fName,
             'data_type'=>$fDataType,
             'type'=>$fType,
-            'halign'=>'left',
+            'halign'=>'center',
             'default_value'=>'-',
             'label'=>$fLabel,
         ]);
@@ -110,7 +110,7 @@ if(is_array($this->showInListing)) {
                     'type'=>'value',
                     'format'=>'integer',
                     'halign'=>'center',
-                    'label'=>Translate::GetLabel('template_code'),
+                    'label'=>Translate::GetLabel('form_code'),
                     'sortable'=>TRUE,
                     'filterable'=>TRUE,
                 ]);
@@ -121,7 +121,7 @@ if(is_array($this->showInListing)) {
                     'data_type'=>'string',
                     'type'=>'value',
                     'halign'=>'left',
-                    'label'=>Translate::GetLabel('template_name'),
+                    'label'=>Translate::GetLabel('form_name'),
                     'sortable'=>TRUE,
                     'filterable'=>TRUE,
                 ]);
@@ -193,7 +193,7 @@ if(is_array($this->showInListing)) {
                 break;
             case 'create_date':
                 $ctrl_builder->SetColumn('create_date',[
-                    'width'=>'120',
+                    'width'=>'130',
                     'db_field'=>'create_date',
                     'data_type'=>'datetime',
                     'type'=>'value',
@@ -216,7 +216,7 @@ if(is_array($this->showInListing)) {
                 break;
             case 'last_modified':
                 $ctrl_builder->SetColumn('last_modified',[
-                    'width'=>'120',
+                    'width'=>'130',
                     'db_field'=>'last_modified',
                     'data_type'=>'datetime',
                     'type'=>'value',
