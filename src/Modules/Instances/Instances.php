@@ -137,6 +137,7 @@ class Instances extends Module {
      * @throws \NETopes\Core\AppException
      */
     public function Listing(Params $params) {
+        // NApp::Dlog($params->toArray(),'Listing');
         $this->PrepareConfigParams($params);
         $template=DataProvider::Get('Plugins\DForms\Instances','GetTemplate',[
             'for_id'=>$this->templateId,
@@ -148,6 +149,8 @@ class Instances extends Module {
         if(!$this->templateId) {
             throw new AppException('Invalid DynamicForm template!');
         }
+        $relationsData=InstancesHelpers::GetRelationsData($this->templateId,NULL,$params);
+        $relationsValues=InstancesHelpers::GetRelationsFilterParam($relationsData);
         $fields=DataProvider::Get('Plugins\DForms\Instances','GetFields',[
             'template_id'=>$this->templateId,
             'for_template_code'=>NULL,
@@ -160,7 +163,7 @@ class Instances extends Module {
         $cTarget=$params->safeGet('c_target',$target,'is_notempty_string');
 
         $listingTarget=$target.'_listing';
-        $listingAddActionRelations=InstancesHelpers::GetAddActionRelationsParams($this->templateId,$params);
+        $listingAddActionRelations=InstancesHelpers::GetAddActionRelationsParams($relationsData);
         $listingAddAction=[
             'value'=>Translate::GetButton('add'),
             'class'=>NApp::$theme->GetBtnPrimaryClass(),
@@ -290,7 +293,8 @@ class Instances extends Module {
         }//if($this->formAsModal)
         $fResponseTarget=get_array_value($ctrlParams,'response_target','df_'.$tName.'_errors','is_string');
 
-        $formActions=InstancesHelpers::PrepareFormActions($this,$ctrl_params,$instanceId,$aeSaveInstanceMethod,$fResponseTarget,$tName,$fTagId,$cModule,$cMethod,$cTarget,$viewOnly,$noRedirect);
+        $relationsData=InstancesHelpers::GetRelationsData($this->templateId,NULL,$params);
+        $formActions=InstancesHelpers::PrepareFormActions($this,$ctrl_params,$instanceId,$aeSaveInstanceMethod,$fResponseTarget,$tName,$fTagId,$relationsData,$cModule,$cMethod,$cTarget,$viewOnly,$noRedirect);
         if(count($formActions['container'])) {
             $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="'.$fResponseTarget.'">&nbsp;</div></div>');
             foreach($formActions['container'] as $formAct) {
@@ -304,7 +308,7 @@ class Instances extends Module {
 
         $addContentMethod='Add'.$controlClass;
         $view->$addContentMethod($ctrl_params);
-        $relationsHtml=InstancesHelpers::PrepareRelationsFormPart($this->templateId,$instanceId,$params);
+        $relationsHtml=InstancesHelpers::PrepareRelationsFormPart($relationsData);
         $view->AddHtmlContent('<div class="row"><div class="col-md-12 hidden" id="df_'.$tName.'_relations">'.$relationsHtml.'</div></div>');
         if(count($formActions['after'])) {
             $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="'.$fResponseTarget.'">&nbsp;</div></div>');
@@ -366,7 +370,8 @@ class Instances extends Module {
         }//if($this->formAsModal)
         $fResponseTarget=get_array_value($ctrl_params,'response_target','df_'.$tName.'_errors','is_notempty_string');
 
-        $formActions=InstancesHelpers::PrepareFormActions($this,$ctrl_params,NULL,$aeSaveInstanceMethod,$fResponseTarget,$tName,$fTagId,$cModule,$cMethod,$cTarget,FALSE,$noRedirect);
+        $relationsData=InstancesHelpers::GetRelationsData($this->templateId,NULL,$params);
+        $formActions=InstancesHelpers::PrepareFormActions($this,$ctrl_params,NULL,$aeSaveInstanceMethod,$fResponseTarget,$tName,$fTagId,$relationsData,$cModule,$cMethod,$cTarget,FALSE,$noRedirect);
         if(count($formActions['container'])) {
             $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="'.$fResponseTarget.'">&nbsp;</div></div>');
             foreach($formActions['container'] as $formAct) {
@@ -379,7 +384,7 @@ class Instances extends Module {
 
         $addContentMethod='Add'.$controlClass;
         $view->$addContentMethod($ctrl_params);
-        $relationsHtml=InstancesHelpers::PrepareRelationsFormPart($this->templateId,NULL,$params);
+        $relationsHtml=InstancesHelpers::PrepareRelationsFormPart($relationsData);
         $view->AddHtmlContent('<div class="row"><div class="col-md-12 hidden" id="df_'.$tName.'_relations">'.$relationsHtml.'</div></div>');
         if(count($formActions['after'])) {
             $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="'.$fResponseTarget.'">&nbsp;</div></div>');
@@ -443,7 +448,8 @@ class Instances extends Module {
         }//if($this->formAsModal)
         $fResponseTarget=get_array_value($ctrl_params,'response_target','df_'.$tName.'_errors','is_notempty_string');
 
-        $formActions=InstancesHelpers::PrepareFormActions($this,$ctrl_params,$instanceId,$aeSaveInstanceMethod,$fResponseTarget,$tName,$fTagId,$cModule,$cMethod,$cTarget,$viewOnly,$noRedirect);
+        $relationsData=InstancesHelpers::GetRelationsData($this->templateId,NULL,$params);
+        $formActions=InstancesHelpers::PrepareFormActions($this,$ctrl_params,$instanceId,$aeSaveInstanceMethod,$fResponseTarget,$tName,$fTagId,$relationsData,$cModule,$cMethod,$cTarget,$viewOnly,$noRedirect);
         if(count($formActions['container'])) {
             $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="'.$fResponseTarget.'">&nbsp;</div></div>');
             foreach($formActions['container'] as $formAct) {
@@ -456,7 +462,7 @@ class Instances extends Module {
 
         $addContentMethod='Add'.$controlClass;
         $view->$addContentMethod($ctrl_params);
-        $relationsHtml=InstancesHelpers::PrepareRelationsFormPart($this->templateId,NULL,$params);
+        $relationsHtml=InstancesHelpers::PrepareRelationsFormPart($relationsData);
         $view->AddHtmlContent('<div class="row"><div class="col-md-12 hidden" id="df_'.$tName.'_relations">'.$relationsHtml.'</div></div>');
         if(count($formActions['after'])) {
             $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="'.$fResponseTarget.'">&nbsp;</div></div>');
@@ -691,7 +697,13 @@ class Instances extends Module {
         $cModule=$params->safeGet('c_module',get_called_class(),'is_notempty_string');
         $cMethod=$params->safeGet('c_method','Listing','is_notempty_string');
         $cTarget=$params->safeGet('c_target','main-content','is_notempty_string');
-        ModulesProvider::Exec($cModule,$cMethod,['id_template'=>$this->templateId,'target'=>$cTarget],$cTarget);
+        $params->remove('id');
+        $params->remove('c_module');
+        $params->remove('c_method');
+        $params->remove('c_target');
+        $params->set('id_template',$this->templateId);
+        $params->set('target',$cTarget);
+        ModulesProvider::Exec($cModule,$cMethod,$params,$cTarget);
     }//END public function DeleteRecord
 
     /**

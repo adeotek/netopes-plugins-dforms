@@ -1,4 +1,5 @@
 <?php
+use NETopes\Core\App\AppHelpers;
 use NETopes\Core\Controls\Button;
 use NETopes\Core\Controls\DivButton;
 use NETopes\Core\Controls\TextBox;
@@ -124,62 +125,18 @@ if($renderType>1) {
 		</table>
 	</div>
 <?php
-$this->AddJsScript("
-    $('#{$target} .draggable.move').draggable({
-        revert: 'invalid',
-        cursor: 'move',
-        containment: '#df_template_fields',
-        helper: 'clone',
-        snap: true
-    });
-    
-    $('#{$target} .droppable').droppable({
-        accept: function(ui) { return($(this).attr('data-full')!='1'); },
-        drop: function(event,ui) {
-            var cell = $(this).attr('data-cell');
-            var cellid = $(ui.draggable).attr('data-id');
-            var ths = $(this); 
-            if($(ui.draggable).hasClass('clone')) {
-                var acb = function() {
-                    $(ths).find('span.blank').hide();
-                    $(ths).append($(ui.draggable).clone());
-                    $(ths).children('.draggable').each(function(){
-                        $(this).removeClass('clone');
-                        $(this).attr('data-cell',cell);
-                        $(this).draggable({
-                            revert: 'invalid',
-                            cursor: 'move',
-                            containment: '#df_template_fields',
-                            helper: 'clone',
-                            snap: true
-                        });
-                    });
-                    $(ths).attr('data-full','1');
-                };
-                ".NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'AddEditContentElement', 'params': { 'id_template': {$template}, 'pindex': '{$pIndex}', 'cols_no': '{$colsNo}', 'id_control': cellid, 'cell': cell, 'target': '{$target}' } }",'modal',['cellid','cell'],TRUE,NULL,TRUE,'acb')."
-            } else {
-                var acb = function() {
-                    var ocell = $(ui.draggable).attr('data-cell');
-                    console.log('ocell: '+ocell);
-                    $(ths).find('span.blank').hide();
-                    $(ths).append($(ui.draggable).clone());
-                    $(ths).children('.draggable').each(function(){
-                        $(this).attr('data-cell',cell);
-                        $(this).draggable({
-                            revert: 'invalid',
-                            cursor: 'move',
-                            containment: '#df_template_fields',
-                            helper: 'clone',
-                            snap: true
-                        });
-                    });
-                    $('#cell-'+ocell).find('.draggable').remove();
-                    $('#cell-'+ocell).attr('data-full','0');
-                    $('#cell-'+ocell).find('span.blank').show();
-                    $(ths).attr('data-full','1');
-                };
-                ".NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'MoveContentElement', 'params': { 'id_template': {$template}, 'pindex': '{$pIndex}', 'id_item': cellid, 'cell': cell, 'target': '{$target}' } }",'errors',['cellid','cell'],TRUE,NULL,TRUE,'acb')."
-            }
-        }
-    });
-");
+$this->AddJsScript($this->module->GetResourceFile('ContentTable','.js'),TRUE,TRUE,[
+	'htmlTarget'=>$target,
+	'addEditContentAction'=>[
+		'value'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'AddEditContentElement', 'params': { 'id_template': {$template}, 'pindex': '{$pIndex}', 'cols_no': '{$colsNo}', 'id_control': cellId, 'cell': cell, 'target': '{$target}' } }",'modal',['cellId','cell'],TRUE,NULL,TRUE,'acb'),
+		'type'=>AppHelpers::JS_SCRIPT_INJECTION_TYPE_FUNCTION,
+		'arguments'=>['cellId','cell'],
+		'js_var_type'=>'const',
+	],
+	'moveContentElementAction'=>[
+		'value'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'MoveContentElement', 'params': { 'id_template': {$template}, 'pindex': '{$pIndex}', 'id_item': cellId, 'cell': cell, 'target': '{$target}' } }",'errors',['cellId','cell'],TRUE,NULL,TRUE,'acb'),
+		'type'=>AppHelpers::JS_SCRIPT_INJECTION_TYPE_FUNCTION,
+		'arguments'=>['cellId','cell'],
+		'js_var_type'=>'const',
+	],
+]);

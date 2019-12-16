@@ -2,6 +2,8 @@
 use NETopes\Core\App\Module;
 use NETopes\Core\Controls\TableViewBuilder;
 
+/** @var string|null $relationsValues */
+/** @var string $listingAddActionRelations */
 /** @var string $target */
 /** @var string $cModule */
 /** @var string $cMethod */
@@ -23,7 +25,7 @@ $ctrl_builder=new TableViewBuilder([
     'qsearch'=>'for_text',
     'ds_class'=>'Plugins\DForms\Instances',
     'ds_method'=>'GetInstances',
-    'ds_params'=>['for_id'=>NULL,'template_id'=>$this->templateId,'for_template_code'=>NULL,'for_state'=>NULL,'for_text'=>NULL],
+    'ds_params'=>['for_id'=>NULL,'template_id'=>$this->templateId,'for_template_code'=>NULL,'for_state'=>NULL,'for_relations_values'=>$relationsValues,'for_text'=>NULL],
     'auto_load_data'=>TRUE,
 ]);
 if($this->inListingActions) {
@@ -57,14 +59,14 @@ if($this->listingPrintAction) {
 $ctrl_builder->AddAction('actions',[
     'dright'=>Module::DRIGHT_EDIT,
     'type'=>'DivButton',
-    'ajax_command'=>"{ 'module': '{$this->name}', 'method': 'ShowEditForm', 'params': { 'id': {!id!}, 'id_template': '{!id_template!}', 'c_module': '{$cModule}', 'c_method': '{$cMethod}', 'c_target': '{$cTarget}' } }",
+    'ajax_command'=>"{ 'module': '{$this->name}', 'method': 'ShowEditForm', 'params': { 'id': {!id!}, 'id_template': '{!id_template!}', {$listingAddActionRelations} 'c_module': '{$cModule}', 'c_method': '{$cMethod}', 'c_target': '{$cTarget}' } }",
     'ajax_target_id'=>$target,
     'params'=>['tooltip'=>Translate::GetButton('edit'),'class'=>NApp::$theme->GetBtnPrimaryClass('btn-xxs'),'icon'=>'fa fa-pencil-square-o'],
 ]);
 $ctrl_builder->AddAction('actions',[
     'dright'=>Module::DRIGHT_VIEW,
     'type'=>'DivButton',
-    'ajax_command'=>"{ 'module': '{$this->name}', 'method': 'ShowViewForm', 'params': { 'id': {!id!}, 'id_template': '{!id_template!}' } }",
+    'ajax_command'=>"{ 'module': '{$this->name}', 'method': 'ShowViewForm', 'params': { 'id': {!id!}, {$listingAddActionRelations} 'id_template': '{!id_template!}' } }",
     'ajax_target_id'=>'modal',
     'params'=>['tooltip'=>Translate::GetButton('view'),'class'=>NApp::$theme->GetBtnInfoClass('btn-xxs pull-right'),'icon'=>'fa fa-eye'],
 ]);
@@ -246,7 +248,7 @@ if(is_array($this->showInListing)) {
 $ctrl_builder->AddAction('end_actions',[
     'dright'=>Module::DRIGHT_DELETE,
     'type'=>'DivButton',
-    'ajax_command'=>"{ 'module': '{$this->name}', 'method': 'DeleteRecord', 'params': { 'id': {!id!}, 'id_template': '{!id_template!}', 'c_module': '{$cModule}', 'c_method': '{$cMethod}', 'c_target': '{$cTarget}' } }",
+    'ajax_command'=>"{ 'module': '{$this->name}', 'method': 'DeleteRecord', 'params': { 'id': {!id!}, 'id_template': '{!id_template!}', {$listingAddActionRelations} 'c_module': '{$cModule}', 'c_method': '{$cMethod}', 'c_target': '{$cTarget}' } }",
     'ajax_target_id'=>'errors',
     'params'=>['tooltip'=>Translate::GetButton('delete'),'class'=>NApp::$theme->GetBtnDangerClass('btn-xxs'),'icon'=>'fa fa-times','confirm_text'=>Translate::GetMessage('confirm_delete'),'conditions'=>[['field'=>'ftype','type'=>'!=','value'=>2]]],
 ]);

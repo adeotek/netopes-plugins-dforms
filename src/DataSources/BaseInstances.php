@@ -119,12 +119,12 @@ abstract class BaseInstances extends DataSource {
     /**
      * GetInstances default parameters
      */
-    public const GET_INSTANCES=['for_id'=>NULL,'template_id'=>NULL,'for_template_code'=>NULL,'for_state'=>NULL,'for_text'=>NULL];
+    public const GET_INSTANCES=['for_id'=>NULL,'template_id'=>NULL,'for_template_code'=>NULL,'for_state'=>NULL,'for_relations_values'=>NULL,'for_text'=>NULL];
 
     /**
      * Gets DynamicForm instances
      *
-     * @param array $params ['for_id'=>NULL,'template_id'=>NULL,'for_template_code'=>NULL,'for_state'=>NULL,'for_text'=>NULL]
+     * @param array $params ['for_id'=>NULL,'template_id'=>NULL,'for_template_code'=>NULL,'for_state'=>NULL,'for_relations_values'=>NULL,'for_text'=>NULL]
      * @param array $extra_params
      * @return mixed
      */

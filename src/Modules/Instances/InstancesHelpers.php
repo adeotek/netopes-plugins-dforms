@@ -532,43 +532,16 @@ HTML;
      * @param int                      $templateId
      * @param int|null                 $instanceId
      * @param \NETopes\Core\App\Params $inputParams
-     * @return string|null
+     * @return array
      * @throws \NETopes\Core\AppException
      */
-    public static function PrepareRelationsFormPart(int $templateId,?int $instanceId,Params $inputParams): ?string {
+    public static function GetRelationsData(int $templateId,?int $instanceId,Params $inputParams): array {
         if($instanceId) {
             $relations=DataProvider::Get('Plugins\DForms\Instances','GetRelations',['instance_id'=>$instanceId]);
         } else {
             $relations=DataProvider::Get('Plugins\DForms\Templates','GetRelations',['template_id'=>$templateId,'validated'=>1]);
         }//if($instanceId)
-        $result=NULL;
-        if(is_iterable($relations) && count($relations)) {
-            /** @var IEntity $rel */
-            foreach($relations as $rel) {
-                if($rel->getProperty('rtype')!=30) {
-                    continue;
-                }
-                //Programmatically (input parameter)
-                $rValue=$inputParams->safeGet($rel->getProperty('key'),NULL,'?isset');
-                if(is_null($rValue)) {
-                    continue;
-                }
-                $rctrl=new HiddenInput(['tag_id'=>$rel->getProperty('key'),'postable'=>TRUE,'value'=>$rValue]);
-                $result.=$rctrl->Show();
-            }//END foreach
-        }//if(is_iterable($relations) && count($relations))
-        return $result;
-    }//END public static function PrepareRelationsFormPart
-
-    /**
-     * @param int                      $templateId
-     * @param \NETopes\Core\App\Params $inputParams
-     * @return string
-     * @throws \NETopes\Core\AppException
-     */
-    public static function GetAddActionRelationsParams(int $templateId,Params $inputParams): string {
-        $relations=DataProvider::Get('Plugins\DForms\Templates','GetRelations',['template_id'=>$templateId,'validated'=>1]);
-        $result=NULL;
+        $result=[];
         if(is_iterable($relations) && count($relations)) {
             /** @var IEntity $rel */
             foreach($relations as $rel) {
@@ -576,12 +549,52 @@ HTML;
                     continue;
                 }
                 $rKey=$rel->getProperty('key');
-                $rValue=$inputParams->safeGet($rKey,NULL,'?isset');
-                $result.=" '{$rKey}': '{$rValue}',";
+                $result[$rKey]=$inputParams->safeGet($rKey,NULL,'?isset');
             }//END foreach
         }//if(is_iterable($relations) && count($relations))
         return $result;
+    }//END public static function GetRelationsData
+
+    /**
+     * @param array $relationsData
+     * @return string|null
+     * @throws \NETopes\Core\AppException
+     */
+    public static function PrepareRelationsFormPart(array $relationsData): ?string {
+        $result=NULL;
+        foreach($relationsData as $k=>$v) {
+            if(is_null($v)) {
+                continue;
+            }
+            $rCtrl=new HiddenInput(['tag_id'=>$k.'_'.str_replace('.','_',microtime(TRUE)),'tag_name'=>$k,'postable'=>TRUE,'value'=>$v]);
+            $result.=$rCtrl->Show();
+        }//END foreach
+        return $result;
+    }//END public static function PrepareRelationsFormPart
+
+    /**
+     * @param array $relationsData
+     * @return string
+     */
+    public static function GetAddActionRelationsParams(array $relationsData): string {
+        $result=NULL;
+        foreach($relationsData as $k=>$v) {
+            $result.=" '{$k}': '{$v}',";
+        }//END foreach
+        return $result;
     }//END public static function GetAddActionRelationsParams
+
+    /**
+     * @param array $relationsData
+     * @return string
+     */
+    public static function GetRelationsFilterParam(array $relationsData): string {
+        $result=NULL;
+        foreach($relationsData as $k=>$v) {
+            $result.=(strlen($result) ? '~' : '').$k.'|'.$v;
+        }//END foreach
+        return $result;
+    }//END public static function GetRelationsFilterParam
 
     /**
      * @param \NETopes\Plugins\DForms\Modules\Instances\Instances $module
@@ -591,6 +604,7 @@ HTML;
      * @param string                                              $responseTarget
      * @param string                                              $tName
      * @param string                                              $fTagId
+     * @param array                                               $relationsData
      * @param string                                              $cModule
      * @param string                                              $cMethod
      * @param string                                              $cTarget
@@ -599,7 +613,7 @@ HTML;
      * @return array
      * @throws \NETopes\Core\AppException
      */
-    public static function PrepareFormActions(Instances $module,array $ctrlParams,?int $instanceId,string $saveMethod,string $responseTarget,string $tName,string $fTagId,string $cModule,string $cMethod,string $cTarget,bool $viewOnly,bool $noRedirect): array {
+    public static function PrepareFormActions(Instances $module,array $ctrlParams,?int $instanceId,string $saveMethod,string $responseTarget,string $tName,string $fTagId,array $relationsData,string $cModule,string $cMethod,string $cTarget,bool $viewOnly,bool $noRedirect): array {
         $actions=['container'=>[],'form'=>[],'after'=>[]];
         if($module->formPrintAction && $instanceId) {
             if(strlen($module->printUrl)) {
@@ -636,8 +650,10 @@ HTML;
                     'params'=>['value'=>Translate::GetButton('cancel'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-ban'],
                 ];
             } elseif(!$module->formAsModal && strlen($module->backActionLocation)) {
+                $listingAddActionRelations=InstancesHelpers::GetAddActionRelationsParams($relationsData);
+                NApp::Dlog($listingAddActionRelations,'$listingAddActionRelations');
                 $actions[$module->backActionLocation][]=[
-                    'params'=>['value'=>Translate::GetButton('back'),'icon'=>'fa fa-chevron-left','class'=>NApp::$theme->GetBtnDefaultClass(),'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$cModule}', 'method': '{$cMethod}', 'params': { 'id_template': {$module->templateId}, 'id': '{$instanceId}', 'target': '{$cTarget}' } }",$cTarget)],
+                    'params'=>['value'=>Translate::GetButton('back'),'icon'=>'fa fa-chevron-left','class'=>NApp::$theme->GetBtnDefaultClass(),'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$cModule}', 'method': '{$cMethod}', 'params': { 'id_template': {$module->templateId}, 'id': '{$instanceId}', {$listingAddActionRelations} 'target': '{$cTarget}' } }",$cTarget)],
                 ];
             }//if($isModal && strlen($backAction))
         }//if(strlen($fTagId) && strlen($fResponseTarget))
