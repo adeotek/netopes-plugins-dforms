@@ -453,7 +453,10 @@ class Instances extends Module {
         if(count($formActions['container'])) {
             $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="'.$fResponseTarget.'">&nbsp;</div></div>');
             foreach($formActions['container'] as $formAct) {
-                $view->AddAction((new Button($formAct['params']))->Show());
+                $actionClass='\NETopes\Core\Controls\\'.get_array_value($formAct,'type','Button','is_notempty_string');
+                if(class_exists($actionClass)) {
+                    $view->AddAction((new $actionClass($formAct['params']))->Show());
+                }
             }//END foreach
         }//if(count($formActions['container']))
         if(count($formActions['form'])) {
@@ -468,7 +471,10 @@ class Instances extends Module {
             $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="'.$fResponseTarget.'">&nbsp;</div></div>');
             $afterFormActions=[];
             foreach($formActions['after'] as $formAct) {
-                $formActionsArray[]=(new Button($formAct['params']))->Show();
+                $actionClass='\NETopes\Core\Controls\\'.get_array_value($formAct,'type','Button','is_notempty_string');
+                if(class_exists($actionClass)) {
+                    $formActionsArray[]=(new $actionClass($formAct['params']))->Show();
+                }
             }//END foreach
             $view->AddHtmlContent('<div class="row"><div class="col-md-12 actions-group">'.implode('',$afterFormActions).'</div></div>');
         }//if(count($formActions['after']))
