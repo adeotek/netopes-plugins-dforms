@@ -130,13 +130,13 @@ $this->AddJsScript($this->module->GetResourceFile('ContentTable','.js'),TRUE,TRU
 	'addEditContentAction'=>[
 		'value'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'AddEditContentElement', 'params': { 'id_template': {$template}, 'pindex': '{$pIndex}', 'cols_no': '{$colsNo}', 'id_control': cellId, 'cell': cell, 'target': '{$target}' } }",'modal',['cellId','cell'],TRUE,NULL,TRUE,'acb'),
 		'type'=>AppHelpers::JS_SCRIPT_INJECTION_TYPE_FUNCTION,
-		'arguments'=>['cellId','cell'],
+		'arguments'=>['cellId','cell','acb'],
 		'js_var_type'=>'const',
 	],
 	'moveContentElementAction'=>[
 		'value'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'MoveContentElement', 'params': { 'id_template': {$template}, 'pindex': '{$pIndex}', 'id_item': cellId, 'cell': cell, 'target': '{$target}' } }",'errors',['cellId','cell'],TRUE,NULL,TRUE,'acb'),
 		'type'=>AppHelpers::JS_SCRIPT_INJECTION_TYPE_FUNCTION,
-		'arguments'=>['cellId','cell'],
+		'arguments'=>['cellId','cell','acb'],
 		'js_var_type'=>'const',
 	],
 ]);

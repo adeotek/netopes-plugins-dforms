@@ -32,7 +32,7 @@ $('#' + htmlTarget + ' .droppable').droppable({
                 });
                 $(ths).attr('data-full','1');
             };
-            addEditContentAction(cellId,cell);
+            addEditContentAction(cellId,cell,acb);
         } else {
             let acb=function() {
                 let oCell=$(ui.draggable).attr('data-cell');
@@ -48,12 +48,12 @@ $('#' + htmlTarget + ' .droppable').droppable({
                         snap: true
                     });
                 });
-                $('#cell-' + oCell).find('.draggable').remove();
-                $('#cell-' + oCell).attr('data-full','0');
-                $('#cell-' + oCell).find('span.blank').show();
+                $('#cell-' + oCell).find('.draggable').remove()
+                .attr('data-full','0')
+                .find('span.blank').show();
                 $(ths).attr('data-full','1');
             };
-            moveContentElementAction(cellId,cell);
+            moveContentElementAction(cellId,cell,acb);
         }
     }
 });

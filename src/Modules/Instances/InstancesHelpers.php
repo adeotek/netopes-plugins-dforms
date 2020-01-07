@@ -637,7 +637,7 @@ HTML;
                     ],
                 ],
             ];
-        }//END if($module->formPrintAction && $instanceId)
+        }//if($module->formPrintAction && $instanceId)
         if(strlen($fTagId) && strlen($responseTarget)) {
             if(!$viewOnly) {
                 $actions[$module->actionsLocation][]=[
@@ -651,7 +651,6 @@ HTML;
                 ];
             } elseif(!$module->formAsModal && strlen($module->backActionLocation)) {
                 $listingAddActionRelations=InstancesHelpers::GetAddActionRelationsParams($relationsData);
-                NApp::Dlog($listingAddActionRelations,'$listingAddActionRelations');
                 $actions[$module->backActionLocation][]=[
                     'params'=>['value'=>Translate::GetButton('back'),'icon'=>'fa fa-chevron-left','class'=>NApp::$theme->GetBtnDefaultClass(),'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$cModule}', 'method': '{$cMethod}', 'params': { 'id_template': {$module->templateId}, 'id': '{$instanceId}', {$listingAddActionRelations} 'target': '{$cTarget}' } }",$cTarget)],
                 ];
