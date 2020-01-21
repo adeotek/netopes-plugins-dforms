@@ -42,7 +42,7 @@ $ctrl_params=[
                     'dright'=>'validate',
                     'ajax_command'=>"{ 'module': '{$this->class}', 'method': 'ValidateRecord', 'params': { 'id': {!id!}, 'new_value': '-1' } }",
                     'ajax_target_id'=>'errors',
-                    'params'=>['tooltip'=>Translate::GetButton('delete_unvalidated_version'),'class'=>NApp::$theme->GetBtnWarningClass('btn-xxs'),'icon'=>'fa fa-minus','conditions'=>[['field'=>'validated','type'=>'==','value'=>0],['field'=>'version','type'=>'>','value'=>0]]],
+                    'params'=>['tooltip'=>Translate::GetButton('delete_unvalidated_version'),'class'=>NApp::$theme->GetBtnWarningClass('btn-xxs'),'icon'=>'fa fa-minus','conditions'=>[['field'=>'validated','type'=>'==','value'=>0],['field'=>'version','type'=>'>','value'=>0]],'confirm_text'=>Translate::GetMessage('confirm_cancel_changes')],
                 ],
                 [
                     'type'=>'DivButton',
