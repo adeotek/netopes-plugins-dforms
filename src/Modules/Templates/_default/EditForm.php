@@ -33,7 +33,7 @@ $ctrl_params=[
                         [
                             [
                                 'control_type'=>'TextBox',
-                                'control_params'=>['tag_id'=>'df_template_edit_name','tag_name'=>'name','value'=>$item->getProperty('name','','is_string'),'label'=>Translate::GetLabel('name'),'onenter_button'=>'df_template_edit_save','required'=>TRUE,'disabled'=>($item->getProperty('version',0,'is_numeric')>0)],
+                                'control_params'=>['tag_id'=>'df_template_edit_name','tag_name'=>'name','value'=>$item->getProperty('name','','is_string'),'label'=>Translate::GetLabel('name'),'onenter_button'=>'df_template_edit_save','required'=>TRUE],
                             ],
                         ],
                         [
