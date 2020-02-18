@@ -576,7 +576,7 @@ HTML;
      * @param array $relationsData
      * @return string
      */
-    public static function GetAddActionRelationsParams(array $relationsData): string {
+    public static function GetAddActionRelationsParams(array $relationsData): ?string {
         $result=NULL;
         foreach($relationsData as $k=>$v) {
             $result.=" '{$k}': '{$v}',";

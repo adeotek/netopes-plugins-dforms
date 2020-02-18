@@ -190,11 +190,11 @@ class Instances extends Module {
      * @throws \NETopes\Core\AppException
      */
     public function GlobalListing(Params $params) {
-        $this->PrepareConfigParams($params);
         $fTypes=DataProvider::GetKeyValue('_Custom\Offline','GetDynamicFormsTemplatesFTypes');
+        $templateId=$templateCode=NULL;
         $listingTarget='listing-content';
         $view=new AppView(get_defined_vars(),$this,'main');
-        $view->SetTitle('');
+        $view->SetTitle('dynamic_forms_instances');
         $view->SetTargetId($listingTarget);
         $view->AddTableView($this->GetViewFile('GlobalListing'));
         $view->Render();

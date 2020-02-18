@@ -27,7 +27,7 @@ $ctrl_params=[
                         [
                             [
                                 'control_type'=>'NumericTextBox',
-                                'control_params'=>['tag_id'=>'df_template_edit_code','tag_name'=>'code','value'=>$item->getProperty('code',0,'is_numeric'),'label'=>Translate::GetLabel('code').' ('.Translate::GetLabel('numeric').')','align'=>'center','number_format'=>'0|||','disabled'=>TRUE,'required'=>TRUE],
+                                'control_params'=>['tag_id'=>'df_template_edit_code','tag_name'=>'code','value'=>$item->getProperty('code',0,'is_numeric'),'label'=>Translate::GetLabel('code').' ('.Translate::GetLabel('numeric').')','align'=>'center','number_format'=>'0|||','disabled'=>$version>0,'required'=>TRUE],
                             ],
                         ],
                         [
@@ -43,13 +43,12 @@ $ctrl_params=[
                             ],
                         ],
                         ['separator'=>'line'],
-                        // array(
-                        // 	array(
-                        //
-                        // 		'control_type'=>'CheckBox',
-                        // 		'control_params'=>array('tag_id'=>'df_template_edit_state','tag_name'=>'state','value'=>$item->getProperty('state',0,'is_numeric'),'label'=>Translate::GetLabel('active'),'class'=>'pull-left'),
-                        // 	),
-                        // ),
+                        [
+                            [
+                                'control_type'=>'CheckBox',
+                                'control_params'=>array('tag_id'=>'df_template_edit_state','tag_name'=>'state','value'=>$item->getProperty('state',1,'is_numeric'),'label'=>Translate::GetLabel('active'),'class'=>'pull-left'),
+                            ],
+                        ],
                         [
                             [
                                 'control_type'=>'CheckBox',
