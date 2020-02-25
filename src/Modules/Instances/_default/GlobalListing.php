@@ -4,8 +4,7 @@
 /** @var string|null $templateCode */
 /** @var \NETopes\Core\Data\DataSet|array $fTypes */
 $ctrl_params=[
-    'module'=>$this->class,
-    'method'=>$this->GetCurrentMethod(),
+    'drights_uid'=>$this->module->dRightsUid ?? $this->module::DRIGHTS_UID_GLOBAL,
     'persistent_state'=>TRUE,
     'target'=>$listingTarget,
     'alternate_row_color'=>TRUE,

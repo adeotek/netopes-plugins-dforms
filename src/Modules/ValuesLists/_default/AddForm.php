@@ -1,5 +1,6 @@
 <?php
 $ctrl_params=[
+    'drights_uid'=>$this->module->dRightsUid ?? $this->module::DRIGHTS_UID,
     'tag_id'=>'df_list_add_form',
     'response_target'=>'df_list_add_errors',
     'cols_no'=>1,

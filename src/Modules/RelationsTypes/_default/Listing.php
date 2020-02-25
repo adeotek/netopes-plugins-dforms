@@ -1,7 +1,6 @@
 <?php
 $ctrl_params=[
-    'module'=>$this->class,
-    'method'=>$this->GetCurrentMethod(),
+    'drights_uid'=>$this->module->dRightsUid ?? $this->module::DRIGHTS_UID,
     'persistent_state'=>TRUE,
     'target'=>'listing-content',
     'alternate_row_color'=>TRUE,

@@ -32,6 +32,10 @@ use Translate;
  */
 class Templates extends Module {
     /**
+     * string Denied rights GUID
+     */
+    const DRIGHTS_UID='';
+    /**
      * int Relation UTYPE standard
      */
     public const RELATION_UTYPE_STANDARD=10;
@@ -62,10 +66,10 @@ class Templates extends Module {
         $view=new AppView(get_defined_vars(),$this,'main');
         $view->SetTitle('dynamic_forms_templates');
         $view->SetTargetId($listingTarget);
-        if(!$this->AddDRights()) {
+        if(!$this->AddDRights($this->dRightsUid ?? $this::DRIGHTS_UID)) {
             $btnAdd=new Button(['value'=>Translate::GetButton('add').' '.Translate::GetLabel('template'),'class'=>NApp::$theme->GetBtnPrimaryClass(),'icon'=>'fa fa-plus','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'ShowAddForm', 'params': {  } }",'modal')]);
             $view->AddAction($btnAdd->Show());
-        }//if(!$this->AddDRights())
+        }//if(!$this->AddDRights($this->dRightsUid ?? $this::DRIGHTS_UID))
         $view->AddTableView($this->GetViewFile('Listing'));
         $view->Render();
     }//END public function Listing
@@ -136,10 +140,10 @@ class Templates extends Module {
         $view=new AppView(get_defined_vars(),$this,'main');
         $view->AddTabControl($this->GetViewFile('EditForm'));
         $view->SetTitle(Translate::GetButton('edit_template').': '.$item->getProperty('name').' ['.$item->getProperty('code').'] - Ver. '.$version.' ('.($version + 1).')');
-        if(!$this->ValidateDRights()) {
+        if(!$this->ValidateDRights($this->dRightsUid ?? $this::DRIGHTS_UID)) {
             $btnValidate=new Button(['value'=>Translate::GetButton('validate'),'class'=>NApp::$theme->GetBtnSuccessClass('mr10'),'icon'=>'fa fa-check-square-o','onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->class,'method'=>'ValidateRecord','params'=>['id'=>$id]],['target_id'=>'errors'])]);
             $view->AddAction($btnValidate->Show());
-        }//if(!$this->ValidateDRights()) {
+        }//if(!$this->ValidateDRights($this->dRightsUid ?? $this::DRIGHTS_UID)) {
         $btnBack=new Button(['value'=>Translate::GetButton('back'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-chevron-left','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'Listing', 'params': {  } }",'main-content')]);
         $view->AddAction($btnBack->Show());
         $view->Render();
