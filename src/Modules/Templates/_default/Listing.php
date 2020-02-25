@@ -4,8 +4,7 @@ use NETopes\Core\Controls\TableView;
 use NETopes\Core\Data\DataProvider;
 
 $ctrl_params=[
-    'module'=>$this->class,
-    'method'=>$this->GetCurrentMethod(),
+    'drights_uid'=>$this->module->dRightsUid ?? $this->module::DRIGHTS_UID,
     'persistent_state'=>TRUE,
     'target'=>'listing_content',
     'alternate_row_color'=>TRUE,

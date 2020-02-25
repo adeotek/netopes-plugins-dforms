@@ -27,6 +27,11 @@ use Translate;
  */
 class RelationsTypes extends Module {
     /**
+     * string Denied rights GUID
+     */
+    const DRIGHTS_UID='';
+
+    /**
      * Module class initializer
      *
      * @return void
@@ -44,10 +49,10 @@ class RelationsTypes extends Module {
         $view=new AppView(get_defined_vars(),$this,'main');
         $view->AddTableView($this->GetViewFile('Listing'));
         $view->SetTitle(Translate::GetLabel('relations_types'));
-        if(!$this->AddDRights()) {
+        if(!$this->AddDRights($this->dRightsUid ?? $this::DRIGHTS_UID)) {
             $btn_add=new Button(['value'=>Translate::GetButton('add_relation_type'),'class'=>NApp::$theme->GetBtnInfoClass(),'icon'=>'fa fa-plus','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'ShowAddForm', 'params': {  } }",'modal')]);
             $view->AddAction($btn_add->Show());
-        }//if(!$this->AddDRights())
+        }//if(!$this->AddDRights($this->dRightsUid ?? $this::DRIGHTS_UID))
         $view->SetTargetId('listing-content');
         $view->Render();
     }//END public function Listing

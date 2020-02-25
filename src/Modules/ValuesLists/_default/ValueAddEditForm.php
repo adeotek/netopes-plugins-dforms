@@ -1,6 +1,7 @@
 <?php
-/** @var TYPE_NAME $listId */
+/** @var int $listId */
 $ctrl_params=[
+    'drights_uid'=>$this->module->dRightsUid ?? $this->module::DRIGHTS_UID,
     'tag_id'=>'df_lv_ae_form',
     'response_target'=>'df_lv_ae_errors',
     'cols_no'=>1,

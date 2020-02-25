@@ -32,6 +32,14 @@ use Translate;
  */
 class Instances extends Module {
     /**
+     * string Denied rights GUID
+     */
+    const DRIGHTS_UID='';
+    /**
+     * string Denied rights global GUID
+     */
+    const DRIGHTS_UID_GLOBAL='';
+    /**
      * @var integer Dynamic form template ID
      */
     public $templateId=NULL;
@@ -176,10 +184,10 @@ class Instances extends Module {
         $view->SetTargetId($listingTarget);
         $view->AddControlBuilderContent($this->GetViewFile('Listing'),TableView::class);
         if(!$this->inListingActions) {
-            if(!$this->AddDRights()) {
+            if(!$this->AddDRights($this->dRightsUid ?? $this::DRIGHTS_UID)) {
                 $btnAdd=new Button($listingAddAction);
                 $view->AddAction($btnAdd->Show());
-            }
+            }//if(!$this->AddDRights($this->dRightsUid ?? $this::DRIGHTS_UID))
         }
         $view->Render();
     }//END public function Listing

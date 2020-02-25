@@ -28,6 +28,11 @@ use Translate;
  */
 class ValuesLists extends Module {
     /**
+     * string Denied rights GUID
+     */
+    const DRIGHTS_UID='';
+
+    /**
      * Module class initializer
      *
      * @return void
@@ -45,10 +50,10 @@ class ValuesLists extends Module {
         $view=new AppView(get_defined_vars(),$this,'main');
         $view->AddTableView($this->GetViewFile('Listing'));
         $view->SetTitle(Translate::GetLabel('values_lists'));
-        if(!$this->AddDRights()) {
+        if(!$this->AddDRights($this->dRightsUid ?? $this::DRIGHTS_UID)) {
             $btn_add=new Button(['value'=>Translate::GetButton('add').' '.Translate::GetLabel('values_list'),'class'=>NApp::$theme->GetBtnInfoClass(),'icon'=>'fa fa-plus','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'ShowAddForm', 'params': {  } }",'modal')]);
             $view->AddAction($btn_add->Show());
-        }//if(!$this->AddDRights())
+        }//if(!$this->AddDRights($this->dRightsUid ?? $this::DRIGHTS_UID))
         $view->SetTargetId('listing_content');
         $view->Render();
     }//END public function Listing
@@ -160,14 +165,14 @@ class ValuesLists extends Module {
             $dgtarget='dg-'.$target;
             $view=new AppView(get_defined_vars(),$this,'default');
             $view->SetTargetId($dgtarget);
-            if(!$this->AddDRights()) {
+            if(!$this->AddDRights($this->dRightsUid ?? $this::DRIGHTS_UID)) {
                 $btnAdd=new Button([
                     'value'=>Translate::GetButton('add'),
                     'class'=>NApp::$theme->GetBtnPrimaryClass(),
                     'icon'=>'fa fa-plus-circle',
                     'onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->class,'method'=>'ShowValueAddEditForm','params'=>['id_list'=>$listId,'target'=>$target]],['target_id'=>'modal'])]);
                 $view->AddAction($btnAdd->Show());
-            }//if(!$this->AddDRights())
+            }//if(!$this->AddDRights($this->dRightsUid ?? $this::DRIGHTS_UID))
         } else {
             $dgtarget=$target;
             $view=new AppView(get_defined_vars(),$this,'modal');

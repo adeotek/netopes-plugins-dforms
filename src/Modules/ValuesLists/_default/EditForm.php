@@ -1,5 +1,6 @@
 <?php
 $ctrl_params=[
+    'drights_uid'=>$this->module->dRightsUid ?? $this->module::DRIGHTS_UID,
     'tag_id'=>'df_list_edit_tabs',
     'tabs'=>[
         [
