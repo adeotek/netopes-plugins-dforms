@@ -184,10 +184,10 @@ class Instances extends Module {
         $view->SetTargetId($listingTarget);
         $view->AddControlBuilderContent($this->GetViewFile('Listing'),TableView::class);
         if(!$this->inListingActions) {
-            if(!$this->AddDRights($this->dRightsUid ?? $this::DRIGHTS_UID)) {
+            if(!$this->AddDRights()) {
                 $btnAdd=new Button($listingAddAction);
                 $view->AddAction($btnAdd->Show());
-            }//if(!$this->AddDRights($this->dRightsUid ?? $this::DRIGHTS_UID))
+            }//if(!$this->AddDRights())
         }
         $view->Render();
     }//END public function Listing

@@ -1,7 +1,8 @@
 <?php
 /** @var int $listId */
+/** @var \NETopes\Core\Data\IEntity $item */
 $ctrl_params=[
-    'drights_uid'=>$this->module->dRightsUid ?? $this->module::DRIGHTS_UID,
+    'drights_uid'=>$this->module->dRightsUid,
     'tag_id'=>'df_lv_ae_form',
     'response_target'=>'df_lv_ae_errors',
     'cols_no'=>1,

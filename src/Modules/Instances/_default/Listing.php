@@ -13,7 +13,7 @@ use NETopes\Core\Controls\TableViewBuilder;
 /** @var \NETopes\Core\Data\DataSet $fields */
 /** @var \NETopes\Core\Data\DataSet|null $fTypes */
 $ctrl_builder=new TableViewBuilder([
-    'drights_uid'=>$this->module->dRightsUid ?? $this->module::DRIGHTS_UID,
+    'drights_uid'=>$this->module->dRightsUid,
     'persistent_state'=>FALSE,
     'target'=>$listingTarget,
     'alternate_row_color'=>TRUE,

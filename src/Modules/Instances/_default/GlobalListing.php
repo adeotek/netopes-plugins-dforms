@@ -4,7 +4,7 @@
 /** @var string|null $templateCode */
 /** @var \NETopes\Core\Data\DataSet|array $fTypes */
 $ctrl_params=[
-    'drights_uid'=>$this->module->dRightsUid ?? $this->module::DRIGHTS_UID_GLOBAL,
+    'drights_uid'=>$this->module->dRightsUid,
     'persistent_state'=>TRUE,
     'target'=>$listingTarget,
     'alternate_row_color'=>TRUE,
