@@ -10,15 +10,15 @@
  * @filesource
  */
 namespace NETopes\Plugins\DForms\Modules\ValuesLists;
+use NApp;
 use NETopes\Core\App\AppView;
 use NETopes\Core\App\Module;
 use NETopes\Core\App\Params;
+use NETopes\Core\AppException;
 use NETopes\Core\Controls\Button;
 use NETopes\Core\Data\DataProvider;
 use NETopes\Core\Data\DataSet;
 use NETopes\Core\Data\VirtualEntity;
-use NETopes\Core\AppException;
-use NApp;
 use Translate;
 
 /**
@@ -50,10 +50,10 @@ class ValuesLists extends Module {
         $view=new AppView(get_defined_vars(),$this,'main');
         $view->AddTableView($this->GetViewFile('Listing'));
         $view->SetTitle(Translate::GetLabel('values_lists'));
-        if(!$this->AddDRights($this->dRightsUid ?? $this::DRIGHTS_UID)) {
+        if(!$this->AddDRights()) {
             $btn_add=new Button(['value'=>Translate::GetButton('add').' '.Translate::GetLabel('values_list'),'class'=>NApp::$theme->GetBtnInfoClass(),'icon'=>'fa fa-plus','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'ShowAddForm', 'params': {  } }",'modal')]);
             $view->AddAction($btn_add->Show());
-        }//if(!$this->AddDRights($this->dRightsUid ?? $this::DRIGHTS_UID))
+        }//if(!$this->AddDRights())
         $view->SetTargetId('listing_content');
         $view->Render();
     }//END public function Listing
@@ -165,14 +165,14 @@ class ValuesLists extends Module {
             $dgtarget='dg-'.$target;
             $view=new AppView(get_defined_vars(),$this,'default');
             $view->SetTargetId($dgtarget);
-            if(!$this->AddDRights($this->dRightsUid ?? $this::DRIGHTS_UID)) {
+            if(!$this->AddDRights()) {
                 $btnAdd=new Button([
                     'value'=>Translate::GetButton('add'),
                     'class'=>NApp::$theme->GetBtnPrimaryClass(),
                     'icon'=>'fa fa-plus-circle',
                     'onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->class,'method'=>'ShowValueAddEditForm','params'=>['id_list'=>$listId,'target'=>$target]],['target_id'=>'modal'])]);
                 $view->AddAction($btnAdd->Show());
-            }//if(!$this->AddDRights($this->dRightsUid ?? $this::DRIGHTS_UID))
+            }//if(!$this->AddDRights())
         } else {
             $dgtarget=$target;
             $view=new AppView(get_defined_vars(),$this,'modal');

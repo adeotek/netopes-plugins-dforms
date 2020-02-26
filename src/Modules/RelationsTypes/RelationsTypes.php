@@ -10,14 +10,14 @@
  * @filesource
  */
 namespace NETopes\Plugins\DForms\Modules\RelationsTypes;
+use NApp;
 use NETopes\Core\App\AppView;
 use NETopes\Core\App\Module;
 use NETopes\Core\App\Params;
+use NETopes\Core\AppException;
 use NETopes\Core\Controls\Button;
 use NETopes\Core\Data\DataProvider;
 use NETopes\Core\Data\VirtualEntity;
-use NETopes\Core\AppException;
-use NApp;
 use Translate;
 
 /**
@@ -49,10 +49,10 @@ class RelationsTypes extends Module {
         $view=new AppView(get_defined_vars(),$this,'main');
         $view->AddTableView($this->GetViewFile('Listing'));
         $view->SetTitle(Translate::GetLabel('relations_types'));
-        if(!$this->AddDRights($this->dRightsUid ?? $this::DRIGHTS_UID)) {
+        if(!$this->AddDRights()) {
             $btn_add=new Button(['value'=>Translate::GetButton('add_relation_type'),'class'=>NApp::$theme->GetBtnInfoClass(),'icon'=>'fa fa-plus','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'ShowAddForm', 'params': {  } }",'modal')]);
             $view->AddAction($btn_add->Show());
-        }//if(!$this->AddDRights($this->dRightsUid ?? $this::DRIGHTS_UID))
+        }//if(!$this->AddDRights())
         $view->SetTargetId('listing-content');
         $view->Render();
     }//END public function Listing

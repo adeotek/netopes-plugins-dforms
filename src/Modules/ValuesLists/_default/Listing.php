@@ -1,6 +1,6 @@
 <?php
 $ctrl_params=[
-    'drights_uid'=>$this->module->dRightsUid ?? $this->module::DRIGHTS_UID,
+    'drights_uid'=>$this->module->dRightsUid,
     'persistent_state'=>TRUE,
     'target'=>'listing-content',
     'alternate_row_color'=>TRUE,

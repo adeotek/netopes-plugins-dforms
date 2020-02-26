@@ -10,19 +10,16 @@
  * @filesource
  */
 namespace NETopes\Plugins\DForms\Modules\Templates;
+use NApp;
 use NETopes\Core\App\AppView;
 use NETopes\Core\App\Module;
-use NETopes\Core\App\ModulesProvider;
 use NETopes\Core\App\Params;
-use NETopes\Core\Controls\BasicForm;
+use NETopes\Core\AppException;
 use NETopes\Core\Controls\Button;
 use NETopes\Core\Data\DataProvider;
 use NETopes\Core\Data\DataSet;
 use NETopes\Core\Data\IEntity;
 use NETopes\Core\Data\VirtualEntity;
-use NETopes\Core\AppException;
-use NApp;
-use NETopes\Plugins\DForms\Modules\Controls\Controls;
 use Translate;
 
 /**
@@ -47,6 +44,7 @@ class Templates extends Module {
      * int Relation UTYPE UID
      */
     public const RELATION_UTYPE_UID=10;
+
     /**
      * Module class initializer
      *
@@ -66,10 +64,10 @@ class Templates extends Module {
         $view=new AppView(get_defined_vars(),$this,'main');
         $view->SetTitle('dynamic_forms_templates');
         $view->SetTargetId($listingTarget);
-        if(!$this->AddDRights($this->dRightsUid ?? $this::DRIGHTS_UID)) {
+        if(!$this->AddDRights()) {
             $btnAdd=new Button(['value'=>Translate::GetButton('add').' '.Translate::GetLabel('template'),'class'=>NApp::$theme->GetBtnPrimaryClass(),'icon'=>'fa fa-plus','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'ShowAddForm', 'params': {  } }",'modal')]);
             $view->AddAction($btnAdd->Show());
-        }//if(!$this->AddDRights($this->dRightsUid ?? $this::DRIGHTS_UID))
+        }//if(!$this->AddDRights())
         $view->AddTableView($this->GetViewFile('Listing'));
         $view->Render();
     }//END public function Listing
@@ -140,10 +138,10 @@ class Templates extends Module {
         $view=new AppView(get_defined_vars(),$this,'main');
         $view->AddTabControl($this->GetViewFile('EditForm'));
         $view->SetTitle(Translate::GetButton('edit_template').': '.$item->getProperty('name').' ['.$item->getProperty('code').'] - Ver. '.$version.' ('.($version + 1).')');
-        if(!$this->ValidateDRights($this->dRightsUid ?? $this::DRIGHTS_UID)) {
+        if(!$this->ValidateDRights()) {
             $btnValidate=new Button(['value'=>Translate::GetButton('validate'),'class'=>NApp::$theme->GetBtnSuccessClass('mr10'),'icon'=>'fa fa-check-square-o','onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->class,'method'=>'ValidateRecord','params'=>['id'=>$id]],['target_id'=>'errors'])]);
             $view->AddAction($btnValidate->Show());
-        }//if(!$this->ValidateDRights($this->dRightsUid ?? $this::DRIGHTS_UID)) {
+        }//if(!$this->ValidateDRights()) {
         $btnBack=new Button(['value'=>Translate::GetButton('back'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-chevron-left','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'Listing', 'params': {  } }",'main-content')]);
         $view->AddAction($btnBack->Show());
         $view->Render();

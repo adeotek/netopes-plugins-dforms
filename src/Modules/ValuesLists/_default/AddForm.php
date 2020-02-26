@@ -1,6 +1,8 @@
 <?php
+use NETopes\Core\App\Module;
+
 $ctrl_params=[
-    'drights_uid'=>$this->module->dRightsUid ?? $this->module::DRIGHTS_UID,
+    'drights_uid'=>$this->module->dRightsUid,
     'tag_id'=>'df_list_add_form',
     'response_target'=>'df_list_add_errors',
     'cols_no'=>1,
@@ -26,6 +28,7 @@ $ctrl_params=[
     ],
     'actions'=>[
         [
+            'dright'=>Module::DRIGHT_ADD,
             'params'=>['tag_id'=>'df_list_add_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'AddEditRecord', 'params': { 'target': 'df_list_add_form' }, 'arrayParams': [ '{nGet|df_list_add_form:form}' ] }",'df_list_add_errors')],
         ],
         [

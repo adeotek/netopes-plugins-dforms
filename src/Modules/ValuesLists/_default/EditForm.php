@@ -1,6 +1,8 @@
 <?php
+use NETopes\Core\App\Module;
+
 $ctrl_params=[
-    'drights_uid'=>$this->module->dRightsUid ?? $this->module::DRIGHTS_UID,
+    'drights_uid'=>$this->module->dRightsUid,
     'tag_id'=>'df_list_edit_tabs',
     'tabs'=>[
         [
@@ -36,9 +38,11 @@ $ctrl_params=[
                     ],
                     'actions'=>[
                         [
+                            'dright'=>Module::DRIGHT_EDIT,
                             'params'=>['value'=>Translate::GetButton('save_and_close'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->name}', 'method': 'AddEditRecord', 'params': { 'id': '{$id}', 'close': 1, 'form_id': 'df_list_edit_form' }, 'arrayParams': [ '{nGet|df_list_edit_form:form}' ] }",'df_list_edit_errors')],
                         ],
                         [
+                            'dright'=>Module::DRIGHT_EDIT,
                             'params'=>['value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->name}', 'method': 'AddEditRecord', 'params': { 'id': '{$id}', 'close': 0, 'form_id': 'df_list_edit_form' }, 'arrayParams': [ '{nGet|df_list_edit_form:form}' ] }",'df_list_edit_errors')],
                         ],
                     ],

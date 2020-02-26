@@ -1,7 +1,7 @@
 <?php
 /* @var \NETopes\Core\Data\VirtualEntity $item */
 $ctrl_params=[
-    'drights_uid'=>$this->module->dRightsUid ?? $this->module::DRIGHTS_UID,
+    'drights_uid'=>$this->module->dRightsUid,
     'tag_id'=>'df_rel_type_ae_form',
     'response_target'=>'df_rel_type_ae_errors',
     'cols_no'=>1,

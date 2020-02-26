@@ -1,10 +1,8 @@
 <?php
-use NETopes\Core\Controls\Button;
-use NETopes\Core\Controls\TableView;
 use NETopes\Core\Data\DataProvider;
 
 $ctrl_params=[
-    'drights_uid'=>$this->module->dRightsUid ?? $this->module::DRIGHTS_UID,
+    'drights_uid'=>$this->module->dRightsUid,
     'persistent_state'=>TRUE,
     'target'=>'listing_content',
     'alternate_row_color'=>TRUE,
