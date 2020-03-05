@@ -1,10 +1,10 @@
 <?php
 use NETopes\Core\Data\DataProvider;
-
+/** @var string $listingTarget */
 $ctrl_params=[
     'drights_uid'=>$this->module->dRightsUid,
     'persistent_state'=>TRUE,
-    'target'=>'listing_content',
+    'target'=>$listingTarget,
     'alternate_row_color'=>TRUE,
     'scrollable'=>FALSE,
     'with_filter'=>TRUE,

@@ -47,6 +47,7 @@ class ValuesLists extends Module {
      * @throws \NETopes\Core\AppException
      */
     public function Listing(Params $params) {
+        $listingTarget='dforms_values_lists_listing';
         $view=new AppView(get_defined_vars(),$this,'main');
         $view->AddTableView($this->GetViewFile('Listing'));
         $view->SetTitle(Translate::GetLabel('values_lists'));
@@ -54,7 +55,7 @@ class ValuesLists extends Module {
             $btn_add=new Button(['value'=>Translate::GetButton('add').' '.Translate::GetLabel('values_list'),'class'=>NApp::$theme->GetBtnInfoClass(),'icon'=>'fa fa-plus','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'ShowAddForm', 'params': {  } }",'modal')]);
             $view->AddAction($btn_add->Show());
         }//if(!$this->AddDRights())
-        $view->SetTargetId('listing_content');
+        $view->SetTargetId($listingTarget);
         $view->Render();
     }//END public function Listing
 
