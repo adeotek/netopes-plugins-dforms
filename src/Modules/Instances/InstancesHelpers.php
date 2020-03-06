@@ -10,6 +10,7 @@
  * @filesource
  */
 namespace NETopes\Plugins\DForms\Modules\Instances;
+use Exception;
 use NApp;
 use NETopes\Core\App\ModulesProvider;
 use NETopes\Core\App\Params;
@@ -610,11 +611,13 @@ HTML;
      * @param string                                              $cTarget
      * @param bool                                                $viewOnly
      * @param bool                                                $noRedirect
+     * @param array                                               $customActions
      * @return array
      * @throws \NETopes\Core\AppException
      */
-    public static function PrepareFormActions(Instances $module,array $ctrlParams,?int $instanceId,string $saveMethod,string $responseTarget,string $tName,string $fTagId,array $relationsData,string $cModule,string $cMethod,string $cTarget,bool $viewOnly,bool $noRedirect): array {
+    public static function PrepareFormActions(Instances $module,array $ctrlParams,?int $instanceId,string $saveMethod,string $responseTarget,string $tName,string $fTagId,array $relationsData,string $cModule,string $cMethod,string $cTarget,bool $viewOnly,bool $noRedirect,array $customActions=[]): array {
         $actions=['container'=>[],'form'=>[],'after'=>[]];
+        $actions[$module->actionsLocation]=$customActions;
         if($module->formPrintAction && $instanceId) {
             if(strlen($module->printUrl)) {
                 $printUrl=NApp::$appBaseUrl.$module->printUrl;
@@ -641,7 +644,23 @@ HTML;
         if(strlen($fTagId) && strlen($responseTarget)) {
             if(!$viewOnly) {
                 $actions[$module->actionsLocation][]=[
-                    'params'=>['tag_id'=>'df_'.$tName.'_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','class'=>NApp::$theme->GetBtnPrimaryClass(),'onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$module->name}', 'method': '{$saveMethod}', 'params': { 'id_template': '{$module->templateId}', 'id': '{$instanceId}', 'relations': '{nGet|df_{$tName}_relations:form}', 'data': '{nGet|{$fTagId}:form}', 'no_redirect': '".(int)$noRedirect."', 'is_modal': '{$module->formAsModal}', 'c_module': '{$cModule}', 'c_method': '{$cMethod}', 'c_target': '{$cTarget}', 'form_id': '{$fTagId}' } }",$responseTarget)],
+                    'params'=>['tag_id'=>'df_'.$tName.'_save','value'=>Translate::GetButton('save'),'icon'=>'fa fa-save','class'=>NApp::$theme->GetBtnPrimaryClass(),'onclick'=>NApp::Ajax()->PrepareAjaxRequest([
+                        'module'=>$module->name,
+                        'method'=>$saveMethod,
+                        'params'=>[
+                            'id_template'=>$module->templateId,
+                            'id'=>$instanceId,
+                            'relations'=>"{nGet|df_{$tName}_relations:form}",
+                            'data'=>"{nGet|{$fTagId}:form}",
+                            'no_redirect'=>(int)$noRedirect,
+                            'is_modal'=>$module->formAsModal,
+                            'form_id'=>$fTagId,
+                            'c_module'=>$cModule,
+                            'c_method'=>$cMethod,
+                            'c_target'=>$cTarget,
+                            'c_custom_actions'=>"{nGet|df_{$tName}_custom_actions:innerHTML}",
+                        ],
+                    ],['target_id'=>$responseTarget])],
                 ];
             }
             if($module->formAsModal && strlen($module->backActionLocation)) {
@@ -914,7 +933,17 @@ HTML;
         $cModule=$params->safeGet('c_module',$module->name,'is_notempty_string');
         $cMethod=$params->safeGet('c_method','Listing','is_notempty_string');
         $cTarget=$params->safeGet('c_target','main-content','is_notempty_string');
-        $redirectParams=['id_template'=>$module->templateId,'id'=>$params->safeGet('id',NULL,'is_integer'),'target'=>$cTarget];
+        $cCustomActions=$params->safeGet('c_custom_actions','','is_string');
+        if(strlen($cCustomActions)) {
+            try {
+                $customActions=json_decode(str_replace('``','"',$cCustomActions),TRUE);
+            } catch(Exception $e) {
+                $customActions=NULL;
+            }
+        } else {
+            $customActions=NULL;
+        }
+        $redirectParams=['id_template'=>$module->templateId,'id'=>$params->safeGet('id',NULL,'is_integer'),'target'=>$cTarget,'custom_actions'=>$customActions];
         $relations=$params->safeGet('relations',[],'is_array');
         ModulesProvider::Exec($cModule,$cMethod,array_merge($redirectParams,$relations),$cTarget);
     }//END public static function RedirectAfterAction
