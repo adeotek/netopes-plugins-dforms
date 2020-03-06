@@ -617,7 +617,17 @@ HTML;
      */
     public static function PrepareFormActions(Instances $module,array $ctrlParams,?int $instanceId,string $saveMethod,string $responseTarget,string $tName,string $fTagId,array $relationsData,string $cModule,string $cMethod,string $cTarget,bool $viewOnly,bool $noRedirect,array $customActions=[]): array {
         $actions=['container'=>[],'form'=>[],'after'=>[]];
-        $actions[$module->actionsLocation]=$customActions;
+        if(count($customActions)) {
+            $row=new VirtualEntity(array_merge($relationsData,['id_instance'=>$instanceId]));
+            foreach($customActions as $cAction) {
+                // Check conditions for displaying action
+                $conditions=get_array_value($cAction,['params','conditions'],NULL,'is_array');
+                if(is_array($conditions) && !ControlsHelpers::CheckRowConditions($row,$conditions)) {
+                    continue;
+                }
+                $actions[$module->actionsLocation][]=$cAction;
+            }//END foreach
+        }//if(count($customActions))
         if($module->formPrintAction && $instanceId) {
             if(strlen($module->printUrl)) {
                 $printUrl=NApp::$appBaseUrl.$module->printUrl;
