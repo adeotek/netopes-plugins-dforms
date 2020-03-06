@@ -248,7 +248,7 @@ class Instances extends Module {
      * @throws \NETopes\Core\AppException
      */
     public function ShowAddEditForm(Params $params) {
-        // NApp::Dlog($params,'ShowAddEditForm');
+        // NApp::Dlog($params->toArray(),'ShowAddEditForm');
         $this->PrepareConfigParams($params);
         $instanceId=$params->safeGet('id',NULL,'is_not0_integer');
         /** @var \NETopes\Core\Data\VirtualEntity $template */
@@ -276,6 +276,7 @@ class Instances extends Module {
         $cModule=$params->safeGet('c_module',$this->name,'is_notempty_string');
         $cMethod=$params->safeGet('c_method','ShowAddEditForm','is_notempty_string');
         $cTarget=$params->safeGet('c_target',$target,'is_notempty_string');
+        $customActions=$params->safeGet('custom_actions',[],'is_array');
 
         $builder=InstancesHelpers::PrepareForm($params,$template,$instanceId);
         if(!$builder instanceof IControlBuilder) {
@@ -302,7 +303,7 @@ class Instances extends Module {
         $fResponseTarget=get_array_value($ctrlParams,'response_target','df_'.$tName.'_errors','is_string');
 
         $relationsData=InstancesHelpers::GetRelationsData($this->templateId,NULL,$params);
-        $formActions=InstancesHelpers::PrepareFormActions($this,$ctrl_params,$instanceId,$aeSaveInstanceMethod,$fResponseTarget,$tName,$fTagId,$relationsData,$cModule,$cMethod,$cTarget,$viewOnly,$noRedirect);
+        $formActions=InstancesHelpers::PrepareFormActions($this,$ctrl_params,$instanceId,$aeSaveInstanceMethod,$fResponseTarget,$tName,$fTagId,$relationsData,$cModule,$cMethod,$cTarget,$viewOnly,$noRedirect,$customActions);
         if(count($formActions['container'])) {
             $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="'.$fResponseTarget.'">&nbsp;</div></div>');
             foreach($formActions['container'] as $formAct) {
@@ -318,6 +319,7 @@ class Instances extends Module {
         $view->$addContentMethod($ctrl_params);
         $relationsHtml=InstancesHelpers::PrepareRelationsFormPart($relationsData);
         $view->AddHtmlContent('<div class="row"><div class="col-md-12 hidden" id="df_'.$tName.'_relations">'.$relationsHtml.'</div></div>');
+        $view->AddHtmlContent('<div class="row"><div class="col-md-12 hidden" id="df_'.$tName.'_custom_actions">'.json_encode($customActions).'</div></div>');
         if(count($formActions['after'])) {
             $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="'.$fResponseTarget.'">&nbsp;</div></div>');
             $afterFormActions=[];
@@ -353,6 +355,7 @@ class Instances extends Module {
         $cModule=$params->safeGet('c_module',$this->name,'is_notempty_string');
         $cMethod=$params->safeGet('c_method','Listing','is_notempty_string');
         $cTarget=$params->safeGet('c_target',$target,'is_notempty_string');
+        $customActions=$params->safeGet('custom_actions',[],'is_array');
 
         $builder=InstancesHelpers::PrepareForm($params,$template);
         if(!$builder instanceof IControlBuilder) {
@@ -379,7 +382,7 @@ class Instances extends Module {
         $fResponseTarget=get_array_value($ctrl_params,'response_target','df_'.$tName.'_errors','is_notempty_string');
 
         $relationsData=InstancesHelpers::GetRelationsData($this->templateId,NULL,$params);
-        $formActions=InstancesHelpers::PrepareFormActions($this,$ctrl_params,NULL,$aeSaveInstanceMethod,$fResponseTarget,$tName,$fTagId,$relationsData,$cModule,$cMethod,$cTarget,FALSE,$noRedirect);
+        $formActions=InstancesHelpers::PrepareFormActions($this,$ctrl_params,NULL,$aeSaveInstanceMethod,$fResponseTarget,$tName,$fTagId,$relationsData,$cModule,$cMethod,$cTarget,FALSE,$noRedirect,$customActions);
         if(count($formActions['container'])) {
             $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="'.$fResponseTarget.'">&nbsp;</div></div>');
             foreach($formActions['container'] as $formAct) {
@@ -394,6 +397,7 @@ class Instances extends Module {
         $view->$addContentMethod($ctrl_params);
         $relationsHtml=InstancesHelpers::PrepareRelationsFormPart($relationsData);
         $view->AddHtmlContent('<div class="row"><div class="col-md-12 hidden" id="df_'.$tName.'_relations">'.$relationsHtml.'</div></div>');
+        $view->AddHtmlContent('<div class="row"><div class="col-md-12 hidden" id="df_'.$tName.'_custom_actions">'.json_encode($customActions).'</div></div>');
         if(count($formActions['after'])) {
             $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="'.$fResponseTarget.'">&nbsp;</div></div>');
             $afterFormActions=[];
@@ -431,6 +435,7 @@ class Instances extends Module {
         $cModule=$params->safeGet('c_module',$this->name,'is_notempty_string');
         $cMethod=$params->safeGet('c_method','Listing','is_notempty_string');
         $cTarget=$params->safeGet('c_target',$target,'is_notempty_string');
+        $customActions=$params->safeGet('custom_actions',[],'is_array');
 
         $builder=InstancesHelpers::PrepareForm($params,$template,$instanceId);
         if(!$builder instanceof IControlBuilder) {
@@ -457,7 +462,7 @@ class Instances extends Module {
         $fResponseTarget=get_array_value($ctrl_params,'response_target','df_'.$tName.'_errors','is_notempty_string');
 
         $relationsData=InstancesHelpers::GetRelationsData($this->templateId,NULL,$params);
-        $formActions=InstancesHelpers::PrepareFormActions($this,$ctrl_params,$instanceId,$aeSaveInstanceMethod,$fResponseTarget,$tName,$fTagId,$relationsData,$cModule,$cMethod,$cTarget,$viewOnly,$noRedirect);
+        $formActions=InstancesHelpers::PrepareFormActions($this,$ctrl_params,$instanceId,$aeSaveInstanceMethod,$fResponseTarget,$tName,$fTagId,$relationsData,$cModule,$cMethod,$cTarget,$viewOnly,$noRedirect,$customActions);
         if(count($formActions['container'])) {
             $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="'.$fResponseTarget.'">&nbsp;</div></div>');
             foreach($formActions['container'] as $formAct) {
@@ -475,6 +480,7 @@ class Instances extends Module {
         $view->$addContentMethod($ctrl_params);
         $relationsHtml=InstancesHelpers::PrepareRelationsFormPart($relationsData);
         $view->AddHtmlContent('<div class="row"><div class="col-md-12 hidden" id="df_'.$tName.'_relations">'.$relationsHtml.'</div></div>');
+        $view->AddHtmlContent('<div class="row"><div class="col-md-12 hidden" id="df_'.$tName.'_custom_actions">'.json_encode($customActions).'</div></div>');
         if(count($formActions['after'])) {
             $view->AddHtmlContent('<div class="row"><div class="col-md-12 clsBasicFormErrMsg" id="'.$fResponseTarget.'">&nbsp;</div></div>');
             $afterFormActions=[];
