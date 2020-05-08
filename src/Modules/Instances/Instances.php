@@ -217,18 +217,18 @@ class Instances extends Module {
         $message=NULL;
         $relationsErrors=$params->safeGet('df_relations_errors',[],'is_array');
         foreach($relationsErrors as $error) {
-            $type=get_array_param($error,'type','','is_string');
-            $name=get_array_param($error,'name','','is_string');
+            $type=get_array_value($error,'type','','is_string');
+            $name=get_array_value($error,'name','','is_string');
             $message.='<li>'.$name.': '.Translate::GetError('required_field').'</li>';
             if(strlen($type)=='required_field') {
-                NApp::Ajax()->ExecuteJs("AddClassOnErrorByName('{$formId}','".get_array_param($error,'key','','is_string')."')");
+                NApp::Ajax()->ExecuteJs("AddClassOnErrorByName('{$formId}','".get_array_value($error,'key','','is_string')."')");
             }//if(strlen($type)=='required_field')
         }//END foreach
         $fieldsErrors=$params->safeGet('df_fields_errors',[],'is_array');
         foreach($fieldsErrors as $error) {
-            // $type=get_array_param($error,'type','','is_string');
-            $name=get_array_param($error,'label','','is_string');
-            $fieldUid=get_array_param($error,'uid',NULL,'is_string');
+            // $type=get_array_value($error,'type','','is_string');
+            $name=get_array_value($error,'label','','is_string');
+            $fieldUid=get_array_value($error,'uid',NULL,'is_string');
             $message.='<li>'.$name.': '.Translate::GetError('required_field').'</li>';
             if(strlen($fieldUid)) {
                 NApp::Ajax()->ExecuteJs("AddClassOnErrorByName('{$formId}','{$fieldUid}')");
