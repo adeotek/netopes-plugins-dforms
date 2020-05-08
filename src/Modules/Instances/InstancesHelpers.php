@@ -698,7 +698,7 @@ HTML;
      */
     public static function GetValidatedValue($value,&$returnValue=NULL,?string $dataType=NULL,string $key=NULL): bool {
         if(is_array($value) && strlen($key)) {
-            $lValue=get_array_param($value,$key,NULL,'isset');
+            $lValue=get_array_value($value,$key,NULL,'isset');
         } else {
             $lValue=$value;
         }//if(is_array($value) && strlen($key))
