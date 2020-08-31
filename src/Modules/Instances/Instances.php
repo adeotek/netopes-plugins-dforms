@@ -6,7 +6,7 @@
  * @author     George Benjamin-Schonberger
  * @copyright  Copyright (c) 2013 - 2019 AdeoTEK Software SRL
  * @license    LICENSE.md
- * @version    1.0.1.0
+ * @version    1.2.1.0
  * @filesource
  */
 namespace NETopes\Plugins\DForms\Modules\Instances;
@@ -138,6 +138,40 @@ class Instances extends Module {
         $this->backActionLocation=$params->safeGet('back_action_location',$this->backActionLocation,'is_notempty_string');
         $this->showInListing=$params->safeGet('show_in_listing',$this->showInListing,'is_array');
     }//END protected function PrepareConfigParams
+
+    /**
+     * @param \NETopes\Core\App\Params $params
+     * @return int|null
+     * @throws \NETopes\Core\AppException
+     */
+    protected function GetInstanceId(Params $params): ?int {
+        // NApp::Dlog($params->toArray(),'GetInstanceId');
+        $this->PrepareConfigParams($params);
+        $instanceId=$params->safeGet('id',NULL,'is_not0_integer');
+        if(!$instanceId) {
+            /** @var \NETopes\Core\Data\VirtualEntity $template */
+            $template=DataProvider::Get('Plugins\DForms\Instances','GetTemplate',[
+                'for_id'=>$this->templateId,
+                'for_code'=>$this->templateCode,
+                'instance_id'=>NULL,
+                'for_state'=>1,
+            ]);
+            if(!$template instanceof IEntity) {
+                throw new AppException('Invalid DynamicForm template!');
+            }
+            $this->templateId=$template->getProperty('id',NULL,'is_integer');
+            $this->templateCode=$template->getProperty('code',NULL,'is_integer');
+            if(!$this->templateId) {
+                throw new AppException('Invalid DynamicForm template!');
+            }
+
+            if(!$instanceId && $template->getProperty('ftype',0,'is_integer')==2 && $params instanceof Params) {
+                $instance=InstancesHelpers::GetSingletonInstance($this->templateId,$params);
+                $instanceId=$instance->getProperty('id',NULL,'is_integer');
+            }//if(!$instanceId && $template->getProperty('ftype',0,'is_integer')==2 && $params instanceof Params)
+        }
+        return $instanceId;
+    }//END protected function GetInstanceId
 
     /**
      * @param \NETopes\Core\App\Params $params Parameters object
@@ -775,4 +809,21 @@ class Instances extends Module {
         $pdfBuilder->Render();
         // echo $contentBuilder->content;
     }//END public function PrintInstance
+
+    /**
+     * @param \NETopes\Core\App\Params $params Parameters object
+     * @return void
+     * @throws \NETopes\Core\AppException
+     */
+    public function GetFormDataForPrint(Params $params) {
+        // NApp::Dlog($params,'GetFormDataForPrint');
+        $instanceId=$this->GetInstanceId($params);
+        $params->set('id',$instanceId);
+        $contentBuilder=$this->GetPrintContentBuilder($params);
+        if(!$contentBuilder instanceof InstancesPrintContentBuilder) {
+            throw new AppException('Invalid instance content builder object!');
+        }
+        $contentBuilder->PrepareContent();
+        return $contentBuilder->content;
+    }//END public function GetFormDataForPrint
 }//END class Instances extends Module
