@@ -340,7 +340,7 @@ class TemplatesContent extends Module {
         $required=$params->safeGet('required',0,'is_integer');
         $listing=$params->safeGet('listing',0,'is_integer');
         $colSpan=$params->safeGet('colspan',0,'is_integer');
-        $colSpan=$colSpan>1 ? $colSpan : NULL;
+        $colSpan=$colSpan>=1 ? $colSpan : NULL;
         $idValuesList=$params->safeGet('id_values_list',NULL,'is_numeric');
         // process field properties
         $fParams=ModulesProvider::Exec(Controls::class,'ProcessFieldProperties',[

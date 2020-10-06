@@ -887,6 +887,16 @@ HTML;
                             continue 2;
                         }
                         break;
+                    case 'array':
+                        $fieldValues=get_array_value($fieldsData,$fieldUid,[],'is_array');
+                        $fieldValue='';
+                        foreach($fieldValues as $fValId=>$fVal) {
+                            if($fVal!=1) {
+                                continue;
+                            }
+                            $fieldValue.=(strlen($fieldValue) ? '|' : '').$fValId;
+                        }//END foreach
+                        break;
                     case 'string':
                     default:
                         $fieldValue=get_array_value($fieldsData,$fieldUid,NULL,'is_string');
