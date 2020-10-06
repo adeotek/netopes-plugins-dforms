@@ -56,6 +56,10 @@ class Instances extends Module {
      */
     public $viewAsModal=FALSE;
     /**
+     * @var bool Flag for throwing exceptions on errors
+     */
+    public $errorsAsException=FALSE;
+    /**
      * @var string AppView container type
      */
     public $containerType='main';
@@ -269,10 +273,18 @@ class Instances extends Module {
             }//if(strlen($fieldUid))
         }//END foreach
         if(strlen($message)) {
-            echo '<ul class="errors-list">'.$message.'</ul>';
+            if($this->errorsAsException) {
+                throw new AppException('<ul class="errors-list">'.$message.'</ul>');
+            } else {
+                echo '<ul class="errors-list">'.$message.'</ul>';
+            }
         } else {
             NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$formId}')");
-            echo Translate::GetMessage('required_fields');
+            if($this->errorsAsException) {
+                throw new AppException(Translate::GetMessage('required_fields'));
+            } else {
+                echo Translate::GetMessage('required_fields');
+            }
         }//if(strlen($message))
     }//END protected function ShowAddEditErrors
 

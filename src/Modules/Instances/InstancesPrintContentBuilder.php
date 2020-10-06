@@ -87,13 +87,16 @@ class InstancesPrintContentBuilder {
      */
     protected function GetFieldValue(IEntity $field,Params $params): ?string {
         $value=$field->getProperty('ivalues',NULL,'isset');
+        $emptyValue=$params->safeGet('empty_value',NULL,'is_string');
         switch($field->getProperty('class',NULL,'is_string')) {
             case 'CheckBox':
                 $result=$value ? Translate::GetLabel('yes') : Translate::GetLabel('no');
                 break;
             case 'NumericTextBox':
                 $result=NumericTextBox::FormatValue($value,$params->safeGet('number_format','','is_string'),$params->safeGet('allow_null',FALSE,'bool'));
+                $result=strlen($result) ? $result : $emptyValue;
                 break;
+            case 'GroupCheckBox':
             case 'SmartComboBox':
                 $valuesListId=$field->getProperty('id_values_list',0,'is_numeric');
                 if($valuesListId>0) {
@@ -112,9 +115,10 @@ class InstancesPrintContentBuilder {
                 } else {
                     $result=$value;
                 }//if($valuesListId>0)
+                $result=strlen($result) ? $result : $emptyValue;
                 break;
             default:
-                $result=is_string($value) ? $value : NULL;
+                $result=is_string($value) && strlen($value) ? $value : $emptyValue;
                 break;
         }//END switch
         return $result;
