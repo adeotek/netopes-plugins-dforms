@@ -83,7 +83,7 @@ class Controls extends Module {
                     break;
                 case 'bool':
                     $fpCType='CheckBox';
-                    $fpValue=get_array_value($data,$fpKey,$fpi->getProperty('default_value',0,'is_numeric'),'is_numeric');
+                    $fpValue=intval(get_array_value($data,$fpKey,$fpi->getProperty('default_value',0,'bool'),'bool'));
                     $fpSParams['class']='pull-left';
                     break;
                 case 'integer':
