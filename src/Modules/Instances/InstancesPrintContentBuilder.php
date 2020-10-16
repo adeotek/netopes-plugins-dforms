@@ -97,6 +97,35 @@ class InstancesPrintContentBuilder {
                 $result=strlen($result) ? $result : $emptyValue;
                 break;
             case 'GroupCheckBox':
+                $valuesListId=$field->getProperty('id_values_list',0,'is_numeric');
+                if($valuesListId>0) {
+                    if($params->safeGet('show_all_options',FALSE,'bool')) {
+                        $listValues=DataProvider::Get('Plugins\DForms\ValuesLists','GetSelectedValues',[
+                            'instance_id'=>$this->instanceId,
+                            'field_id'=>$field->getProperty('id',NULL,'is_integer'),
+                            'list_id'=>$valuesListId,
+                            'all_list_values'=>1,
+                        ]);
+                        $result=$listValues instanceof DataSet ? $this->GetFieldValueAsCheckboxList($listValues) : NULL;
+                    } else {
+                        $result=NULL;
+                        $listValues=DataProvider::Get('Plugins\DForms\ValuesLists','GetSelectedValues',[
+                            'instance_id'=>$this->instanceId,
+                            'field_id'=>$field->getProperty('id',NULL,'is_integer'),
+                            'list_id'=>$valuesListId,
+                        ]);
+                        if($listValues instanceof DataSet) {
+                            /** @var IEntity $listValue */
+                            foreach($listValues as $listValue) {
+                                $result.=(strlen($result) ? '; ' : '').$listValue->getProperty('name',NULL,'is_string');
+                            }//END foreach
+                        }
+                    }//if($params->safeGet('show_all_options',FALSE,'bool'))
+                } else {
+                    $result=$value;
+                }//if($valuesListId>0)
+                $result=strlen($result) ? $result : $emptyValue;
+                break;
             case 'SmartComboBox':
                 $valuesListId=$field->getProperty('id_values_list',0,'is_numeric');
                 if($valuesListId>0) {
@@ -123,6 +152,22 @@ class InstancesPrintContentBuilder {
         }//END switch
         return $result;
     }//END protected function GetFieldValue
+
+    /**
+     * @param \NETopes\Core\Data\DataSet $listValues
+     * @return string|null
+     * @throws \NETopes\Core\AppException
+     */
+    protected function GetFieldValueAsCheckboxList(DataSet $listValues): ?string {
+        $result='';
+        /** @var IEntity $listValue */
+        foreach($listValues as $listValue) {
+            $result.='<div style="display: block;">';
+            $result.='<input type="checkbox"'.($listValue->getProperty('is_selected',0,'is_integer')==1 ? ' checked="checked"' : '').'>&nbsp;&nbsp;&nbsp;'.$listValue->getProperty('name',NULL,'is_string');
+            $result.='</div>';
+        }//END foreach
+        return $result;
+    }//END protected function GetFieldValueAsCheckboxList
 
     /**
      * @param \NETopes\Core\Data\IEntity $field

@@ -129,12 +129,12 @@ abstract class BaseValuesLists extends DataSource {
     /**
      * GetSelectedValues default parameters
      */
-    const GET_SELECTED_VALUES=['instance_id'=>NULL,'field_id'=>NULL,'list_id'=>NULL,'for_ltype'=>NULL,'for_state'=>NULL];
+    const GET_SELECTED_VALUES=['instance_id'=>NULL,'field_id'=>NULL,'list_id'=>NULL,'for_ltype'=>NULL,'for_state'=>NULL,'all_list_values'=>NULL];
 
     /**
      * Gets forms lists values instance selected items
      *
-     * @param array $params ['instance_id'=>NULL,'field_id'=>NULL,'list_id'=>NULL,'for_ltype'=>NULL,'for_state'=>NULL]
+     * @param array $params ['instance_id'=>NULL,'field_id'=>NULL,'list_id'=>NULL,'for_ltype'=>NULL,'for_state'=>NULL,'all_list_values'=>NULL]
      * @param array $extra_params
      */
     abstract public function GetSelectedValues($params=[],$extra_params=[]);
