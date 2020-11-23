@@ -121,15 +121,16 @@ class InstancesHelpers {
                     // 'tooltip'=>Translate::GetButton('remove_field'),
                     'icon'=>'fa fa-minus-circle',
                     'class'=>NApp::$theme->GetBtnDangerClass('pull-right clsRemoveRepeatableCtrlBtn'),
-                    'onclick'=>"RemoveRepeatableControl(this)",
+                    'onclick'=>"RemoveRepeatableControl(this);",
                 ],
             ],
         ];
         $iCustomActions=[];
         for($i=1; $i<$iCount; $i++) {
             $tmpCtrl=$fParams;
-            $tmpCtrl['container']='none';
+            $tmpCtrl['container']=FALSE;
             $tmpCtrl['no_label']=TRUE;
+            $tmpCtrl['inline']=TRUE;
             $tmpCtrl['label_width']=NULL;
             $tmpCtrl['width']=NULL;
             $tmpCtrl['tag_id']=$tagId.'-'.$i;

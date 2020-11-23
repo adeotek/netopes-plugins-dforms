@@ -30,6 +30,7 @@
 	border-radius: 3px;
 }
 .dft-container .dft-content .dft-actions { display: block; }
+
 /*** Pages ***/
 .dft-container .dft-pages-actions {
     float: left;
@@ -179,6 +180,7 @@
 .ctrl-repeatable .input-group { margin-bottom: 8px; }
 .input-group-btn > .btn.clsRemoveRepeatableFieldBtn { padding: 3px 12px !important; }
 .add-ctrl-btn {
+	float: left;
 	display: inline-block;
 	border: 0;
 	padding: 0;
