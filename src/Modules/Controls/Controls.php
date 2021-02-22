@@ -81,6 +81,11 @@ class Controls extends Module {
                     $fpValue=get_array_value($data,$fpKey,$fpi->getProperty('default_value','','is_string'),'is_string');
                     $fpFixedWidth=100;
                     break;
+                case 'largetext':
+                    $fpCType='EditBox';
+                    $fpValue=get_array_value($data,$fpKey,$fpi->getProperty('default_value','','is_string'),'is_string');
+                    $fpSParams['height']=50;
+                    break;
                 case 'bool':
                     $fpCType='CheckBox';
                     $fpValue=intval(get_array_value($data,$fpKey,$fpi->getProperty('default_value',0,'bool'),'bool'));

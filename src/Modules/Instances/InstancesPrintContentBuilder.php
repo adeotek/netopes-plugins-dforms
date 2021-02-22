@@ -20,6 +20,7 @@ use NETopes\Core\Data\DataProvider;
 use NETopes\Core\Data\DataSet;
 use NETopes\Core\Data\IEntity;
 use NETopes\Core\Data\TPlaceholdersManipulation;
+use NETopes\Core\Data\VirtualEntity;
 use Translate;
 
 /**
@@ -90,15 +91,23 @@ class InstancesPrintContentBuilder {
         $emptyValue=$params->safeGet('empty_value',NULL,'is_string');
         switch($field->getProperty('class',NULL,'is_string')) {
             case 'CheckBox':
-                $result=$value ? Translate::GetLabel('yes') : Translate::GetLabel('no');
+                if($params->safeGet('display_as_checkbox',FALSE,'bool')) {
+                    // $result='<div style="display: block;">';
+                    $result='<input type="checkbox"'.($value ? ' checked="checked"' : '').'>';
+                    // $result.='</div>';
+                } else {
+                    $result=$value ? Translate::GetLabel('yes') : Translate::GetLabel('no');
+                }
                 break;
             case 'NumericTextBox':
                 $result=NumericTextBox::FormatValue($value,$params->safeGet('number_format','','is_string'),$params->safeGet('allow_null',FALSE,'bool'));
                 $result=strlen($result) ? $result : $emptyValue;
                 break;
             case 'GroupCheckBox':
+                $displayAsCheckbox=$params->safeGet('display_as_checkbox',FALSE,'bool');
                 $valuesListId=$field->getProperty('id_values_list',0,'is_numeric');
                 if($valuesListId>0) {
+                    $result=NULL;
                     if($params->safeGet('show_all_options',FALSE,'bool')) {
                         $listValues=DataProvider::Get('Plugins\DForms\ValuesLists','GetSelectedValues',[
                             'instance_id'=>$this->instanceId,
@@ -106,19 +115,17 @@ class InstancesPrintContentBuilder {
                             'list_id'=>$valuesListId,
                             'all_list_values'=>1,
                         ]);
-                        $result=$listValues instanceof DataSet ? $this->GetFieldValueAsCheckboxList($listValues) : NULL;
+                        if($listValues instanceof DataSet) {
+                            $result=$displayAsCheckbox ? $this->GetFieldValuesAsCheckboxList($listValues) : $this->GetFieldValuesAsEnum($listValues);
+                        }
                     } else {
-                        $result=NULL;
                         $listValues=DataProvider::Get('Plugins\DForms\ValuesLists','GetSelectedValues',[
                             'instance_id'=>$this->instanceId,
                             'field_id'=>$field->getProperty('id',NULL,'is_integer'),
                             'list_id'=>$valuesListId,
                         ]);
                         if($listValues instanceof DataSet) {
-                            /** @var IEntity $listValue */
-                            foreach($listValues as $listValue) {
-                                $result.=(strlen($result) ? '; ' : '').$listValue->getProperty('name',NULL,'is_string');
-                            }//END foreach
+                            $result=$displayAsCheckbox ? $this->GetFieldValuesAsCheckboxList($listValues) : $this->GetFieldValuesAsEnum($listValues);
                         }
                     }//if($params->safeGet('show_all_options',FALSE,'bool'))
                 } else {
@@ -154,20 +161,46 @@ class InstancesPrintContentBuilder {
     }//END protected function GetFieldValue
 
     /**
+     * @param \NETopes\Core\Data\IEntity $field
+     * @param string                     $valueField
+     * @param string                     $nameField
+     * @return string|null
+     * @throws \NETopes\Core\AppException
+     */
+    protected function GetFieldValueAsCheckboxList(IEntity $field,string $valueField='is_selected',string $nameField='name'): ?string {
+        $result='<div style="display: block;">';
+        $result.='<input type="checkbox"'.($field->getProperty($valueField,0,'is_integer')==1 ? ' checked="checked"' : '').'>&nbsp;&nbsp;&nbsp;'.$field->getProperty($nameField,NULL,'is_string');
+        $result.='</div>';
+        return $result;
+    }//END protected function GetFieldValueAsCheckboxList
+
+    /**
      * @param \NETopes\Core\Data\DataSet $listValues
      * @return string|null
      * @throws \NETopes\Core\AppException
      */
-    protected function GetFieldValueAsCheckboxList(DataSet $listValues): ?string {
+    protected function GetFieldValuesAsCheckboxList(DataSet $listValues): ?string {
         $result='';
         /** @var IEntity $listValue */
         foreach($listValues as $listValue) {
-            $result.='<div style="display: block;">';
-            $result.='<input type="checkbox"'.($listValue->getProperty('is_selected',0,'is_integer')==1 ? ' checked="checked"' : '').'>&nbsp;&nbsp;&nbsp;'.$listValue->getProperty('name',NULL,'is_string');
-            $result.='</div>';
+            $result.=$this->GetFieldValueAsCheckboxList($listValue);
         }//END foreach
         return $result;
-    }//END protected function GetFieldValueAsCheckboxList
+    }//END protected function GetFieldValuesAsCheckboxList
+
+    /**
+     * @param \NETopes\Core\Data\DataSet $listValues
+     * @return string|null
+     * @throws \NETopes\Core\AppException
+     */
+    protected function GetFieldValuesAsEnum(DataSet $listValues): ?string {
+        $result='';
+        /** @var IEntity $listValue */
+        foreach($listValues as $listValue) {
+            $result.=(strlen($result) ? '; ' : '').$listValue->getProperty('name',NULL,'is_string');
+        }//END foreach
+        return $result;
+    }//END protected function GetFieldValuesAsEnum
 
     /**
      * @param \NETopes\Core\Data\IEntity $field

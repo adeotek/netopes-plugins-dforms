@@ -86,10 +86,11 @@ class InstancesHelpers {
      * @param mixed                            $fValue
      * @param string|null                      $themeType
      * @param int                              $iCount
+     * @param bool                             $viewOnly
      * @return array
      * @throws \NETopes\Core\AppException
      */
-    public static function PrepareRepeatableField(VirtualEntity $field,array $fParams,$fValue=NULL,?string $themeType=NULL,int $iCount=0): array {
+    public static function PrepareRepeatableField(VirtualEntity $field,array $fParams,$fValue=NULL,?string $themeType=NULL,int $iCount=0,bool $viewOnly=FALSE): array {
         // NApp::Dlog(['$field'=>$field,'$fParams'=>$fParams,'$fValue'=>$fValue,'$themeType'=>$themeType,'$iCount'=>$iCount],'PrepareField');
         $instanceId=$field->getProperty('id_instance',NULL,'is_integer');
         $fieldUid=$field->getProperty('uid',NULL,'is_string');
@@ -114,7 +115,7 @@ class InstancesHelpers {
         }//if(in_array($fClass,['SmartComboBox','GroupCheckBox']) && $idValuesList>0)
         $fParams=ControlsHelpers::ReplaceDynamicParams($fParams,$field,TRUE,'_dfp_');
         $fParams['container_class']='ctrl-repeatable';
-        $removeAction=[
+        $removeAction=$viewOnly ? [] : [
             [
                 'type'=>'Button',
                 'params'=>[
@@ -140,12 +141,12 @@ class InstancesHelpers {
             }
             $tmpCtrl['extra_tag_params']=(isset($tmpCtrl['extra_tag_params']) && $tmpCtrl['extra_tag_params'] ? $tmpCtrl['extra_tag_params'].' ' : '').'data-tid="'.$tagId.'" data-ti="'.$i.'"';
             $tmpCtrl['actions']=$removeAction;
-            $iCustomActions[]=[
+            $iCustomActions[]=$viewOnly ? [] : [
                 'type'=>$fClass,
                 'params'=>$tmpCtrl,
             ];
         }//END for
-        $iCustomActions[]=[
+        $iCustomActions[]=$viewOnly ? [] : [
             'type'=>'Button',
             'params'=>[
                 'value'=>Translate::GetButton('add_field'),
@@ -181,13 +182,14 @@ class InstancesHelpers {
      * @param string|null                      $themeType
      * @param bool                             $repeatable
      * @param int                              $iCount
+     * @param bool                             $viewOnly
      * @return array
      * @throws \NETopes\Core\AppException
      */
-    public static function PrepareField(VirtualEntity $field,array $fParams,$fValue=NULL,?string $themeType=NULL,bool $repeatable=FALSE,int $iCount=0): array {
+    public static function PrepareField(VirtualEntity $field,array $fParams,$fValue=NULL,?string $themeType=NULL,bool $repeatable=FALSE,int $iCount=0,bool $viewOnly=FALSE): array {
         // NApp::Dlog(['$field'=>$field,'$fParams'=>$fParams,'$fValue'=>$fValue,'$themeType'=>$themeType,'$iCount'=>$iCount],'PrepareField');
         if($repeatable) {
-            return static::PrepareRepeatableField($field,$fParams,$fValue,$themeType,$iCount);
+            return static::PrepareRepeatableField($field,$fParams,$fValue,$themeType,$iCount,$viewOnly);
         }
         $instanceId=$field->getProperty('id_instance',NULL,'is_integer');
         $fieldUid=$field->getProperty('uid',NULL,'is_string');
@@ -204,6 +206,9 @@ class InstancesHelpers {
             $fdesc=$field->getProperty('description','','is_string');
             $fParams['text']=$flabel.$fdesc;
         }//if($fClass=='Message')
+        if(!$instanceId && !$fValue && in_array($fClass,['TextBox','EditBox'])) {
+            $fValue=get_array_value($fParams,'default_value',NULL,'is_string');
+        }
         $idValuesList=$field->getProperty('id_values_list',0,'is_numeric');
         if(in_array($fClass,['SmartComboBox','GroupCheckBox']) && $idValuesList>0) {
             $fParams['load_type']='database';
@@ -408,13 +413,13 @@ HTML;
                                 $fICount=0;
                                 $fValue=NULL;
                             }//if($instanceId)
-                            $builder->AddControl(static::PrepareField($field,$fParams,$fValue,$themeType,TRUE,$fICount),$row);
+                            $builder->AddControl(static::PrepareField($field,$fParams,$fValue,$themeType,TRUE,$fICount,$viewOnly),$row);
                         } else {
                             $fValue=NULL;
                             if($instanceId) {
                                 $fValue=$field->getProperty('ivalues',NULL,'is_string');
                             }
-                            $builder->AddControl(static::PrepareField($field,$fParams,$fValue,$themeType),$row);
+                            $builder->AddControl(static::PrepareField($field,$fParams,$fValue,$themeType,FALSE,0,$viewOnly),$row);
                         }//if($fIType==2)
                     }//if(!is_array($fParams) || !count($fParams))
                     break;
