@@ -10,6 +10,7 @@
  * @filesource
  */
 namespace NETopes\Plugins\DForms\Modules\Instances;
+use DKMed\Extra\ControlsConfig;
 use Exception;
 use NApp;
 use NETopes\Core\App\ModulesProvider;
@@ -208,6 +209,9 @@ class InstancesHelpers {
         }//if($fClass=='Message')
         if(!$instanceId && !$fValue && in_array($fClass,['TextBox','EditBox'])) {
             $fValue=get_array_value($fParams,'default_value',NULL,'is_string');
+        }
+        if($fClass==='CkEditor') {
+            $fParams['extra_config']=ControlsConfig::GetCkEditorConfig(ControlsConfig::TYPE_DEFAULT);
         }
         $idValuesList=$field->getProperty('id_values_list',0,'is_numeric');
         if(in_array($fClass,['SmartComboBox','GroupCheckBox']) && $idValuesList>0) {
