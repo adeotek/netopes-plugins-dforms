@@ -957,7 +957,6 @@ HTML;
             return;
         }
         if($params->safeGet('form_as_modal',$module->formAsModal,'is_numeric')==1) {
-            /** @var \NETopes\Core\App\Module $module */
             $module->CloseForm();
         }
         $cModule=$params->safeGet('c_module',$module->name,'is_notempty_string');
