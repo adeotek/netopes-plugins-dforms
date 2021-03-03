@@ -153,6 +153,10 @@ class InstancesPrintContentBuilder {
                 }//if($valuesListId>0)
                 $result=strlen($result) ? $result : $emptyValue;
                 break;
+            case 'EditBox':
+            case 'CkEditor':
+                $result=is_string($value) && strlen($value) ? nl2br($value) : $emptyValue;
+                break;
             default:
                 $result=is_string($value) && strlen($value) ? $value : $emptyValue;
                 break;
