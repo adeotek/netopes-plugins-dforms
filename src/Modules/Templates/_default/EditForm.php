@@ -3,6 +3,8 @@ use NETopes\Core\Data\DataProvider;
 use NETopes\Plugins\DForms\Modules\TemplatesContent\TemplatesContent;
 
 /** @var \NETopes\Core\Data\IEntity $item */
+/** @var int $version */
+/** @var int $id */
 $ctrl_params=[
     'tag_id'=>'df_template_edit_tabs',
     'tabs'=>[
@@ -69,21 +71,12 @@ $ctrl_params=[
         ],
         [
             'type'=>'fixed',
-            'uid'=>'design',
-            'name'=>Translate::GetLabel('design'),
-            'content_type'=>'ajax',
-            'content_ajax_command'=>"{ 'module': '{$this->name}', 'method': 'ShowDesignEditForm', 'params': { 'id_template': {$id}, 'target': '{!t_target!}' } }",
-            'reload_onchange'=>TRUE,
-            'autoload'=>FALSE,
-        ],
-        [
-            'type'=>'fixed',
             'uid'=>'relations',
             'name'=>Translate::GetLabel('relations'),
             'content_type'=>'ajax',
             'content_ajax_command'=>"{ 'module': '{$this->name}', 'method': 'ShowRelationsEditForm', 'params': { 'id_template': {$id}, 'target': '{!t_target!}' } }",
-            'reload_onchange'=>TRUE,
-            'autoload'=>FALSE,
+            'reload_onchange'=>FALSE,
+            'autoload'=>TRUE,
         ],
         [
             'type'=>'fixed',
@@ -91,8 +84,17 @@ $ctrl_params=[
             'name'=>Translate::GetLabel('content'),
             'content_type'=>'ajax',
             'content_ajax_command'=>"{ 'module': '".TemplatesContent::class."', 'method': 'ShowContentEditForm', 'params': { 'id_template': {$id}, 'target': '{!t_target!}' } }",
-            'reload_onchange'=>TRUE,
-            'autoload'=>FALSE,
+            'reload_onchange'=>FALSE,
+            'autoload'=>TRUE,
+        ],
+        [
+            'type'=>'fixed',
+            'uid'=>'design',
+            'name'=>Translate::GetLabel('design'),
+            'content_type'=>'ajax',
+            'content_ajax_command'=>"{ 'module': '{$this->name}', 'method': 'ShowDesignEditForm', 'params': { 'id_template': {$id}, 'target': '{!t_target!}' } }",
+            'reload_onchange'=>FALSE,
+            'autoload'=>TRUE,
         ],
         [
             'type'=>'fixed',
@@ -100,8 +102,8 @@ $ctrl_params=[
             'name'=>Translate::GetLabel('print_template'),
             'content_type'=>'ajax',
             'content_ajax_command'=>"{ 'module': '{$this->name}', 'method': 'ShowPrintTemplateEditForm', 'params': { 'id_template': {$id}, 'target': '{!t_target!}' } }",
-            'reload_onchange'=>TRUE,
-            'autoload'=>FALSE,
+            'reload_onchange'=>FALSE,
+            'autoload'=>TRUE,
         ],
     ],
 ];

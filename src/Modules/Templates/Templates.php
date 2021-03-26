@@ -1,7 +1,5 @@
 <?php
 /**
- * description
- *
  * @package    NETopes\Plugins\Modules\DForms
  * @author     George Benjamin-Schonberger
  * @copyright  Copyright (c) 2013 - 2019 AdeoTEK Software SRL
@@ -139,7 +137,13 @@ class Templates extends Module {
         $view->AddTabControl($this->GetViewFile('EditForm'));
         $view->SetTitle(Translate::GetButton('edit_template').': '.$item->getProperty('name').' ['.$item->getProperty('code').'] - Ver. '.$version.' ('.($version + 1).')');
         if(!$this->ValidateDRights()) {
-            $btnValidate=new Button(['value'=>Translate::GetButton('validate'),'class'=>NApp::$theme->GetBtnSuccessClass('mr10'),'icon'=>'fa fa-check-square-o','onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->class,'method'=>'ValidateRecord','params'=>['id'=>$id]],['target_id'=>'errors'])]);
+            $btnValidate=new Button(['value'=>Translate::GetButton('validate'),'class'=>NApp::$theme->GetBtnSuccessClass('mr10'),'icon'=>'fa fa-check-square-o','onclick'=>NApp::Ajax()->PrepareAjaxRequest(['module'=>$this->class,'method'=>'ValidateRecord','params'=>[
+                'id'=>$id,
+                'design_form_id'=>'df_template_design_edit_form',
+                'design_data'=>'{nGet|df_template_design_edit_form:form}',
+                'print_template_form_id'=>'df_template_edit_print_template_form',
+                'print_template_data'=>'{nGet|df_template_edit_print_template_form:form}',
+            ]],['target_id'=>'errors'])]);
             $view->AddAction($btnValidate->Show());
         }//if(!$this->ValidateDRights()) {
         $btnBack=new Button(['value'=>Translate::GetButton('back'),'class'=>NApp::$theme->GetBtnDefaultClass(),'icon'=>'fa fa-chevron-left','onclick'=>NApp::Ajax()->Prepare("{ 'module': '{$this->class}', 'method': 'Listing', 'params': {  } }",'main-content')]);
@@ -205,6 +209,7 @@ class Templates extends Module {
      */
     public function SetPrintTemplate(Params $params) {
         $templateId=$params->getOrFail('id_template','is_not0_integer','Invalid record identifier!');
+        $preValidation=$params->safeGet('pre_validation',FALSE,'bool');
         $result=DataProvider::Get('Plugins\DForms\Templates','SetPropertiesItem',[
             'template_id'=>$templateId,
             'in_print_page_orientation'=>strtoupper($params->safeGet('page_orientation','P','is_notempty_string')),
@@ -213,7 +218,9 @@ class Templates extends Module {
         if($result===FALSE) {
             throw new AppException('Unknown database error!');
         }
-        echo Translate::GetMessage('save_done').' ('.date('Y-m-d H:i:s').')';
+        if(!$preValidation) {
+            echo Translate::GetMessage('save_done').' ('.date('Y-m-d H:i:s').')';
+        }
     }//END public function SetPrintTemplate
 
     /**
@@ -269,15 +276,35 @@ class Templates extends Module {
      */
     public function ValidateRecord(Params $params) {
         $id=$params->getOrFail('id','is_not0_integer','Invalid template identifier!');
-        $new_value=$params->safeGet('new_value',1,'is_numeric');
+        $designFormId=$params->safeGet('design_form_id',NULL,'is_string');
+        $designData=$params->safeGet('design_data',[],'is_array');
+        $printTemplateFormId=$params->safeGet('print_template_form_id',NULL,'is_string');
+        $printTemplateData=$params->safeGet('print_template_data',[],'is_array');
+
+        if(strlen($designFormId) && count($designData)) {
+            $this->Exec('EditDesignRecord',array_merge($designData,[
+                'id_template'=>$id,
+                'form_id'=>$designFormId,
+                'pre_validation'=>TRUE,
+            ]));
+        }//if(strlen($designFormId) && count($designData))
+        if(strlen($printTemplateFormId) && count($printTemplateData)) {
+            $this->Exec('SetPrintTemplate',array_merge($printTemplateData,[
+                'id_template'=>$id,
+                'form_id'=>$printTemplateFormId,
+                'pre_validation'=>TRUE,
+            ]));
+        }//if(strlen($printTemplateFormId) && count($printTemplateData))
+
         $result=DataProvider::GetArray('Plugins\DForms\Templates','SetItemValidated',[
             'for_id'=>$id,
-            'new_value'=>$new_value,
+            'new_value'=>$params->safeGet('new_value',1,'is_numeric'),
             'user_id'=>NApp::GetCurrentUserId(),
         ]);
         if($result===FALSE) {
             throw new AppException('Unknown database error!');
         }
+
         $this->Exec('Listing',[],'main-content');
     }//END public function ValidateRecord
 
@@ -307,8 +334,12 @@ class Templates extends Module {
         $template=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
         $renderType=$params->safeGet('render_type',NULL,'is_integer');
         $formId=$params->safeGet('form_id','','is_string');
+        $preValidation=$params->safeGet('pre_validation',FALSE,'bool');
         if(!$renderType) {
             NApp::Ajax()->ExecuteJs("AddClassOnErrorByParent('{$formId}')");
+            if($preValidation) {
+                throw new AppException(Translate::GetLabel('design_form').': '.Translate::GetMessage('required_fields'));
+            }
             echo Translate::GetMessage('required_fields');
             return;
         }//if(!$renderType)
@@ -320,9 +351,13 @@ class Templates extends Module {
             'in_label_cols'=>$params->safeGet('label_cols',NULL,'is_not0_integer'),
             'in_separator_width'=>$params->safeGet('separator_width','','is_string'),
             'in_iso_code'=>$params->safeGet('iso_code','','is_string'),
+            'in_title'=>$params->safeGet('title','','is_string'),
         ]);
         if($result===FALSE) {
             throw new AppException('Unknown database error!');
+        }
+        if($preValidation) {
+            return;
         }
         $cTarget=$params->safeGet('c_target','','is_string');
         if(!strlen($cTarget)) {
@@ -449,4 +484,22 @@ class Templates extends Module {
         }
         $this->Exec('Listing',[],'main-content');
     }//END public function CloneRecord
+
+    /**
+     * @param \NETopes\Core\App\Params $params
+     * @throws \NETopes\Core\AppException
+     */
+    public function ShowAvailablePrintTags(Params $params) {
+        $templateId=$params->getOrFail('id_template','is_not0_integer','Invalid template identifier!');
+        $targetTagId=$params->safeGet('target_tag_id',NULL,'is_string');
+        $targetTagType=$params->safeGet('target_tag_type',NULL,'is_string');
+        $relations=DataProvider::Get('Plugins\DForms\Templates','GetRelations',['template_id'=>$templateId]);
+        $fields=DataProvider::Get('Plugins\DForms\Templates','GetFields',['template_id'=>$templateId]);
+        $view=new AppView(get_defined_vars(),$this,'modal');
+        $view->SetIsModalView(TRUE);
+        $view->AddFileContent($this->GetViewFile('AvailablePrintTags'));
+        $view->SetTitle(Translate::GetLabel('available_print_tags'));
+        $view->SetModalWidth(850);
+        $view->Render();
+    }//END public function ShowAvailablePrintTags
 }//END class Templates extends Module
