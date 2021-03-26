@@ -502,4 +502,34 @@ class Templates extends Module {
         $view->SetModalWidth(850);
         $view->Render();
     }//END public function ShowAvailablePrintTags
+
+    /**
+     * @param \NETopes\Core\App\Params $params
+     * @throws \NETopes\Core\AppException
+     */
+    public function AddTagToPrintTemplate(Params $params) {
+        // NApp::Dlog($params->toArray(),__METHOD__);
+        $targetTagId=$params->safeGet('target_tag_id',NULL,'is_string');
+        $targetTagType=$params->safeGet('target_tag_type',NULL,'is_string');
+
+        $tags=$params->safeGet('tags',[],'is_array');
+        $tag=$params->safeGet('tag',NULL,'is_string');
+        if(strlen($tag)) {
+            $tags[$tag]=$tag;
+        }
+
+        $data=trim(implode('<br />',$tags));
+        if(!strlen($targetTagId) || !strlen($targetTagType) || !strlen($data)) {
+            return;
+        }
+
+        switch($targetTagType) {
+            case 'CkEditor':
+                $this->AddJsScript("InsertCkEditorData('$targetTagId','{$data}');");
+                break;
+            default:
+                $this->AddJsScript("$('#{$targetTagId}').val($('#{$targetTagId}').val() + '{$data}');");
+                break;
+        }//END switch
+    }//END public function AddTagToPrintTemplate
 }//END class Templates extends Module
