@@ -218,7 +218,7 @@ class Instances extends Module {
         ];
 
         $view=new AppView(get_defined_vars(),$this,$this->containerType);
-        $view->SetTitle($params->safeGet('title',$template->getProperty('name','','is_string'),'is_string'));
+        $view->SetTitle($params->safeGet('title',$template->getProperty('title','','is_string'),'is_string'));
         $view->SetTargetId($listingTarget);
         $view->AddControlBuilderContent($this->GetViewFile('Listing'),TableView::class);
         if(!$this->inListingActions) {
@@ -341,10 +341,10 @@ class Instances extends Module {
             $view=new AppView(get_defined_vars(),$this,'modal');
             $view->SetIsModalView(TRUE);
             $view->SetModalWidth('80%');
-            $view->SetTitle($template->getProperty('name','','is_string'));
+            $view->SetTitle($template->getProperty('title','','is_string'));
         } else {
             $view=new AppView(get_defined_vars(),$this,$this->containerType);
-            $view->SetTitle($template->getProperty('name','','is_string'));
+            $view->SetTitle($template->getProperty('title','','is_string'));
         }//if($this->formAsModal)
         $fResponseTarget=get_array_value($ctrlParams,'response_target','df_'.$tName.'_errors','is_string');
 
@@ -420,10 +420,10 @@ class Instances extends Module {
             $view=new AppView(get_defined_vars(),$this,'modal');
             $view->SetIsModalView(TRUE);
             $view->SetModalWidth('80%');
-            $view->SetTitle($template->getProperty('name','','is_string'));
+            $view->SetTitle($template->getProperty('title','','is_string'));
         } else {
             $view=new AppView(get_defined_vars(),$this,$this->containerType);
-            $view->SetTitle($template->getProperty('name','','is_string'));
+            $view->SetTitle($template->getProperty('title','','is_string'));
         }//if($this->formAsModal)
         $fResponseTarget=get_array_value($ctrl_params,'response_target','df_'.$tName.'_errors','is_notempty_string');
 
@@ -500,10 +500,10 @@ class Instances extends Module {
             $view=new AppView(get_defined_vars(),$this,'modal');
             $view->SetIsModalView(TRUE);
             $view->SetModalWidth('80%');
-            $view->SetTitle($template->getProperty('name','','is_string'));
+            $view->SetTitle($template->getProperty('title','','is_string'));
         } else {
             $view=new AppView(get_defined_vars(),$this,$this->containerType);
-            $view->SetTitle($template->getProperty('name','','is_string'));
+            $view->SetTitle($template->getProperty('title','','is_string'));
         }//if($this->formAsModal)
         $fResponseTarget=get_array_value($ctrl_params,'response_target','df_'.$tName.'_errors','is_notempty_string');
 

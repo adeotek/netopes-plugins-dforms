@@ -9,9 +9,17 @@ $ctrl_params=[
     'content'=>[
         [
             [
+                'control_type'=>'TextBox',
+                'control_params'=>['tag_id'=>'df_template_design_edit_title','tag_name'=>'title','value'=>$item->getProperty('title','','is_string'),'label'=>Translate::GetLabel('title'),'onenter_button'=>'df_template_design_edit_save'],
+            ],
+        ],
+        ['separator'=>'line'],
+        [
+            [
                 'control_type'=>'SmartComboBox',
                 'control_params'=>['tag_id'=>'df_template_design_edit_render_type','label'=>Translate::GetLabel('render_type'),
                     'tag_name'=>'render_type',
+                    'fixed_width'=>'100%',
                     'required'=>TRUE,
                     'value_field'=>'id',
                     'display_field'=>'name',
