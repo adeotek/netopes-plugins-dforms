@@ -4,21 +4,21 @@
   "type": "library",
   "license": "MIT License",
   "authors": [
-	{
-	  "name": "George Benjamin-Schonberger",
-	  "email": "george.benjamin@gmail.com"
-	}
+    {
+      "name": "George Benjamin-Schonberger",
+      "email": "george.benjamin@gmail.com"
+    }
   ],
   "minimum-stability": "stable",
   "require": {
-    "php": ">=7.2",
+    "php": "^7.2 || ^8.0",
     "ext-json": "*",
-    "netopes/core": "^3.3",
-    "netopes/ajax": "^1.2"
+    "netopes/core": "^3.5",
+    "netopes/ajax": "^1.4"
   },
   "autoload": {
-	"psr-4": {
-	  "NETopes\\Plugins\\DForms\\": "src"
-	}
+    "psr-4": {
+      "NETopes\\Plugins\\DForms\\": "src"
+    }
   }
 }
