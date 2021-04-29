@@ -9,7 +9,7 @@
       "email": "george.benjamin@gmail.com"
     }
   ],
-  "minimum-stability": "RC",
+  "minimum-stability": "stable",
   "require": {
     "php": "^7.2 || ^8.0",
     "ext-json": "*",
