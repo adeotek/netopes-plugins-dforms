@@ -2,7 +2,7 @@
   "name": "netopes/plugins-dforms",
   "description": "Dynamic forms plugin",
   "type": "library",
-  "license": "MIT License",
+  "license": "MIT",
   "authors": [
     {
       "name": "George Benjamin-Schonberger",
